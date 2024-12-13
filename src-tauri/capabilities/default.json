@@ -1,0 +1,23 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    {
+      "identifier": "fs:allow-appdata-write",
+      "allow": [{ "path": "$HOME/**" }]
+    },
+    "fs:allow-write-file",
+    "fs:allow-read-file",
+    "fs:allow-mkdir",
+    "fs:allow-exists",
+    "fs:allow-create",
+    "fs:allow-read-dir",
+    "core:webview:allow-create-webview-window"
+  ]
+}
