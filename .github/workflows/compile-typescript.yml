@@ -1,0 +1,47 @@
+name: Compile TypeScript
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Lint for console.log statements
+        run: |
+          # Procura por console.log em todos os arquivos .js, excluindo node_modules
+          if grep -rnw './' -e 'console.log' --exclude-dir=node_modules --include \*.{js,ts,jsx,tsx}; then
+            echo "Error: console.log found, failing the build."
+            exit 1
+          fi
+
+      - name: Create database.ts file
+        run: |
+          echo "export const databaseVersion = 11" > src/database_version.ts
+
+      - name: Create key.ts file
+        run: |
+          echo "export const VITE_APP_LICENSE_KEY = 'N@03xiste_N@03xiste'" > src/key.ts
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compile TypeScript
+        run: |
+          export NODE_OPTIONS=--max_old_space_size=4096
+          npm run build
