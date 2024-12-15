@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impressão de Cartão</title>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
         }
+
         iframe {
             width: 100%;
             height: 100%;
@@ -18,14 +21,43 @@
         }
     </style>
 </head>
+
 <body>
     <iframe id="pdf-frame"></iframe>
-    <script>
+    <!--  <script>
         const urlParams = new URLSearchParams(window.location.search);
         const pdfData = urlParams.get('pdfData');
+
         if (pdfData) {
             document.getElementById('pdf-frame').src = `data:application/pdf;base64,${pdfData}`;
         }
+    </script> -->
+
+    <script type="module">
+        const { readFile, BaseDirectory } = window.__TAURI__.fs
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const path = urlParams.get('path');
+
+        readFile(path, { baseDir: BaseDirectory.AppLocalData })
+            .then((content) => {
+                const base64PDF = uint8ArrayToBase64(content)
+
+                if (base64PDF) {
+                    document.getElementById('pdf-frame').src = `data:application/pdf;base64,${base64PDF}`;
+                }
+            })
+            .catch(console.log)
+
+        function uint8ArrayToBase64(u8a) {
+            const CHUNK_SIZE = 0x8000; // Tamanho do pedaço (32 KB)
+            const chunks = [];
+            for (let i = 0; i < u8a.length; i += CHUNK_SIZE) {
+                chunks.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SIZE)));
+            }
+            return btoa(chunks.join(''));
+        }
     </script>
 </body>
+
 </html>

@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import { CardType } from "../types/CardType";
 import CardDao from "../database/CardDao";
-import { PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb } from 'pdf-lib';
+import { readFile } from "@tauri-apps/plugin-fs"
+import { convertformatDateAngolan } from "../utils";
 
 const initialState: State = {
     cards: [],
@@ -13,7 +15,7 @@ interface State {
 
 interface Actions {
     getAllCards: () => void
-    generatePersonCardPVC: () => Promise<Uint8Array<ArrayBufferLike>>
+    generatePersonCardPVC: (card: CardType) => Promise<Uint8Array<ArrayBuffer>>
 }
 
 export const useCardState = create<Actions & State>((set) => ({
@@ -25,84 +27,94 @@ export const useCardState = create<Actions & State>((set) => ({
             })
             .catch(console.log)
     },
-    generatePersonCardPVC: async () => {
-        // Cria um novo documento PDF
+    generatePersonCardPVC: async (card: CardType) => {
         const pdfDoc = await PDFDocument.create();
 
-        // Define o tamanho do cartão A7 (74mm x 105mm) em pontos
-        const width = 74 * 2.83465; // 74 mm convertido para pontos (1 mm = 2.83465 pontos)
-        const height = 105 * 2.83465; // 105 mm convertido para pontos (1 mm = 2.83465 pontos)
+        const height = 242.64;
+        const width = 153;
 
-        // Adiciona uma página com o tamanho especificado
         const page = pdfDoc.addPage([width, height]);
 
-        // Adiciona as fontes padrão
-        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-        const boldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+        const grayColor = rgb(0.9, 0.9, 0.9);
 
-        // Define cores
-        const blueColor = rgb(0.2, 0.2, 0.7); // Azul para a letra T
-        const blackColor = rgb(0, 0, 0);
+        const signed = await readFile('resources/signed.jpg')
+        const top = await readFile('resources/t_up.png')
+        const bottom = await readFile('resources/t_down.png')
 
-        // Desenha o "T"
-        page.drawText("T", {
-            x: width / 2 - 15,
-            y: height - 30,
-            size: 16,
-            font: boldFont,
-            color: blueColor,
-        });
+        const topImage = await pdfDoc.embedPng(top);
+        const bottomImage = await pdfDoc.embedPng(bottom);
+        const signedImage = await pdfDoc.embedJpg(signed);
 
-        // Desenha o número
-        page.drawText("00007", {
-            x: width / 2 - 20,
-            y: height - 60,
-            size: 12,
-            font: boldFont,
-            color: blackColor,
-        });
+        const topImageDims = topImage.scale(0.15);
+        const bottomImageDims = bottomImage.scale(0.15);
+        const signedImageDims = signedImage.scale(0.18);
 
-        // Desenha os dados
-        page.drawText("Nome: MANUEL PEDRO", {
-            x: 10,
-            y: height - 90,
-            size: 8,
-            font: timesRomanFont,
-        });
-
-        page.drawText("Função: LOAD CONTROL", {
-            x: 10,
+        page.drawRectangle({
+            x: 0,
             y: height - 110,
-            size: 8,
-            font: timesRomanFont,
+            width: width,
+            height: 230,
+            color: grayColor,
         });
 
-        page.drawText("VALIDADE: 12/12/2024", {
-            x: 10,
-            y: height - 130,
-            size: 8,
-            font: timesRomanFont,
+        page.drawImage(topImage, {
+            x: (width - topImageDims.width) / 2,
+            y: height - topImageDims.height - 10,
+            width: topImageDims.width,
+            height: topImageDims.height,
         });
 
-        // Desenha o rodapé
-        page.drawText("FNCT/SGA-SA", {
-            x: 10,
-            y: 10,
-            size: 6,
-            font: boldFont,
+        page.drawText(card.cardNumber, {
+            x: width / 2 - 25,
+            y: height / 2 + 65,
+            size: 24,
+            color: rgb(0, 0, 0),
         });
 
-        page.drawText("AEROPORTO INTERNACIONAL PAULO TEIXEIRA JORGE", {
-            x: 10,
+        page.drawImage(bottomImage, {
+            x: (width - bottomImageDims.width) / 2,
+            y: height / 1.75,
+            width: bottomImageDims.width,
+            height: bottomImageDims.height,
+        });
+
+        page.drawImage(signedImage, {
+            x: (width - signedImageDims.width) / 2,
             y: 0,
-            size: 5,
-            font: timesRomanFont,
+            width: signedImageDims.width,
+            height: signedImageDims.height,
         });
 
-        // Salva o PDF como bytes
-        const pdfBytes = await pdfDoc.save();
+        page.drawText(`Nome: ${card.person.name}`, {
+            x: 10,
+            y: height / 2.1,
+            size: 11,
+            color: rgb(0, 0, 0),
+        });
 
-        // Retorna os bytes do PDF
+        page.drawText(`Função: ${card.person.job}`, {
+            x: 10,
+            y: height / 2.5,
+            size: 11,
+            color: rgb(0, 0, 0),
+        });
+
+
+        page.drawText(`Validade: ${convertformatDateAngolan(card.expiration)}`, {
+            x: 10,
+            y: height / 3.1,
+            size: 11,
+            color: rgb(0, 0, 0),
+        });
+
+        page.drawText('FNCT/SGA-SA', {
+            x: 'FNCT/SGA-SA'.length * 3.9,
+            y: height / 4.2,
+            size: 11,
+            color: rgb(0, 0, 0),
+        });
+
+        const pdfBytes = await pdfDoc.save();
         return pdfBytes;
     }
 }));

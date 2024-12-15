@@ -1,20 +1,13 @@
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
-import { Buffer } from "buffer"
-import { readFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 
 export async function openCardPDF(path: string) {
-
-    const content = await readFile(path, { baseDir: BaseDirectory.AppLocalData })
-    const base64PDF = Buffer.from(content).toString('base64')
-
-    //await invoke('open_invoice_pdf')
     const invoiceWindow = new WebviewWindow('invoiceWindow', {
-        url: `pvcCard.html?pdfData=${encodeURIComponent(base64PDF)}`,
-        title: "Factura",
+        url: `pvcCard.html?path=${encodeURIComponent(path)}`,
+        title: "Impressão de Cartão",
         width: 800,
         height: 600,
         center: true,
-        alwaysOnTop: true
+        alwaysOnTop: false
     })
 
     invoiceWindow.once('tauri://created', () => {

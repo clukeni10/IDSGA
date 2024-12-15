@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "invoiceWindow"
   ],
   "permissions": [
     "core:default",
@@ -12,12 +13,23 @@
       "identifier": "fs:allow-appdata-write",
       "allow": [{ "path": "$HOME/**" }]
     },
+    {
+      "identifier": "fs:allow-resource-read-recursive",
+      "allow": [{ "path": "$HOME/**" }]
+    },
     "fs:allow-write-file",
     "fs:allow-read-file",
     "fs:allow-mkdir",
     "fs:allow-exists",
     "fs:allow-create",
     "fs:allow-read-dir",
-    "core:webview:allow-create-webview-window"
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-close",
+    "core:webview:allow-print",
+    {
+      "identifier": "core:event:allow-listen",
+      "windows": ["main", "invoiceWindow"]
+    },
+    "fs:scope-resource"
   ]
 }

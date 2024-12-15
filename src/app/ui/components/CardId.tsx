@@ -3,7 +3,7 @@ import { Button, Card, Text } from "@chakra-ui/react"
 
 interface CardId {
     card: CardType
-    onPrintCard: (cardId: string) => void
+    onPrintCard: (card: CardType) => void
 }
 
 export default function CardId(props: CardId): JSX.Element {
@@ -14,7 +14,7 @@ export default function CardId(props: CardId): JSX.Element {
     } = props
 
     function handlePrintCard() {
-        onPrintCard(card.cardNumber)
+        onPrintCard(card)
     }
 
     return (

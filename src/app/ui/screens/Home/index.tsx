@@ -8,6 +8,7 @@ import { useCardState } from "@/app/hooks/useCardState";
 import { usePersonState } from "@/app/hooks/usePersonState";
 import { openCardPDF } from "@/app/libs/tauri-window";
 import { saveFileLocal } from "@/app/libs/tauri-fs";
+import { CardType } from "@/app/types/CardType";
 
 export default function HomeScreen(): JSX.Element {
 
@@ -28,11 +29,11 @@ export default function HomeScreen(): JSX.Element {
         setOpen({ open: true })
     }
 
-    async function handleOnPrintingCard(cardId: string) {
-        const pathUri = await generatePersonCardPVC()
+    async function handleOnPrintingCard(card: CardType) {
+        const pathUri = await generatePersonCardPVC(card)
         const dirPath = 'pdf'
         const extension = 'pdf'
-        const filePath = await saveFileLocal(pathUri, cardId, dirPath, extension)
+        const filePath = await saveFileLocal(pathUri, card.cardNumber, dirPath, extension)
         await openCardPDF(filePath)
     }
 
