@@ -22,18 +22,12 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
         onOpenChange
     } = props
 
-    /* const [loadingLogo, setLoadingLogo] = useState<boolean>(false)
-    const [imagePreview, setImagePreview] = useState<string>("") */
     const [loading, setLoading] = useState<boolean>(false)
     const [selectedJob, onJobValueChange] = useState<string[]>([])
 
     const [employeeName, setEmployeeName] = useState<string>("")
 
     const addPerson = usePersonState(state => state.addPerson)
-
-    /* function onMessage(message: string) {
-
-    } */
 
     function handleAddPerson() {
         setLoading(true)
@@ -65,14 +59,6 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             }
         >
             <VStack gap={4}>
-                {/* <ImagePreview
-                    loading={loadingLogo}
-                    setLoading={setLoadingLogo}
-                    onSelectedImagePreview={setImagePreview}
-                    imagePreview={imagePreview}
-                    onMessage={onMessage}
-                />
-                <Spacer /> */}
                 <Field  
                     label="Nome" 
                     errorText="Este campo é obrigatório"

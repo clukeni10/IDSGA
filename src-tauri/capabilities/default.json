@@ -11,11 +11,19 @@
     "shell:allow-open",
     {
       "identifier": "fs:allow-appdata-write",
-      "allow": [{ "path": "$HOME/**" }]
+      "allow": [
+        {
+          "path": "$HOME/**"
+        }
+      ]
     },
     {
       "identifier": "fs:allow-resource-read-recursive",
-      "allow": [{ "path": "$HOME/**" }]
+      "allow": [
+        {
+          "path": "$HOME/**"
+        }
+      ]
     },
     "fs:allow-write-file",
     "fs:allow-read-file",
@@ -28,8 +36,12 @@
     "core:webview:allow-print",
     {
       "identifier": "core:event:allow-listen",
-      "windows": ["main", "invoiceWindow"]
+      "windows": [
+        "main",
+        "invoiceWindow"
+      ]
     },
-    "fs:scope-resource"
+    "fs:scope-resource",
+    "dialog:default"
   ]
 }

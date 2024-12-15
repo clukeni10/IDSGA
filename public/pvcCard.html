@@ -24,15 +24,6 @@
 
 <body>
     <iframe id="pdf-frame"></iframe>
-    <!--  <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const pdfData = urlParams.get('pdfData');
-
-        if (pdfData) {
-            document.getElementById('pdf-frame').src = `data:application/pdf;base64,${pdfData}`;
-        }
-    </script> -->
-
     <script type="module">
         const { readFile, BaseDirectory } = window.__TAURI__.fs
 
@@ -50,7 +41,7 @@
             .catch(console.log)
 
         function uint8ArrayToBase64(u8a) {
-            const CHUNK_SIZE = 0x8000; // Tamanho do pedaço (32 KB)
+            const CHUNK_SIZE = 0x8000;
             const chunks = [];
             for (let i = 0; i < u8a.length; i += CHUNK_SIZE) {
                 chunks.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SIZE)));

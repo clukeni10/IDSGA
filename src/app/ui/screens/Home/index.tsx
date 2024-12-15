@@ -9,15 +9,19 @@ import { usePersonState } from "@/app/hooks/usePersonState";
 import { openCardPDF } from "@/app/libs/tauri-window";
 import { saveFileLocal } from "@/app/libs/tauri-fs";
 import { CardType } from "@/app/types/CardType";
+import CardOptionPrintScreen from "../CardOptionPrint";
 
 export default function HomeScreen(): JSX.Element {
 
     const [open, setOpen] = useState<{ open: boolean }>({ open: false })
+    const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
+    const [cardSelected, setCardSelected] = useState<CardType>()
 
     const contentRef = useRef<HTMLDivElement>(null)
 
     const getAllCards = useCardState(state => state.getAllCards)
-    const generatePersonCardPVC = useCardState(state => state.generatePersonCardPVC)
+    const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
+    const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
     const cards = useCardState(state => state.cards)
     const refresh = usePersonState(state => state.refresh)
 
@@ -30,11 +34,27 @@ export default function HomeScreen(): JSX.Element {
     }
 
     async function handleOnPrintingCard(card: CardType) {
-        const pathUri = await generatePersonCardPVC(card)
+        setCardSelected(card)
+        setOpenOption({ open: true })
+    }
+
+    async function onHandleToPrint(date: Date, cardSidePrint: string) {
+
         const dirPath = 'pdf'
         const extension = 'pdf'
-        const filePath = await saveFileLocal(pathUri, card.cardNumber, dirPath, extension)
-        await openCardPDF(filePath)
+        let pathUri: Uint8Array<ArrayBuffer>
+
+        if (cardSelected) {
+            cardSelected.expiration = date
+            
+            if (cardSidePrint === 'frontal') {
+                pathUri = await generatePersonCardFrontPVC(cardSelected) 
+            } else {
+                pathUri = await generatePersonCardBackPVC() 
+            }
+            const filePath = await saveFileLocal(pathUri, cardSelected.cardNumber, dirPath, extension)
+            await openCardPDF(filePath)
+        }
     }
 
     return (
@@ -62,6 +82,12 @@ export default function HomeScreen(): JSX.Element {
                     contentRef={contentRef}
                     open={open.open}
                     onOpenChange={setOpen}
+                />
+
+                <CardOptionPrintScreen
+                    open={openOption.open}
+                    onOpenChange={setOpenOption}
+                    onHandleToPrint={onHandleToPrint}
                 />
             </Stack>
         </Stack>

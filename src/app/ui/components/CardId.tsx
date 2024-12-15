@@ -19,10 +19,6 @@ export default function CardId(props: CardId): JSX.Element {
 
     return (
         <Card.Root maxW="xs" overflow="hidden">
-            {/* <Image
-                src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                alt="Green double couch with wooden legs"
-            /> */}
             <Card.Body>
                 <Card.Title>{card.person.name}</Card.Title>
                 <Card.Description>
@@ -39,7 +35,6 @@ export default function CardId(props: CardId): JSX.Element {
                 >
                     Imprimir
                 </Button>
-                {/* <Button variant="ghost">Apagar</Button> */}
             </Card.Footer>
         </Card.Root>
 
