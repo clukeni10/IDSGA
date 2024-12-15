@@ -2,8 +2,7 @@ import { create } from "zustand";
 import { CardType } from "../types/CardType";
 import CardDao from "../database/CardDao";
 import { BlendMode, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { readFile } from "@tauri-apps/plugin-fs"
-import { convertformatDateAngolan } from "../utils";
+import { bottom, convertformatDateAngolan, getFirstAndLastName, signed, signedBack, top } from "../utils";
 
 const initialState: State = {
     cards: [],
@@ -37,10 +36,6 @@ export const useCardState = create<Actions & State>((set) => ({
         const page = pdfDoc.addPage([width, height]);
 
         const grayColor = rgb(0.9, 0.9, 0.9);
-
-        const signed = await readFile('resources/signed.jpg')
-        const top = await readFile('resources/t_up.png')
-        const bottom = await readFile('resources/t_down.png')
 
         const topImage = await pdfDoc.embedPng(top);
         const bottomImage = await pdfDoc.embedPng(bottom);
@@ -86,14 +81,14 @@ export const useCardState = create<Actions & State>((set) => ({
             height: signedImageDims.height,
         });
 
-        page.drawText(`Nome: ${card.person.name}`, {
+        page.drawText(`Nome: ${getFirstAndLastName(card.person.name)}`, {
             x: 10,
             y: height / 2.1,
             size: 11,
             color: rgb(0, 0, 0),
         });
 
-        page.drawText(`Função: ${card.person.job}`, {
+        page.drawText(`Função: ${card.person.job.toUpperCase()}`, {
             x: 10,
             y: height / 2.5,
             size: 11,
@@ -127,9 +122,8 @@ export const useCardState = create<Actions & State>((set) => ({
         const width = 153;
 
         const page = pdfDoc.addPage([width, height]);
-        const signed = await readFile('resources/signBack.png')
 
-        const signedImage = await pdfDoc.embedPng(signed);
+        const signedImage = await pdfDoc.embedPng(signedBack);
 
         const signedImageDims = signedImage.scale(0.15);
         const title = 'PRERROGATIVAS';

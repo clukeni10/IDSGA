@@ -10,6 +10,7 @@ import {
 
 interface SelectComponent {
     label?: string
+    placeholder?: string
     portalRef?: React.RefObject<HTMLDivElement>
     data: { label: string, value: string }[]
     selectedValue: string[]
@@ -23,6 +24,7 @@ export default function SelectComponent(props: SelectComponent): JSX.Element {
         portalRef,
         selectedValue,
         data,
+        placeholder,
         onValueChange
     } = props
 
@@ -39,7 +41,7 @@ export default function SelectComponent(props: SelectComponent): JSX.Element {
         >
             {label ? <SelectLabel>{label}</SelectLabel> : null}
             <SelectTrigger>
-                <SelectValueText placeholder="Select movie" />
+                <SelectValueText placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent
                 portalRef={portalRef}

@@ -75,6 +75,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                     <SelectComponent
                         portalRef={contentRef}
                         label="Função"
+                        placeholder="Seleccione a função"
                         selectedValue={selectedJob}
                         onValueChange={onJobValueChange}
                         data={[
