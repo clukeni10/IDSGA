@@ -1,17 +1,21 @@
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { IoPersonAdd } from "react-icons/io5";
 import { PiPrinterLight } from "react-icons/pi";
+import { VscSettings } from "react-icons/vsc";
+
 
 interface HeaderActions {
     onOpenAddPerson: () => void
     onPrintCards: () => void
+    onSetupNetwork: () => void
 }
 
 export default function HeaderActions(props: HeaderActions): JSX.Element {
 
     const {
         onOpenAddPerson,
-        onPrintCards
+        onPrintCards,
+        onSetupNetwork
     } = props;
 
     return (
@@ -46,7 +50,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                 <Spacer />
                 <Box
                     py={4}
-                    px={8}
+
                     textAlign={'center'}
                     _hover={{
                         bgColor: '#cbe5f2',
@@ -66,6 +70,30 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         color={'#607d8c'}
                     >
                         Imprimir
+                    </Text>
+                </Box>
+                <Box
+                    py={4}
+                    px={8}
+                    textAlign={'center'}
+                    _hover={{
+                        bgColor: '#cbe5f2',
+                        cursor: 'default'
+                    }}
+                    onClick={onSetupNetwork}
+                >
+                    <Icon
+                        fontSize="2xl"
+                        color={'#607d8c'}
+                    >
+                        <VscSettings />
+                    </Icon>
+                    <Text
+                        fontSize={'small'}
+                        fontWeight={'bold'}
+                        color={'#607d8c'}
+                    >
+                        Configuração
                     </Text>
                 </Box>
             </HStack>

@@ -9,11 +9,14 @@ import { usePersonState } from "@/app/hooks/usePersonState";
 import { openCardPDF } from "@/app/libs/tauri-window";
 import { saveFileLocal } from "@/app/libs/tauri-fs";
 import CardOptionPrintScreen from "../CardOptionPrint";
+import SetupNetworkScreen from "../SetupNetwork";
+import { useNetworkState } from "@/app/hooks/useNetworkState";
 
 export default function HomeScreen(): JSX.Element {
 
     const [open, setOpen] = useState<{ open: boolean }>({ open: false })
     const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
+    const [openSetup, setOpenSetup] = useState<{ open: boolean }>({ open: false })
 
     const contentRef = useRef<HTMLDivElement>(null)
 
@@ -23,8 +26,10 @@ export default function HomeScreen(): JSX.Element {
     const cards = useCardState(state => state.cards)
     const refresh = usePersonState(state => state.refresh)
 
+    const address = useNetworkState(state => state.address)
+
     useEffect(() => {
-        getAllCards()
+        getAllCards(address)
     }, [refresh])
 
     function handleOnOpenAddPerson() {
@@ -52,11 +57,16 @@ export default function HomeScreen(): JSX.Element {
         await openCardPDF(filePath)
     }
 
+    function handleoOnSetupNetwork() {
+        setOpenSetup({ open: true })
+    }
+
     return (
         <Stack>
             <HeaderActions
                 onOpenAddPerson={handleOnOpenAddPerson}
                 onPrintCards={handleOnPrintingCard}
+                onSetupNetwork={handleoOnSetupNetwork}
             />
 
             <Stack
@@ -83,6 +93,11 @@ export default function HomeScreen(): JSX.Element {
                     open={openOption.open}
                     onOpenChange={setOpenOption}
                     onHandleToPrint={onHandleToPrint}
+                />
+
+                <SetupNetworkScreen 
+                    open={openSetup.open}
+                    onOpenChange={setOpenSetup}
                 />
             </Stack>
         </Stack>

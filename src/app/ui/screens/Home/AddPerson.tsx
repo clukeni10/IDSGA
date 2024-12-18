@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { usePersonState } from "@/app/hooks/usePersonState";
 import { PersonType } from "@/app/types/PersonType";
 import UUIDv4 from "@/app/libs/uuidv4";
+import { useNetworkState } from "@/app/hooks/useNetworkState";
 
 interface AddPersonModal {
     open: boolean
@@ -28,6 +29,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     const [employeeName, setEmployeeName] = useState<string>("")
 
     const addPerson = usePersonState(state => state.addPerson)
+    const address = useNetworkState(state => state.address)
 
     function handleAddPerson() {
         setLoading(true)
@@ -37,7 +39,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             id: UUIDv4.generateId()
         }
         
-        addPerson(person)
+        addPerson(person, address)
         setLoading(false)
         onJobValueChange([])
         setEmployeeName("")

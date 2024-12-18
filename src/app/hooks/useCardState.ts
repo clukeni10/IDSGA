@@ -3,6 +3,7 @@ import { CardType } from "../types/CardType";
 import CardDao from "../database/CardDao";
 import { BlendMode, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { bottom, convertformatDateAngolan, getFirstAndLastName, signed, signedBack, top } from "../utils";
+import CardService from "../database/CardService";
 
 const initialState: State = {
     cards: [],
@@ -13,7 +14,7 @@ interface State {
 }
 
 interface Actions {
-    getAllCards: () => void
+    getAllCards: (url: string | null) => void
     generatePersonCardFrontPVC: (card: CardType) => Promise<Uint8Array<ArrayBuffer>>
     generatePersonCardBackPVC: () => Promise<Uint8Array<ArrayBuffer>>
     generateA4CardsBack: (cards: CardType[]) => Promise<Uint8Array<ArrayBuffer>>
@@ -22,12 +23,20 @@ interface Actions {
 
 export const useCardState = create<Actions & State>((set) => ({
     ...initialState,
-    getAllCards: () => {
-        CardDao.shared.getAllCards()
-            .then(cards => {
-                set(() => ({ cards }))
-            })
-            .catch(console.log)
+    getAllCards: (url: string | null) => {
+        if (url) {
+            CardService.shared.getAllCards(url)
+                .then(cards => {
+                    set(() => ({ cards }))
+                })
+                .catch(console.log)
+        } else {
+            CardDao.shared.getAllCards()
+                .then(cards => {
+                    set(() => ({ cards }))
+                })
+                .catch(console.log)
+        }
     },
     generatePersonCardFrontPVC: async (card: CardType) => {
         const pdfDoc = await PDFDocument.create();
@@ -197,48 +206,48 @@ export const useCardState = create<Actions & State>((set) => ({
         const pdfDoc = await PDFDocument.create();
         const helveticaFontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    
+
         const cardWidth = 153;
         const cardHeight = 242.64;
-    
+
         const pageWidth = PageSizes.A4[0];
         const pageHeight = PageSizes.A4[1];
-    
+
         const marginX = 30;
         const marginY = 30;
         const spacingX = 20;
         const spacingY = 20;
-    
+
         const rows = 3;
         const cols = 3;
         const cardsPerPage = rows * cols;
-    
+
         const signedImage = await pdfDoc.embedPng(signedBack);
-    
+
         const signedImageDims = signedImage.scale(0.15);
-    
+
         const title = 'PRERROGATIVAS';
         const fontSize = 12;
-    
+
         const prerrogatives = [
             `1. O uso do presente Passe de Acesso é \npessoal e intransmissível e válido até a data \nde expiração, escrita na parte frontal.`,
             `2. O porte visível e ostensivo é obrigatório e \npermite o Acesso do Portador somente na \nárea autorizada conforme indica no passe.`,
             `3. O uso indevido do passe, implicará \npenalizações ao infractor conforme \nlegislação e regulamento aplicáveis.`,
             `4. Em caso de extravio, perda, roubo ou \nfurto. O portador deverá notificar a \nAutoridade Aeroportuária, podendo fazê-lo \nao Supervisor de Segurança 05 ou a Policia.`,
         ];
-    
+
         for (let pageIndex = 0; pageIndex < Math.ceil(cards.length / cardsPerPage); pageIndex++) {
 
             const page = pdfDoc.addPage([pageWidth, pageHeight]);
-    
-            const startIndex = pageIndex * cardsPerPage; 
+
+            const startIndex = pageIndex * cardsPerPage;
             const endIndex = Math.min(startIndex + cardsPerPage, cards.length);
-    
+
             for (let i = startIndex; i < endIndex; i++) {
                 const cardIndex = i % cardsPerPage; // Índice relativo à página atual
                 const col = cardIndex % cols; // Coluna atual
                 const row = Math.floor(cardIndex / cols); // Linha atual
-    
+
                 const x = marginX + col * (cardWidth + spacingX);
                 const y = pageHeight - marginY - (row + 1) * (cardHeight + spacingY);
 
@@ -252,7 +261,7 @@ export const useCardState = create<Actions & State>((set) => ({
                     borderColor: rgb(0.5, 0.5, 0.5),
                     borderWidth: 1,
                 });
-    
+
                 // Adicionar imagem de fundo assinada
                 page.drawImage(signedImage, {
                     x: x + (cardWidth - signedImageDims.width) / 2,
@@ -260,7 +269,7 @@ export const useCardState = create<Actions & State>((set) => ({
                     width: signedImageDims.width,
                     height: signedImageDims.height,
                 });
-    
+
                 // Adicionar título "PRERROGATIVAS"
                 page.drawText(title, {
                     x: x + (cardWidth - title.length * fontSize * 0.5) / 2.4,
@@ -269,7 +278,7 @@ export const useCardState = create<Actions & State>((set) => ({
                     font: helveticaFontBold,
                     color: rgb(0, 0, 0),
                 });
-    
+
                 // Adicionar linha abaixo do título
                 page.drawLine({
                     start: { x: x + 20, y: y + cardHeight - 22 },
@@ -277,7 +286,7 @@ export const useCardState = create<Actions & State>((set) => ({
                     thickness: 1,
                     color: rgb(0, 0, 0),
                 });
-    
+
                 // Adicionar prerrogativas
                 prerrogatives.forEach((text, index) => {
                     page.drawText(text, {
@@ -290,10 +299,10 @@ export const useCardState = create<Actions & State>((set) => ({
                 });
             }
         }
-    
+
         const pdfBytes = await pdfDoc.save();
         return pdfBytes;
-    },    
+    },
     generateA4Cards: async (cards: CardType[]) => {
         const pdfDoc = await PDFDocument.create();
 

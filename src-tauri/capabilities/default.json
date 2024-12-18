@@ -6,6 +6,9 @@
     "main",
     "invoiceWindow"
   ],
+  "remote": {
+    "urls": ["http://192*"]
+  },
   "permissions": [
     "core:default",
     "shell:allow-open",
@@ -40,6 +43,10 @@
         "main",
         "invoiceWindow"
       ]
+    },
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "http://*.*.*.*:3000/*" }]
     },
     "fs:scope-resource",
     "dialog:default"

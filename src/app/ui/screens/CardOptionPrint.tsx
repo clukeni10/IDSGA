@@ -20,7 +20,7 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
         onHandleToPrint
     } = props
 
-    const [cardValidate, setCardValidate] = useState<string>("")
+    const [cardValidate, setCardValidate] = useState<string>(new Date().toString())
     const [cardSidePrint, setCardSidePrint] = useState<string>("frontal")
 
     async function handleToPrint() {

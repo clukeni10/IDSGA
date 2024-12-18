@@ -3,6 +3,7 @@ import PersonDao from "../database/PersonDao";
 import { PersonType } from "../types/PersonType";
 import CardDao from "../database/CardDao";
 import { CardType } from "../types/CardType";
+import CardService from "../database/CardService";
 
 const initialState: State = {
     cards: [],
@@ -15,12 +16,13 @@ interface State {
 }
 
 interface Actions {
-    addPerson: (person: PersonType) => void
+    addPerson: (person: PersonType, url: string | null) => void
+    forceRefresh: () => void
 }
 
 export const usePersonState = create<Actions & State>((set) => ({
     ...initialState,
-    addPerson: async (person: PersonType) => {
+    addPerson: async (person: PersonType, url: string | null) => {
 
         const cardNumber = await CardDao.shared.generateNextId()
 
@@ -30,8 +32,17 @@ export const usePersonState = create<Actions & State>((set) => ({
             cardNumber
         }
 
-        await PersonDao.shared.addPerson(person)
-        await CardDao.shared.addCard(card)
+        if (url) {
+            await CardService.shared.addCard({ ...card, ...person }, url)
+        } else {
+
+            await PersonDao.shared.addPerson(person)
+            await CardDao.shared.addCard(card)
+        }
+
         set((state) => ({ cards: [...state.cards, card], refresh: state.refresh + 1 }))
     },
+    forceRefresh: () => {
+        set((state) => ({ refresh: state.refresh + 1 }))
+    }
 }));
