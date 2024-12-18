@@ -8,20 +8,18 @@ import { useCardState } from "@/app/hooks/useCardState";
 import { usePersonState } from "@/app/hooks/usePersonState";
 import { openCardPDF } from "@/app/libs/tauri-window";
 import { saveFileLocal } from "@/app/libs/tauri-fs";
-import { CardType } from "@/app/types/CardType";
 import CardOptionPrintScreen from "../CardOptionPrint";
 
 export default function HomeScreen(): JSX.Element {
 
     const [open, setOpen] = useState<{ open: boolean }>({ open: false })
     const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
-    const [cardSelected, setCardSelected] = useState<CardType>()
 
     const contentRef = useRef<HTMLDivElement>(null)
 
     const getAllCards = useCardState(state => state.getAllCards)
-    const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
-    const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
+    const generateA4Cards = useCardState(state => state.generateA4Cards)
+    const generateA4CardsBack = useCardState(state => state.generateA4CardsBack)
     const cards = useCardState(state => state.cards)
     const refresh = usePersonState(state => state.refresh)
 
@@ -33,8 +31,7 @@ export default function HomeScreen(): JSX.Element {
         setOpen({ open: true })
     }
 
-    async function handleOnPrintingCard(card: CardType) {
-        setCardSelected(card)
+    async function handleOnPrintingCard() {
         setOpenOption({ open: true })
     }
 
@@ -44,23 +41,22 @@ export default function HomeScreen(): JSX.Element {
         const extension = 'pdf'
         let pathUri: Uint8Array<ArrayBuffer>
 
-        if (cardSelected) {
-            cardSelected.expiration = date
-            
-            if (cardSidePrint === 'frontal') {
-                pathUri = await generatePersonCardFrontPVC(cardSelected) 
-            } else {
-                pathUri = await generatePersonCardBackPVC() 
-            }
-            const filePath = await saveFileLocal(pathUri, cardSelected.cardNumber, dirPath, extension)
-            await openCardPDF(filePath)
+        cards.map((card) => card.expiration = date)
+
+        if (cardSidePrint === 'frontal') {
+            pathUri = await generateA4Cards(cards)
+        } else {
+            pathUri = await generateA4CardsBack(cards)
         }
+        const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
+        await openCardPDF(filePath)
     }
 
     return (
         <Stack>
             <HeaderActions
                 onOpenAddPerson={handleOnOpenAddPerson}
+                onPrintCards={handleOnPrintingCard}
             />
 
             <Stack
@@ -72,7 +68,6 @@ export default function HomeScreen(): JSX.Element {
                             <CardId
                                 key={card.cardNumber}
                                 card={card}
-                                onPrintCard={handleOnPrintingCard}
                             />
                         )}
                     </For>
