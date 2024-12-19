@@ -16,19 +16,26 @@ interface State {
 }
 
 interface Actions {
-    addPerson: (person: PersonType, url: string | null) => void
+    addPerson: (person: PersonType, valid: Date, url: string | null, totalCards?: any[]) => Promise<void>
     forceRefresh: () => void
 }
 
 export const usePersonState = create<Actions & State>((set) => ({
     ...initialState,
-    addPerson: async (person: PersonType, url: string | null) => {
+    addPerson: async (person: PersonType, valid: Date, url: string | null, total?: any[]) => {
 
-        const cardNumber = await CardDao.shared.generateNextId()
+        let cardNumber: Promise<string> | string
+
+        if (total) {
+            const nextId = total.length + 1;
+            cardNumber = nextId.toString().padStart(4, '0');
+        } else {
+            cardNumber = await CardDao.shared.generateNextId()
+        }
 
         const card: CardType = {
             person: person,
-            expiration: new Date(),
+            expiration: valid,
             cardNumber
         }
 

@@ -1,4 +1,6 @@
+import { useSetupState } from "@/app/hooks/useSetupState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { IoPersonAdd } from "react-icons/io5";
 import { PiPrinterLight } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
@@ -17,6 +19,14 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
         onPrintCards,
         onSetupNetwork
     } = props;
+
+    const getPersonFunction = useSetupState(state => state.getPersonFunction)
+    const getPersonEscort = useSetupState(state => state.getPersonEscort)
+
+    useEffect(() => {
+        getPersonFunction()
+        getPersonEscort()
+    }, [])
 
     return (
         <Stack

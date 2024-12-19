@@ -1,15 +1,12 @@
 import { Button, VStack } from "@chakra-ui/react";
 import DialogModal from "../components/DialogModal";
-import { Input } from "@chakra-ui/react"
-import { Field } from "@/components/ui/field"
 import { useState } from "react";
-import { message } from '@tauri-apps/plugin-dialog';
 import { Radio, RadioGroup } from "@/components/ui/radio"
 
 interface CardOptionPrintScreen {
     open: boolean
     onOpenChange: (e: { open: boolean }) => void
-    onHandleToPrint: (date: Date, cardSidePrint: string) => void
+    onHandleToPrint: (cardSidePrint: string) => void
 }
 
 export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX.Element {
@@ -20,20 +17,13 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
         onHandleToPrint
     } = props
 
-    const [cardValidate, setCardValidate] = useState<string>(new Date().toString())
     const [cardSidePrint, setCardSidePrint] = useState<string>("frontal")
 
     async function handleToPrint() {
-        const valid = new Date(cardValidate)
-
         if (cardSidePrint === 'frontal') {
-            if (cardValidate !== "") {
-                onHandleToPrint(valid, cardSidePrint)
-            } else {
-                await message('Digite uma data de validade válida', { title: 'Impressão de cartão', kind: 'info' });
-            }
+            onHandleToPrint(cardSidePrint)
         } else {
-            onHandleToPrint(valid, cardSidePrint)
+            onHandleToPrint(cardSidePrint)
         }
     }
 
@@ -51,7 +41,6 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
             }
         >
             <VStack gap={4}>
-
                 <RadioGroup
                     variant={'outline'}
                     spaceX="4"
@@ -66,16 +55,6 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
                         Verso
                     </Radio>
                 </RadioGroup>
-                {
-                    cardSidePrint === 'verso' ? null :
-                        <Field label="Validade do cartão">
-                            <Input
-                                type="date"
-                                value={cardValidate}
-                                onChange={e => setCardValidate(e.target.value)}
-                            />
-                        </Field>
-                }
             </VStack>
         </DialogModal>
     )

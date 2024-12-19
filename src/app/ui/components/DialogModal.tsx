@@ -13,7 +13,7 @@ import { PropsWithChildren } from "react"
 interface DialogModal {
     open: boolean
     title: string
-    footer: React.ReactNode
+    footer?: React.ReactNode
     onOpenChange: (e: { open: boolean }) => void
 }
 

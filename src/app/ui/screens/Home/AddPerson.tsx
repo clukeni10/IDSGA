@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { usePersonState } from "@/app/hooks/usePersonState";
 import { PersonType } from "@/app/types/PersonType";
 import UUIDv4 from "@/app/libs/uuidv4";
-import { useNetworkState } from "@/app/hooks/useNetworkState";
+import { useSetupState } from "@/app/hooks/useSetupState";
+import { useCardState } from "@/app/hooks/useCardState";
 
 interface AddPersonModal {
     open: boolean
@@ -25,23 +26,37 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [selectedJob, onJobValueChange] = useState<string[]>([])
+    const [escort, setEscort] = useState<string[]>([])
 
     const [employeeName, setEmployeeName] = useState<string>("")
+    const [cardValidate, setCardValidate] = useState<string>(new Date().toString())
 
     const addPerson = usePersonState(state => state.addPerson)
-    const address = useNetworkState(state => state.address)
+    const cards = useCardState(state => state.cards)
+    const address = useSetupState(state => state.address)
+    const personFunctions = useSetupState(state => state.personFunctions)
+    const personEscorts = useSetupState(state => state.personEscorts)
 
-    function handleAddPerson() {
+    async function handleAddPerson() {
         setLoading(true)
         const person: PersonType = {
             name: employeeName,
             job: selectedJob[0],
-            id: UUIDv4.generateId()
+            id: UUIDv4.generateId(),
+            escort: escort[0]
         }
-        
-        addPerson(person, address)
+
+        const valid = new Date(cardValidate)
+
+        if (address) {
+            await addPerson(person, valid, address, cards)
+        } else {
+            await addPerson(person, valid, address)
+        }
+
         setLoading(false)
         onJobValueChange([])
+        setEscort([])
         setEmployeeName("")
         onOpenChange({ open: false })
     }
@@ -61,17 +76,17 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             }
         >
             <VStack gap={4}>
-                <Field  
-                    label="Nome" 
+                <Field
+                    label="Nome"
                     errorText="Este campo é obrigatório"
                 >
-                    <Input 
-                        placeholder="Digite o nome completo" 
+                    <Input
+                        placeholder="Digite o nome completo"
                         onChange={e => setEmployeeName(e.target.value)}
                         value={employeeName}
                     />
                 </Field>
-                <Field 
+                <Field
                     errorText="Este campo é obrigatório"
                 >
                     <SelectComponent
@@ -80,11 +95,26 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                         placeholder="Seleccione a função"
                         selectedValue={selectedJob}
                         onValueChange={onJobValueChange}
-                        data={[
-                            { value: "administrador", label: "Administrador" },
-                            { value: "técnico", label: "Técnico" },
-                            { value: "segurança", label: "Segurança" },
-                        ]}
+                        data={personFunctions}
+                    />
+                </Field>
+                <Field
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Escolta"
+                        placeholder="Seleccione a escolta"
+                        selectedValue={escort}
+                        onValueChange={setEscort}
+                        data={personEscorts}
+                    />
+                </Field>
+                <Field label="Validade do cartão">
+                    <Input
+                        type="date"
+                        value={cardValidate}
+                        onChange={e => setCardValidate(e.target.value)}
                     />
                 </Field>
             </VStack>

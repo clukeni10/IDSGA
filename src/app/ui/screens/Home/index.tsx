@@ -9,8 +9,8 @@ import { usePersonState } from "@/app/hooks/usePersonState";
 import { openCardPDF } from "@/app/libs/tauri-window";
 import { saveFileLocal } from "@/app/libs/tauri-fs";
 import CardOptionPrintScreen from "../CardOptionPrint";
-import SetupNetworkScreen from "../SetupNetwork";
-import { useNetworkState } from "@/app/hooks/useNetworkState";
+import SetupScreen from "../SetupScreen";
+import { useSetupState } from "@/app/hooks/useSetupState";
 
 export default function HomeScreen(): JSX.Element {
 
@@ -26,7 +26,7 @@ export default function HomeScreen(): JSX.Element {
     const cards = useCardState(state => state.cards)
     const refresh = usePersonState(state => state.refresh)
 
-    const address = useNetworkState(state => state.address)
+    const address = useSetupState(state => state.address)
 
     useEffect(() => {
         getAllCards(address)
@@ -40,13 +40,11 @@ export default function HomeScreen(): JSX.Element {
         setOpenOption({ open: true })
     }
 
-    async function onHandleToPrint(date: Date, cardSidePrint: string) {
+    async function onHandleToPrint(cardSidePrint: string) {
 
         const dirPath = 'pdf'
         const extension = 'pdf'
         let pathUri: Uint8Array<ArrayBuffer>
-
-        cards.map((card) => card.expiration = date)
 
         if (cardSidePrint === 'frontal') {
             pathUri = await generateA4Cards(cards)
@@ -95,7 +93,7 @@ export default function HomeScreen(): JSX.Element {
                     onHandleToPrint={onHandleToPrint}
                 />
 
-                <SetupNetworkScreen 
+                <SetupScreen 
                     open={openSetup.open}
                     onOpenChange={setOpenSetup}
                 />
