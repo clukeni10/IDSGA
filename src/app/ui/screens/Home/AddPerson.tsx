@@ -61,6 +61,10 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
         onOpenChange({ open: false })
     }
 
+    const currentYear = new Date().getFullYear();
+    const maxYear = Math.min(currentYear, 2025);
+    const maxDate = `${maxYear}-12-31`;
+
     return (
         <DialogModal
             title="Cadastro de pessoal"
@@ -115,6 +119,8 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                         type="date"
                         value={cardValidate}
                         onChange={e => setCardValidate(e.target.value)}
+                        max={maxDate}
+                        min={"2025-01-01"}
                     />
                 </Field>
             </VStack>
