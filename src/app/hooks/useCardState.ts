@@ -99,7 +99,7 @@ export const useCardState = create<Actions & State>((set) => ({
             color: rgb(0, 0, 0),
         });
 
-        page.drawText(`Função: ${card.person.job.toUpperCase()}`, {
+        page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
             x: 10,
             y: height / 2.5,
             size: 11,
@@ -406,7 +406,7 @@ export const useCardState = create<Actions & State>((set) => ({
                     color: rgb(0, 0, 0),
                 });
 
-                page.drawText(`Função: ${card.person.job.toUpperCase()}`, {
+                page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
                     x: x + 10,
                     y: y + cardHeight / 2.5,
                     size: 11,

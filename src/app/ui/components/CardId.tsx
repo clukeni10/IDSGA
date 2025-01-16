@@ -17,7 +17,7 @@ export default function CardId(props: CardId): JSX.Element {
             <Card.Body>
                 <Card.Title>{card.person.name}</Card.Title>
                 <Card.Description>
-                    {card.person.job.toUpperCase()}
+                    {card.person.job?.toUpperCase()}
                 </Card.Description>
                 <Text textStyle="xl" fontWeight="medium" letterSpacing="tight" mt="2">
                     N: {card.cardNumber}
