@@ -40,6 +40,7 @@ export const useCardState = create<Actions & State>((set) => ({
     },
     generatePersonCardFrontPVC: async (card: CardType) => {
         const pdfDoc = await PDFDocument.create();
+        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
         const height = 242.64;
         const width = 153;
@@ -92,11 +93,12 @@ export const useCardState = create<Actions & State>((set) => ({
             height: signedImageDims.height,
         });
 
-        page.drawText(`Nome: ${getFirstAndLastName(card.person.name)}`, {
+        page.drawText(`Nome: ${getFirstAndLastName(card.person.name.toLocaleUpperCase())}`, {
             x: 10,
             y: height / 2.1,
             size: 11,
             color: rgb(0, 0, 0),
+            font: helveticaBold
         });
 
         page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
@@ -104,6 +106,7 @@ export const useCardState = create<Actions & State>((set) => ({
             y: height / 2.5,
             size: 11,
             color: rgb(0, 0, 0),
+            font: helveticaBold
         });
 
 
@@ -305,6 +308,7 @@ export const useCardState = create<Actions & State>((set) => ({
     },
     generateA4Cards: async (cards: CardType[]) => {
         const pdfDoc = await PDFDocument.create();
+        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
         const pageWidth = PageSizes.A4[0];
         const pageHeight = PageSizes.A4[1];
@@ -399,11 +403,12 @@ export const useCardState = create<Actions & State>((set) => ({
                     color: rgb(0, 0, 0),
                 });
 
-                page.drawText(`Nome: ${getFirstAndLastName(card.person.name)}`, {
+                page.drawText(`Nome: ${getFirstAndLastName(card.person.name.toLocaleUpperCase())}`, {
                     x: x + 10,
                     y: y + cardHeight / 2.1,
                     size: 11,
                     color: rgb(0, 0, 0),
+                    font: helveticaBold
                 });
 
                 page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
