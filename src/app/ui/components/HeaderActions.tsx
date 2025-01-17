@@ -1,3 +1,4 @@
+import { useCardState } from "@/app/hooks/useCardState";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
@@ -9,6 +10,7 @@ import { VscSettings } from "react-icons/vsc";
 interface HeaderActions {
     onOpenAddPerson: () => void
     onPrintCards: () => void
+    onPrintSelectedCards: () => void
     onSetupNetwork: () => void
 }
 
@@ -17,15 +19,20 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
     const {
         onOpenAddPerson,
         onPrintCards,
+        onPrintSelectedCards,
         onSetupNetwork
     } = props;
 
     const getPersonFunction = useSetupState(state => state.getPersonFunction)
     const getPersonEscort = useSetupState(state => state.getPersonEscort)
+    const getPersonEntity = useSetupState(state => state.getPersonEntity)
+
+    const selectedCards = useCardState(state => state.selectedCards)
 
     useEffect(() => {
         getPersonFunction()
         getPersonEscort()
+        getPersonEntity()
     }, [])
 
     return (
@@ -58,9 +65,36 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                     </Text>
                 </Box>
                 <Spacer />
+                {
+                    selectedCards.length > 0 ?
+                        <Box
+                            py={4}
+                            px={4}
+                            textAlign={'center'}
+                            _hover={{
+                                bgColor: '#cbe5f2',
+                                cursor: 'default'
+                            }}
+                            onClick={onPrintSelectedCards}
+                        >
+                            <Icon
+                                fontSize="2xl"
+                                color={'#607d8c'}
+                            >
+                                <PiPrinterLight />
+                            </Icon>
+                            <Text
+                                fontSize={'small'}
+                                fontWeight={'bold'}
+                                color={'#607d8c'}
+                            >
+                                Imprimir seleccionado(s)
+                            </Text>
+                        </Box> : null
+                }
                 <Box
                     py={4}
-
+                    px={4}
                     textAlign={'center'}
                     _hover={{
                         bgColor: '#cbe5f2',
@@ -79,7 +113,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         fontWeight={'bold'}
                         color={'#607d8c'}
                     >
-                        Imprimir
+                        Imprimir Todos
                     </Text>
                 </Box>
                 <Box

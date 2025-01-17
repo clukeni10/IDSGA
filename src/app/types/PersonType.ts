@@ -3,4 +3,5 @@ export type PersonType = {
     job: string
     id: string
     escort: string
+    entity: string
 }

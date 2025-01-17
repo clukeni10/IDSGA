@@ -27,6 +27,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     const [loading, setLoading] = useState<boolean>(false)
     const [selectedJob, onJobValueChange] = useState<string[]>([])
     const [escort, setEscort] = useState<string[]>([])
+    const [entity, setEntity] = useState<string[]>([])
 
     const [employeeName, setEmployeeName] = useState<string>("")
     const [cardValidate, setCardValidate] = useState<string>(new Date().toString())
@@ -36,29 +37,41 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     const address = useSetupState(state => state.address)
     const personFunctions = useSetupState(state => state.personFunctions)
     const personEscorts = useSetupState(state => state.personEscorts)
+    const personEntities = useSetupState(state => state.personEntities)
 
     async function handleAddPerson() {
-        setLoading(true)
-        const person: PersonType = {
-            name: employeeName,
-            job: selectedJob[0],
-            id: UUIDv4.generateId(),
-            escort: escort[0]
+        try {
+            setLoading(true)
+            const person: PersonType = {
+                name: employeeName,
+                job: selectedJob[0],
+                id: UUIDv4.generateId(),
+                escort: escort[0],
+                entity: entity[0]
+            }
+
+            const valid = new Date(cardValidate)
+
+            if (address) {
+                await addPerson(person, valid, address, cards)
+                    .catch(() => {
+                        setLoading(false)
+                    })
+            } else {
+                await addPerson(person, valid, address)
+                    .catch(() => {
+                        setLoading(false)
+                    })
+            }
+
+            setLoading(false)
+            onJobValueChange([])
+            setEscort([])
+            setEmployeeName("")
+            onOpenChange({ open: false })
+        } catch (error) {
+            setLoading(false)
         }
-
-        const valid = new Date(cardValidate)
-
-        if (address) {
-            await addPerson(person, valid, address, cards)
-        } else {
-            await addPerson(person, valid, address)
-        }
-
-        setLoading(false)
-        onJobValueChange([])
-        setEscort([])
-        setEmployeeName("")
-        onOpenChange({ open: false })
     }
 
     const currentYear = new Date().getFullYear();
@@ -112,6 +125,18 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                         selectedValue={escort}
                         onValueChange={setEscort}
                         data={personEscorts}
+                    />
+                </Field>
+                <Field
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Escolta"
+                        placeholder="Seleccione a entidade"
+                        selectedValue={entity}
+                        onValueChange={setEntity}
+                        data={personEntities}
                     />
                 </Field>
                 <Field label="Validade do cartão">
