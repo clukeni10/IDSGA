@@ -90,8 +90,7 @@ export default function HomeScreen(): JSX.Element {
                         {(card) => (
                             <CardId
                                 key={card.cardNumber}
-                                card={card}
-                            />
+                                card={card} handleOnPrintingCard={handleOnPrintingCard }                            />
                         )}
                     </For>
                 </Grid>

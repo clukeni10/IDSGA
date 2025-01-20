@@ -1,0 +1,1 @@
+export const APPCOLOR = '#D2ECFA'

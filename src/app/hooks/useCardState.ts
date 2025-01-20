@@ -29,10 +29,10 @@ export const useCardState = create<Actions & State>((set) => ({
     ...initialState,
     setSelectedCard: (selectedCard: CardType) => set((state) => {
 
-        const selectedCards = [...state.selectedCards ]
+        const selectedCards = [...state.selectedCards]
 
         if (selectedCards.includes(selectedCard)) {
-            return ({ selectedCards: selectedCards.filter(card => card.cardNumber !== selectedCard.cardNumber ) })    
+            return ({ selectedCards: selectedCards.filter(card => card.cardNumber !== selectedCard.cardNumber) })
         }
 
         return ({ selectedCards: [...state.selectedCards, selectedCard] })
@@ -481,5 +481,122 @@ export const useCardState = create<Actions & State>((set) => ({
         const pdfBytes = await pdfDoc.save();
 
         return pdfBytes;
+    },
+
+    generateCardPDF: async (card: CardType) => {
+        // Create a new PDF document
+        const pdfDoc = await PDFDocument.create();
+
+        // Add a page to the document
+        const page = pdfDoc.addPage([300, 400]); // ID card dimensions
+        const { width, height } = page.getSize();
+
+        // Draw the background color
+        page.drawRectangle({
+            x: 0,
+            y: 0,
+            width,
+            height,
+            color: rgb(0.9, 0.9, 0.9), // Light gray background
+        });
+
+        // Draw the left-side blocks (A-F)
+        const blockHeight = 30;
+        const blockWidth = 20;
+        const colors = [rgb(1, 1, 1), rgb(1, 0.5, 0)]; // Black and Orange
+        ['A', 'B', 'C', 'D', 'E', 'F'].forEach((letter, index) => {
+            page.drawRectangle({
+                x: 10,
+                y: height - 20 - (index + 1) * blockHeight,
+                width: blockWidth,
+                height: blockHeight,
+                color: index === 1 || index === 2 || index === 3 ? colors[1] : colors[0], // Orange for B, C, D
+            });
+            page.drawText(letter, {
+                x: 15,
+                y: height - 20 - (index + 1) * blockHeight + 8,
+                size: 10,
+                color: rgb(1, 1, 1),
+            });
+        });
+
+        // Draw the card number on the right side
+        const cardDigits = card.cardNumber.split('');
+        cardDigits.forEach((digit, index) => {
+            page.drawText(digit, {
+                x: 260,
+                y: height - 20 - index * blockHeight - blockHeight / 2,
+                size: 12,
+                color: rgb(0, 0, 0),
+            });
+        });
+
+        // Draw a placeholder for the photo
+        page.drawRectangle({
+            x: 50,
+            y: height - 150,
+            width: 100,
+            height: 100,
+            borderColor: rgb(0, 0, 0),
+            borderWidth: 1,
+        });
+
+        // Add text fields
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        page.drawText(`NOME: ${card.person.name}`, {
+            x: 10,
+            y: 80,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+        page.drawText(`FUNÇÃO: ${card.person.job}`, {
+            x: 10,
+            y: 65,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+        page.drawText(`Val: ${card.expiration.toLocaleDateString('pt-PT')}`, {
+            x: 10,
+            y: 50,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+        page.drawText(card.person.entity, {
+            x: 10,
+            y: 35,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+
+        // Optionally embed logo or signature images (if you have them)
+        // const logoImage = await fetch('path_to_logo.png').then((res) => res.arrayBuffer());
+        // const embeddedLogo = await pdfDoc.embedPng(logoImage);
+        // page.drawImage(embeddedLogo, {
+        //   x: 10,
+        //   y: 10,
+        //   width: 50,
+        //   height: 20,
+        // });
+
+        // Serialize the PDFDocument to bytes
+        const pdfBytes = await pdfDoc.save();
+
+        // Create a blob and trigger download
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${card.person.name.replace(/\s/g, '_')}_ID_Card.pdf`;
+        link.click();
     }
+
+
+
+
+
+
+
 }));
