@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DialogModal from "../../components/DialogModal";
-import { Input, VStack } from "@chakra-ui/react";
+import { Flex, Input, VStack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field"
 import SelectComponent from "../../components/SelectComponent";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { PersonType } from "@/app/types/PersonType";
 import UUIDv4 from "@/app/libs/uuidv4";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { useCardState } from "@/app/hooks/useCardState";
+import ImagePreview from "../../components/ImagePreview";
+import { personAccesstypes } from "@/app/utils/constants";
 
 interface AddPersonModal {
     open: boolean
@@ -26,9 +28,10 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
 
     const [loading, setLoading] = useState<boolean>(false)
     const [selectedJob, onJobValueChange] = useState<string[]>([])
+    const [selectedAccessTypes, onSelectedAccessTypes] = useState<string[]>([])
     const [escort, setEscort] = useState<string[]>([])
     const [entity, setEntity] = useState<string[]>([])
-
+    const [imagePreview, setImagePreview] = useState<string>('');
     const [employeeName, setEmployeeName] = useState<string>("")
     const [cardValidate, setCardValidate] = useState<string>(new Date().toString())
 
@@ -39,6 +42,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     const personEscorts = useSetupState(state => state.personEscorts)
     const personEntities = useSetupState(state => state.personEntities)
 
+
     async function handleAddPerson() {
         try {
             setLoading(true)
@@ -47,7 +51,9 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                 job: selectedJob[0],
                 id: UUIDv4.generateId(),
                 escort: escort[0],
-                entity: entity[0]
+                entity: entity[0],
+                image: imagePreview,
+                accessType: selectedAccessTypes[0]
             }
 
             const valid = new Date(cardValidate)
@@ -93,6 +99,25 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             }
         >
             <VStack gap={4}>
+                <Flex
+                    w='100%'
+                    /* p='10px' */
+                    align='center'
+                    justify='center'
+                    // borderTop='1px solid #ddd'
+                    justifyContent={'center'}
+                >
+                    <ImagePreview
+                        loading={false}
+                        setLoading={() => { }}
+                        //onSelectedFile={onSelectedFile}
+                        imagePreview={imagePreview}
+                        onSelectedImagePreview={() => { }}
+                        onDeleteImage={() => { }}
+                        text='Adicionar foto (Opcional)'
+                        setImagePreview={setImagePreview}
+                    />
+                </Flex>
                 <Field
                     label="Nome"
                     errorText="Este campo é obrigatório"
@@ -113,6 +138,18 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                         selectedValue={selectedJob}
                         onValueChange={onJobValueChange}
                         data={personFunctions}
+                    />
+                </Field>
+                <Field
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Tipos de acesso"
+                        placeholder="Seleccione a função"
+                        selectedValue={selectedAccessTypes}
+                        onValueChange={onSelectedAccessTypes}
+                        data={personAccesstypes}
                     />
                 </Field>
                 <Field

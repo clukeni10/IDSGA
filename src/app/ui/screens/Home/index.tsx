@@ -63,7 +63,6 @@ export default function HomeScreen(): JSX.Element {
             }
         }
         const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
-        console.log("filePath", filePath)
         await openCardPDF(filePath)
         clearSelectedCard()
         setOpenOption({ open: false })
@@ -90,7 +89,8 @@ export default function HomeScreen(): JSX.Element {
                         {(card) => (
                             <CardId
                                 key={card.cardNumber}
-                                card={card} handleOnPrintingCard={handleOnPrintingCard }                            />
+                                card={card}
+                            />
                         )}
                     </For>
                 </Grid>

@@ -6,11 +6,11 @@ import { GoTrash } from "react-icons/go";
 
 export interface ImagePreviewProps {
     onSelectedImagePreview: (fileString: string) => void
+    imagePreview: string
+    setImagePreview: React.Dispatch<React.SetStateAction<string>>
     onDeleteImage?: () => void
     setLoading: (loading: boolean) => void
     onClick?: () => void
-    onMessage: (message: string) => void
-    imagePreview: string
     text?: string
     loading: boolean
     isItem?: boolean
@@ -20,27 +20,34 @@ export interface ImagePreviewProps {
 
 function ImagePreview(props: ImagePreviewProps): JSX.Element {
 
-    const { onClick, imagePreview, onSelectedImagePreview, text, onDeleteImage, loading, setLoading, isItem, disabledInput, onMessage } = props
+    const { 
+        onClick, 
+        onSelectedImagePreview, 
+        text, 
+        onDeleteImage, 
+        loading, 
+        setLoading, 
+        isItem, 
+        disabledInput, 
+        imagePreview,
+        setImagePreview
+    } = props
 
     const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+   
 
     function onChangeImage(e: React.ChangeEvent<HTMLInputElement>) {
-
         const reader = new FileReader();
-
-        const file = e.target.files?.[0];
         const f = e.target.files as FileList
-
-        if (file && file.size > 350000) {
-            onMessage("A imagem seleccionada excede o tamanho de 350 KB máximo.")
-        } else {
-            setLoading(true)
-            setLoading(false)
-            reader.onload = (e: ProgressEvent<FileReader>) => {
-                onSelectedImagePreview(e.target?.result as string);
-            };
-            reader.readAsDataURL(f[0]);
-        }
+        setLoading(true)
+        setLoading(false)
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+            onSelectedImagePreview(e.target?.result as string);
+            const result = e.target?.result as string;
+            setImagePreview(result);
+            onSelectedImagePreview?.(result);
+        };
+        reader.readAsDataURL(f[0]);
     }
 
     const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -49,14 +56,13 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
         setImageDimensions({ width: target.naturalWidth, height: target.naturalHeight });
     };
 
-    function onClosePreview() {
-        if (onDeleteImage) {
-            onDeleteImage();
-        }
-        onSelectedImagePreview('');
+    const onClosePreview = () => {
+        setImagePreview('');
         setImageDimensions({ width: 0, height: 0 });
-    }
+        onDeleteImage?.();
+    };
 
+    console.log("imagePreview", imagePreview)
 
     return (
 
@@ -139,7 +145,7 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
                                         onClick={onClosePreview}
                                     >
                                         <Icon>
-                                            <GoTrash />
+                                            <GoTrash color='#f00'/>
                                         </Icon>
                                     </Box>
                                 ) : (

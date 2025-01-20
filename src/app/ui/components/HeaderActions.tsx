@@ -1,6 +1,5 @@
-//import { useCardState } from "@/app/hooks/useCardState";
+import { useCardState } from "@/app/hooks/useCardState";
 import { useSetupState } from "@/app/hooks/useSetupState";
-import { APPCOLOR } from "@/app/utils/constants";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { IoPersonAdd } from "react-icons/io5";
@@ -20,7 +19,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
     const {
         onOpenAddPerson,
         onPrintCards,
-       // onPrintSelectedCards,
+        onPrintSelectedCards,
         onSetupNetwork
     } = props;
 
@@ -28,7 +27,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
     const getPersonEscort = useSetupState(state => state.getPersonEscort)
     const getPersonEntity = useSetupState(state => state.getPersonEntity)
 
-    //const selectedCards = useCardState(state => state.selectedCards)
+    const selectedCards = useCardState(state => state.selectedCards)
 
     useEffect(() => {
         getPersonFunction()
@@ -38,7 +37,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
 
     return (
         <Stack
-            bgColor={APPCOLOR}
+            bgColor={'#D2ECFA'}
         >
             <HStack>
                 <Box
@@ -66,7 +65,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                     </Text>
                 </Box>
                 <Spacer />
-                {/* {
+                {
                     selectedCards.length > 0 ?
                         <Box
                             py={4}
@@ -92,7 +91,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                                 Imprimir seleccionado(s)
                             </Text>
                         </Box> : null
-                } */}
+                }
                 <Box
                     py={4}
                     px={4}

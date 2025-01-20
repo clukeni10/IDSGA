@@ -23,6 +23,7 @@ interface Actions {
     generateA4Cards: (cards: CardType[]) => Promise<Uint8Array<ArrayBuffer>>
     setSelectedCard: (card: CardType) => void
     clearSelectedCard: () => void
+    generateCardPDF: (card: CardType)=> Promise<Uint8Array<ArrayBuffer>>
 }
 
 export const useCardState = create<Actions & State>((set) => ({
@@ -586,11 +587,10 @@ export const useCardState = create<Actions & State>((set) => ({
         const pdfBytes = await pdfDoc.save();
 
         // Create a blob and trigger download
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `${card.person.name.replace(/\s/g, '_')}_ID_Card.pdf`;
-        link.click();
+    
+
+
+        return pdfBytes;
     }
 
 

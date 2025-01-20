@@ -8,7 +8,7 @@ export async function openCardPDF(path: string) {
         height: 600,
         center: true,
         fullscreen: true,
-        alwaysOnTop: false
+        alwaysOnTop: true
     })
 
     invoiceWindow.once('tauri://created', () => {
