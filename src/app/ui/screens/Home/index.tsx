@@ -52,6 +52,7 @@ export default function HomeScreen(): JSX.Element {
             pathUri = await generateA4CardsBack(cards)
         }
         const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
+        console.log("filePath", filePath)
         await openCardPDF(filePath)
     }
 
