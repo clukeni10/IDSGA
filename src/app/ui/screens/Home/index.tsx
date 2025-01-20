@@ -12,6 +12,7 @@ import CardOptionPrintScreen from "../CardOptionPrint";
 import SetupScreen from "../SetupScreen";
 import { useSetupState } from "@/app/hooks/useSetupState";
 
+
 export default function HomeScreen(): JSX.Element {
 
     const [open, setOpen] = useState<{ open: boolean }>({ open: false })
@@ -23,7 +24,10 @@ export default function HomeScreen(): JSX.Element {
     const getAllCards = useCardState(state => state.getAllCards)
     const generateA4Cards = useCardState(state => state.generateA4Cards)
     const generateA4CardsBack = useCardState(state => state.generateA4CardsBack)
+    const clearSelectedCard = useCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
+    const selectedCards = useCardState(state => state.selectedCards)
+
     const refresh = usePersonState(state => state.refresh)
 
     const address = useSetupState(state => state.address)
@@ -41,19 +45,28 @@ export default function HomeScreen(): JSX.Element {
     }
 
     async function onHandleToPrint(cardSidePrint: string) {
-
         const dirPath = 'pdf'
         const extension = 'pdf'
         let pathUri: Uint8Array<ArrayBuffer>
 
         if (cardSidePrint === 'frontal') {
-            pathUri = await generateA4Cards(cards)
+            if (selectedCards.length !== 0) {
+                pathUri = await generateA4Cards(selectedCards)
+            } else {
+                pathUri = await generateA4Cards(cards)
+            }
         } else {
-            pathUri = await generateA4CardsBack(cards)
+            if (selectedCards.length !== 0) {
+                pathUri = await generateA4CardsBack(selectedCards)
+            } else {
+                pathUri = await generateA4CardsBack(cards)
+            }
         }
         const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
         console.log("filePath", filePath)
         await openCardPDF(filePath)
+        clearSelectedCard()
+        setOpenOption({ open: false })
     }
 
     function handleoOnSetupNetwork() {
@@ -65,6 +78,7 @@ export default function HomeScreen(): JSX.Element {
             <HeaderActions
                 onOpenAddPerson={handleOnOpenAddPerson}
                 onPrintCards={handleOnPrintingCard}
+                onPrintSelectedCards={handleOnPrintingCard}
                 onSetupNetwork={handleoOnSetupNetwork}
             />
 
@@ -81,7 +95,6 @@ export default function HomeScreen(): JSX.Element {
                         )}
                     </For>
                 </Grid>
-
                 <AddPersonModal
                     contentRef={contentRef}
                     open={open.open}
@@ -94,7 +107,7 @@ export default function HomeScreen(): JSX.Element {
                     onHandleToPrint={onHandleToPrint}
                 />
 
-                <SetupScreen 
+                <SetupScreen
                     open={openSetup.open}
                     onOpenChange={setOpenSetup}
                 />

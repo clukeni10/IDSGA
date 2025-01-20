@@ -5,21 +5,25 @@ import SetupService from "../database/SetupService";
 const initialState: State = {
     address: null,
     personFunctions: [],
-    personEscorts: []
+    personEscorts: [],
+    personEntities: []
 }
 
 interface State {
     address: string | null
     personFunctions: { value: string, label: string }[]
     personEscorts: { value: string, label: string }[]
+    personEntities: { value: string, label: string }[]
 }
 
 interface Actions {
     saveNetworkAddress: (address: string | null) => void
     savePersonFunction: (value: string, address: string) => Promise<void>
     savePersonEscort: (value: string, address: string) => void
+    savePersonEntity: (value: string, address: string) => void
     getPersonFunction: () => void
     getPersonEscort: () => void
+    getPersonEntity: () => void
 }
 
 export const useSetupState = create<Actions & State>()(
@@ -45,12 +49,26 @@ export const useSetupState = create<Actions & State>()(
                     personEscorts: [...state.personEscorts, { value, label: value }],
                 }));
             },
+            savePersonEntity: async (value: string, address: string) => {
+                await SetupService.shared.savePersonEntity(value, address)
+                set((state) => ({
+                    personEntities: [...state.personEntities, { value, label: value }],
+                }));
+            },
             getPersonEscort: async () => {
                 const { address } = get()
 
                 if (address) {
                     const response = await SetupService.shared.getAllEscorts(address)
                     set(() => ({ personEscorts: response }));
+                }
+            },
+            getPersonEntity: async () => {
+                const { address } = get()
+
+                if (address) {
+                    const response = await SetupService.shared.getAllEntity(address)
+                    set(() => ({ personEntities: response }));
                 }
             },
             getPersonFunction: async () => {

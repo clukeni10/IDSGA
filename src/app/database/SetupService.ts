@@ -39,6 +39,23 @@ export default class SetupService {
             }
         })
     }
+    async savePersonEntity(value: string, url: string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(`http://${url}/setup/entity/save`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: value }),
+                });
+                resolve()
+            } catch (error) {
+                reject(error)
+                throw new Error("Failed to process payment");
+            }
+        })
+    }
 
     async getAllFunctions(url: string): Promise<{ value: string, label: string }[]> {
         return new Promise(async (resolve, reject) => {
@@ -56,7 +73,6 @@ export default class SetupService {
                 resolve(values)
 
             } catch (error) {
-                console.log(error)
                 reject(error)
             }
         })
@@ -76,7 +92,25 @@ export default class SetupService {
                 resolve(values)
 
             } catch (error) {
-                console.log(error)
+                reject(error)
+            }
+        })
+    }
+    async getAllEntity(url: string): Promise<{ value: string, label: string }[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await fetch(`http://${url}/setup/entity/getAll`, {
+                    method: "GET",
+                });
+
+                const data: { name: string }[] = await response.json()
+                const values = data.map(v => {
+                    return { value: v.name, label: v.name }
+                })
+
+                resolve(values)
+
+            } catch (error) {
                 reject(error)
             }
         })

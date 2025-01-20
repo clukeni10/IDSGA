@@ -7,10 +7,12 @@ import CardService from "../database/CardService";
 
 const initialState: State = {
     cards: [],
+    selectedCards: []
 }
 
 interface State {
     cards: CardType[]
+    selectedCards: CardType[]
 }
 
 interface Actions {
@@ -19,10 +21,23 @@ interface Actions {
     generatePersonCardBackPVC: () => Promise<Uint8Array<ArrayBuffer>>
     generateA4CardsBack: (cards: CardType[]) => Promise<Uint8Array<ArrayBuffer>>
     generateA4Cards: (cards: CardType[]) => Promise<Uint8Array<ArrayBuffer>>
+    setSelectedCard: (card: CardType) => void
+    clearSelectedCard: () => void
 }
 
 export const useCardState = create<Actions & State>((set) => ({
     ...initialState,
+    setSelectedCard: (selectedCard: CardType) => set((state) => {
+
+        const selectedCards = [...state.selectedCards ]
+
+        if (selectedCards.includes(selectedCard)) {
+            return ({ selectedCards: selectedCards.filter(card => card.cardNumber !== selectedCard.cardNumber ) })    
+        }
+
+        return ({ selectedCards: [...state.selectedCards, selectedCard] })
+    }),
+    clearSelectedCard: () => set(() => ({ selectedCards: [] })),
     getAllCards: (url: string | null) => {
         if (url) {
             CardService.shared.getAllCards(url)
@@ -40,6 +55,7 @@ export const useCardState = create<Actions & State>((set) => ({
     },
     generatePersonCardFrontPVC: async (card: CardType) => {
         const pdfDoc = await PDFDocument.create();
+        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
         const height = 242.64;
         const width = 153;
@@ -92,18 +108,20 @@ export const useCardState = create<Actions & State>((set) => ({
             height: signedImageDims.height,
         });
 
-        page.drawText(`Nome: ${getFirstAndLastName(card.person.name)}`, {
+        page.drawText(`Nome: ${getFirstAndLastName(card.person.name.toLocaleUpperCase())}`, {
             x: 10,
             y: height / 2.1,
             size: 11,
             color: rgb(0, 0, 0),
+            font: helveticaBold
         });
 
-        page.drawText(`Função: ${card.person.job.toUpperCase()}`, {
+        page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
             x: 10,
             y: height / 2.5,
             size: 11,
             color: rgb(0, 0, 0),
+            font: helveticaBold
         });
 
 
@@ -305,6 +323,7 @@ export const useCardState = create<Actions & State>((set) => ({
     },
     generateA4Cards: async (cards: CardType[]) => {
         const pdfDoc = await PDFDocument.create();
+        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
         const pageWidth = PageSizes.A4[0];
         const pageHeight = PageSizes.A4[1];
@@ -324,7 +343,7 @@ export const useCardState = create<Actions & State>((set) => ({
         // Carregar imagens externas
         const topImage = await pdfDoc.embedPng(top);
         const bottomImage = await pdfDoc.embedPng(bottom);
-        const signedImage = await pdfDoc.embedJpg(signed);
+        const signedImage = await pdfDoc.embedPng(signed);
 
         // Paginação
         for (let pageIndex = 0; pageIndex < Math.ceil(cards.length / cardsPerPage); pageIndex++) {
@@ -399,30 +418,59 @@ export const useCardState = create<Actions & State>((set) => ({
                     color: rgb(0, 0, 0),
                 });
 
-                page.drawText(`Nome: ${getFirstAndLastName(card.person.name)}`, {
+                page.drawText(`Nome: `, {
                     x: x + 10,
                     y: y + cardHeight / 2.1,
                     size: 11,
                     color: rgb(0, 0, 0),
+                    font: helveticaBold
+                });
+                page.drawText(getFirstAndLastName(card.person.name.toLocaleUpperCase()), {
+                    x: x + 50,
+                    y: y + cardHeight / 2.1,
+                    size: 10,
+                    color: rgb(0, 0, 0),
                 });
 
-                page.drawText(`Função: ${card.person.job.toUpperCase()}`, {
+                page.drawText(`Função:`, {
                     x: x + 10,
                     y: y + cardHeight / 2.5,
                     size: 11,
                     color: rgb(0, 0, 0),
+                    font: helveticaBold
+                });
+                page.drawText(card.person.job?.toUpperCase(), {
+                    x: x + 60,
+                    y: y + cardHeight / 2.5,
+                    size: 10,
+                    color: rgb(0, 0, 0),
                 });
 
-                page.drawText(`Validade: ${convertformatDateAngolan(card.expiration)}`, {
+                page.drawText(`Validade:`, {
                     x: x + 10,
+                    y: y + cardHeight / 3.1,
+                    size: 11,
+                    color: rgb(0, 0, 0),
+                    font: helveticaBold
+                });
+                page.drawText(convertformatDateAngolan(card.expiration), {
+                    x: x + 66,
                     y: y + cardHeight / 3.1,
                     size: 11,
                     color: rgb(0, 0, 0),
                 });
 
-                page.drawText('FNCT/SGA-SA', {
-                    x: x + 'FNCT/SGA-SA'.length * 3.9,
-                    y: y + cardHeight / 4.2,
+                page.drawText(`Entidade:`, {
+                    x: x + 10,
+                    y: y + cardHeight / 4.1,
+                    size: 11,
+                    color: rgb(0, 0, 0),
+                    font: helveticaBold
+                });
+
+                page.drawText(`FNCT/${card.person.entity ?? 'SGA-SA'}`, {
+                    x: x + 66,
+                    y: y + cardHeight / 4.1,
                     size: 11,
                     color: rgb(0, 0, 0),
                 });

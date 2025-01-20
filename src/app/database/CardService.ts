@@ -32,7 +32,24 @@ export default class CardService {
                 });
 
                 const data = await response.json()
-                resolve(data)
+                const all: CardType[] = []
+
+                for (const d of data) {
+                    const card: CardType = {
+                        person: {
+                            name: d.person.name,
+                            job: d.person.job,
+                            id: d.person.id,
+                            escort: d.person.escort,
+                            entity: d.person?.entity?.name
+                        },
+                        expiration: d.expiration,
+                        cardNumber: d.cardNumber
+                    }
+                    all.push(card)
+                }
+                
+                resolve(all)
 
             } catch (error) {
                 console.log(error)

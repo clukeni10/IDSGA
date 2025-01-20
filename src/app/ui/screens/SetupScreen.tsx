@@ -26,10 +26,12 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
     const saveNetworkAddress = useSetupState(state => state.saveNetworkAddress)
     const savePersonFunction = useSetupState(state => state.savePersonFunction)
     const savePersonEscort = useSetupState(state => state.savePersonEscort)
+    const savePersonEntity = useSetupState(state => state.savePersonEntity)
 
     const address = useSetupState(state => state.address)
     const personFunctions = useSetupState(state => state.personFunctions)
     const personEscorts = useSetupState(state => state.personEscorts)
+    const personEntities = useSetupState(state => state.personEntities)
 
     const forceRefresh = usePersonState(state => state.forceRefresh)
 
@@ -37,6 +39,7 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
     const [network, setNetwork] = useState<string>(address ? "servidor" : "local")
     const [functionToAdd, setFunctionToAdd] = useState<string>("")
     const [escortToAdd, setEscortToAdd] = useState<string>("")
+    const [entityToAdd, setEntityToAdd] = useState<string>("")
 
     async function handleToPrint() {
 
@@ -76,6 +79,19 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
             }
         }
     }
+    async function handleSaveEntity(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === 'Enter') {
+
+            if (entityToAdd === "") {
+                await message('O campo não pode estar vazio', { title: 'Entidade', kind: 'info' });
+            } else if (address) {
+                await savePersonEntity(entityToAdd, address)
+                setEntityToAdd("")
+            } else {
+                await message('Seleccione servidor em Redes', { title: 'Configuração de redes', kind: 'info' });
+            }
+        }
+    }
 
     return (
         <DialogModal
@@ -90,6 +106,9 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
                     </Tabs.Trigger>
                     <Tabs.Trigger value="escort">
                         Gerir Escolta
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="entities">
+                        Gerir Entidades
                     </Tabs.Trigger>
                     <Tabs.Trigger value="network">
                         Redes
@@ -144,6 +163,32 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
                             selectedValue={[]}
                             onValueChange={() => null}
                             data={personEscorts}
+                        />
+                    </Field>
+                </Tabs.Content>
+                <Tabs.Content value="entities">
+                    <Field
+                        label="Entidade"
+                        errorText="Este campo é obrigatório"
+                        pb={5}
+                    >
+                        <Input
+                            placeholder="Digite a Entidade e pressione ENTER"
+                            onChange={e => setEntityToAdd(e.target.value)}
+                            value={entityToAdd}
+                            onKeyDown={handleSaveEntity}
+                        />
+                    </Field>
+                    <Field
+                        errorText="Este campo é obrigatório"
+                    >
+                        <SelectComponent
+                            portalRef={contentRef}
+                            label="Escoltas armazenadas"
+                            placeholder="Clique para ver"
+                            selectedValue={[]}
+                            onValueChange={() => null}
+                            data={personEntities}
                         />
                     </Field>
                 </Tabs.Content>
