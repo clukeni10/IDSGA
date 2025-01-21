@@ -4,6 +4,6 @@ export type PersonType = {
     id: string
     escort: string
     entity: string
-    image: string
-    accessType: string
+    image?: string
+    accessType: string[]
 }

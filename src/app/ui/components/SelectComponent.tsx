@@ -14,6 +14,7 @@ interface SelectComponent {
     portalRef?: React.RefObject<HTMLDivElement>
     data: { label: string, value: string }[]
     selectedValue: string[]
+    multiple?: boolean
     onValueChange: (value: string[]) => void
 }
 
@@ -24,6 +25,7 @@ export default function SelectComponent(props: SelectComponent): JSX.Element {
         portalRef,
         selectedValue,
         data,
+        multiple,
         placeholder,
         onValueChange
     } = props
@@ -37,6 +39,7 @@ export default function SelectComponent(props: SelectComponent): JSX.Element {
             collection={dataWork}
             width="320px"
             value={selectedValue}
+            multiple={multiple ? multiple : false}
             onValueChange={(e) => onValueChange(e.value)}
         >
             {label ? <SelectLabel>{label}</SelectLabel> : null}

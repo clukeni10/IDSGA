@@ -7,7 +7,7 @@ export async function openCardPDF(path: string) {
         width: 800,
         height: 600,
         center: true,
-        fullscreen: true,
+
         alwaysOnTop: true
     })
 

@@ -22,11 +22,13 @@ export default function HomeScreen(): JSX.Element {
     const contentRef = useRef<HTMLDivElement>(null)
 
     const getAllCards = useCardState(state => state.getAllCards)
-    const generateA4Cards = useCardState(state => state.generateA4Cards)
-    const generateA4CardsBack = useCardState(state => state.generateA4CardsBack)
+    /* const generateA4Cards = useCardState(state => state.generateA4Cards)
+    const generateA4CardsBack = useCardState(state => state.generateA4CardsBack) */
+    const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
+    const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
     const clearSelectedCard = useCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
-    const selectedCards = useCardState(state => state.selectedCards)
+    const selectedCard = useCardState(state => state.selectedCard)
 
     const refresh = usePersonState(state => state.refresh)
 
@@ -41,15 +43,34 @@ export default function HomeScreen(): JSX.Element {
     }
 
     async function handleOnPrintingCard() {
-        setOpenOption({ open: true })
+        if (cards.length !== 0) {
+            setOpenOption({ open: true })
+        }
     }
 
     async function onHandleToPrint(cardSidePrint: string) {
         const dirPath = 'pdf'
         const extension = 'pdf'
-        let pathUri: Uint8Array<ArrayBuffer>
+        let pathUri: Uint8Array
 
-        if (cardSidePrint === 'frontal') {
+
+        if (selectedCard) {
+            if (cardSidePrint === 'frontal') {
+                pathUri = await generatePersonCardFrontPVC(selectedCard)
+                console.log(pathUri)
+            } else {
+                pathUri = await generatePersonCardBackPVC()
+            }
+
+            const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
+            await openCardPDF(filePath)
+            clearSelectedCard()
+            setOpenOption({ open: false })
+        }
+
+
+
+        /* if (cardSidePrint === 'frontal') {
             if (selectedCards.length !== 0) {
                 pathUri = await generateA4Cards(selectedCards)
             } else {
@@ -61,16 +82,21 @@ export default function HomeScreen(): JSX.Element {
             } else {
                 pathUri = await generateA4CardsBack(cards)
             }
-        }
-        const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
-        await openCardPDF(filePath)
-        clearSelectedCard()
-        setOpenOption({ open: false })
+        } */
+
+    }
+
+    function handleUpdateCard() {
+        setOpen({ open: true })
     }
 
     function handleoOnSetupNetwork() {
         setOpenSetup({ open: true })
     }
+
+
+    console.log(selectedCard);
+    
 
     return (
         <Stack>
@@ -79,6 +105,7 @@ export default function HomeScreen(): JSX.Element {
                 onPrintCards={handleOnPrintingCard}
                 onPrintSelectedCards={handleOnPrintingCard}
                 onSetupNetwork={handleoOnSetupNetwork}
+                onUpdateCard={handleUpdateCard}
             />
 
             <Stack

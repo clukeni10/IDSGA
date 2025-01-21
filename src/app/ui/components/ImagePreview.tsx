@@ -1,15 +1,17 @@
-import { Box, Input, VStack, Text, Image, Spinner, Icon } from '@chakra-ui/react';
+import { Box, Input, VStack, Text, Image, Spinner, Icon, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { CiCamera } from "react-icons/ci";
 import { GoTrash } from "react-icons/go";
+import { VscDeviceCamera } from 'react-icons/vsc';
 
 
 export interface ImagePreviewProps {
-    onSelectedImagePreview: (fileString: string) => void
+    onSelectedImagePreview: (file: File | undefined) => void
     imagePreview: string
     setImagePreview: React.Dispatch<React.SetStateAction<string>>
+    onMessage: (message: string) => void
     onDeleteImage?: () => void
     setLoading: (loading: boolean) => void
+    onResultFile: (file: File) => void
     onClick?: () => void
     text?: string
     loading: boolean
@@ -20,34 +22,40 @@ export interface ImagePreviewProps {
 
 function ImagePreview(props: ImagePreviewProps): JSX.Element {
 
-    const { 
-        onClick, 
-        onSelectedImagePreview, 
-        text, 
-        onDeleteImage, 
-        loading, 
-        setLoading, 
-        isItem, 
-        disabledInput, 
+    const {
+        onClick,
+        onSelectedImagePreview,
+        text,
+        onDeleteImage,
+        onMessage,
+        loading,
+        setLoading,
+        isItem,
+        disabledInput,
         imagePreview,
         setImagePreview
     } = props
 
     const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-   
+
 
     function onChangeImage(e: React.ChangeEvent<HTMLInputElement>) {
         const reader = new FileReader();
+        const file = e.target.files?.[0];
         const f = e.target.files as FileList
-        setLoading(true)
-        setLoading(false)
-        reader.onload = (e: ProgressEvent<FileReader>) => {
-            onSelectedImagePreview(e.target?.result as string);
-            const result = e.target?.result as string;
-            setImagePreview(result);
-            onSelectedImagePreview?.(result);
-        };
-        reader.readAsDataURL(f[0]);
+
+        if (file && file.size > 1000000) {
+            onMessage("A imagem seleccionada excede o tamanho de 350 KB máximo.")
+        } else {
+            setLoading(true)
+            setLoading(false)
+            reader.onload = (e: ProgressEvent<FileReader>) => {
+                onSelectedImagePreview(file);
+                const result = e.target?.result as string;
+                setImagePreview(result);
+            };
+            reader.readAsDataURL(f[0]);
+        }
     }
 
     const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -62,10 +70,7 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
         onDeleteImage?.();
     };
 
-    console.log("imagePreview", imagePreview)
-
     return (
-
         <Box>
             {
                 imagePreview === '' ?
@@ -73,8 +78,8 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
                         cursor='pointer'
                         borderWidth='1px'
                         borderRadius='md'
-                        width={'223px'}
-                        height={'223px'}
+                        width={'200px'}
+                        height={'200px'}
                         display='flex'
                         flexShrink={0}
                         flexDir='column'
@@ -90,12 +95,17 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
                             {loading ? (
                                 <Spinner color='#F29325' />
                             ) : (
-                                <>
-                                    <Icon>
-                                        <CiCamera />
+                                <Stack
+                                    alignItems={'center'}
+                                >
+                                    <Icon
+                                        fontSize="2xl"
+                                        color={'#666'}
+                                    >
+                                        <VscDeviceCamera />
                                     </Icon>
-                                    {text ? <Text fontSize={'sm'} textAlign={'center'}>{text}</Text> : <Text>Adicionar foto</Text>}
-                                </>
+                                    {text ? <Text fontSize={'sm'} textAlign={'center'} color={'#666'}>{text}</Text> : <Text>Adicionar foto</Text>}
+                                </Stack>
                             )}
                         </VStack>
                         {!disabledInput && (
@@ -104,7 +114,7 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
                                 placeholder='Adicionar foto'
                                 readOnly
                                 backgroundColor='white'
-                                accept='image/*'
+                                accept="image/png, image/jpeg, image/jpg"
                                 _hover={{
                                     cursor: 'pointer',
                                 }}
@@ -145,7 +155,7 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
                                         onClick={onClosePreview}
                                     >
                                         <Icon>
-                                            <GoTrash color='#f00'/>
+                                            <GoTrash color='#f00' />
                                         </Icon>
                                     </Box>
                                 ) : (

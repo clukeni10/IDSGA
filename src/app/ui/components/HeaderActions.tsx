@@ -5,29 +5,30 @@ import { useEffect } from "react";
 import { IoPersonAdd } from "react-icons/io5";
 import { PiPrinterLight } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
-
+import { VscEdit } from "react-icons/vsc";
 
 interface HeaderActions {
     onOpenAddPerson: () => void
     onPrintCards: () => void
     onPrintSelectedCards: () => void
     onSetupNetwork: () => void
+    onUpdateCard: () => void
 }
 
 export default function HeaderActions(props: HeaderActions): JSX.Element {
 
     const {
         onOpenAddPerson,
-        onPrintCards,
         onPrintSelectedCards,
-        onSetupNetwork
+        onSetupNetwork,
+        onUpdateCard
     } = props;
 
     const getPersonFunction = useSetupState(state => state.getPersonFunction)
     const getPersonEscort = useSetupState(state => state.getPersonEscort)
     const getPersonEntity = useSetupState(state => state.getPersonEntity)
 
-    const selectedCards = useCardState(state => state.selectedCards)
+    const selectedCard = useCardState(state => state.selectedCard)
 
     useEffect(() => {
         getPersonFunction()
@@ -66,7 +67,34 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                 </Box>
                 <Spacer />
                 {
-                    selectedCards.length > 0 ?
+                    selectedCard !== null ?
+                        <Box
+                            py={4}
+                            px={4}
+                            textAlign={'center'}
+                            _hover={{
+                                bgColor: '#cbe5f2',
+                                cursor: 'default'
+                            }}
+                            onClick={onUpdateCard}
+                        >
+                            <Icon
+                                fontSize="2xl"
+                                color={'#607d8c'}
+                            >
+                                <VscEdit />
+                            </Icon>
+                            <Text
+                                fontSize={'small'}
+                                fontWeight={'bold'}
+                                color={'#607d8c'}
+                            >
+                                Editar cartão
+                            </Text>
+                        </Box> : null
+                }
+                {
+                    selectedCard !== null ?
                         <Box
                             py={4}
                             px={4}
@@ -92,7 +120,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                             </Text>
                         </Box> : null
                 }
-                <Box
+               {/*  <Box
                     py={4}
                     px={4}
                     textAlign={'center'}
@@ -115,7 +143,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                     >
                         Imprimir Todos
                     </Text>
-                </Box>
+                </Box> */}
                 <Box
                     py={4}
                     px={8}
