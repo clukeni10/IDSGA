@@ -84,7 +84,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
         try {
             setLoading(true)
             const person: PersonType = {
-                name: employeeName,
+                name: employeeName.trim(),
                 job: selectedJob[0],
                 id: UUIDv4.generateId(),
                 escort: escort[0],

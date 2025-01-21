@@ -46,7 +46,7 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
         if (network === 'local') {
             saveNetworkAddress(null)
         } else {
-            saveNetworkAddress(serverAddress)
+            saveNetworkAddress(serverAddress.trim())
         }
         forceRefresh()
         onOpenChange({ open: false })
@@ -58,7 +58,7 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
             if (functionToAdd === "") {
                 await message('O campo não pode estar vazio', { title: 'Função', kind: 'info' });
             } else if (address) {
-                await savePersonFunction(functionToAdd, address)
+                await savePersonFunction(functionToAdd.trim(), address)
                 setFunctionToAdd("")
             } else {
                 await message('Seleccione servidor em Redes', { title: 'Configuração de redes', kind: 'info' });
@@ -72,7 +72,7 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
             if (escortToAdd === "") {
                 await message('O campo não pode estar vazio', { title: 'Escolta', kind: 'info' });
             } else if (address) {
-                await savePersonEscort(escortToAdd, address)
+                await savePersonEscort(escortToAdd.trim(), address)
                 setEscortToAdd("")
             } else {
                 await message('Seleccione servidor em Redes', { title: 'Configuração de redes', kind: 'info' });
@@ -85,7 +85,7 @@ export default function SetupScreen(props: SetupScreen): JSX.Element {
             if (entityToAdd === "") {
                 await message('O campo não pode estar vazio', { title: 'Entidade', kind: 'info' });
             } else if (address) {
-                await savePersonEntity(entityToAdd, address)
+                await savePersonEntity(entityToAdd.trim(), address)
                 setEntityToAdd("")
             } else {
                 await message('Seleccione servidor em Redes', { title: 'Configuração de redes', kind: 'info' });
