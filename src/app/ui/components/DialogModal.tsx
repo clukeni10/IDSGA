@@ -34,7 +34,9 @@ export default function DialogModal(props: PropsWithChildren<DialogModal>): JSX.
             onOpenChange={onOpenChange}
             placement={'center'}
             trapFocus={false}
+            scrollBehavior={'inside'}
             closeOnInteractOutside={false}
+            unmountOnExit
         >
             <DialogTrigger />
             <DialogContent>

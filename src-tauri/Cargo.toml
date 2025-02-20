@@ -1,6 +1,6 @@
 [package]
 name = "sga-card-gest"
-version = "0.4.5"
+version = "0.5.1"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -25,4 +25,5 @@ serde_json = "1"
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-http = "2"
-
+base64 = "0.22.1"
+bcrypt = "0.16.0"

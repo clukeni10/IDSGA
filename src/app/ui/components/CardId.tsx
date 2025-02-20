@@ -15,12 +15,16 @@ export default function CardId(props: CardId): JSX.Element {
         card,
     } = props
 
-    const selectedCards = useCardState(state => state.selectedCards)
+    const selectedCard = useCardState(state => state.selectedCard)
     const setSelectedCard = useCardState(state => state.setSelectedCard)
-
+    const clearSelectedCard = useCardState(state => state.clearSelectedCard)
 
     function handleSelectCards() {
-        setSelectedCard(card)
+        if (selectedCard === card) {
+            clearSelectedCard()
+        } else {
+            setSelectedCard(card)
+        }
     }
 
     return (
@@ -31,7 +35,7 @@ export default function CardId(props: CardId): JSX.Element {
         >
             <Card.Body>
                 {
-                    selectedCards.includes(card) ?
+                    selectedCard === card ?
                         <Icon
                             fontSize="2xl"
                             color="#607d8c"

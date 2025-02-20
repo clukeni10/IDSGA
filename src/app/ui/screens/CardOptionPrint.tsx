@@ -1,4 +1,4 @@
-import { Button, VStack } from "@chakra-ui/react";
+import { Button, Fieldset } from "@chakra-ui/react";
 import DialogModal from "../components/DialogModal";
 import { useState } from "react";
 import { Radio, RadioGroup } from "@/components/ui/radio"
@@ -6,7 +6,7 @@ import { Radio, RadioGroup } from "@/components/ui/radio"
 interface CardOptionPrintScreen {
     open: boolean
     onOpenChange: (e: { open: boolean }) => void
-    onHandleToPrint: (cardSidePrint: string) => void
+    onHandleToPrint: (cardSidePrint: string, cardType: string) => void
 }
 
 export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX.Element {
@@ -18,12 +18,13 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
     } = props
 
     const [cardSidePrint, setCardSidePrint] = useState<string>("frontal")
+    const [cardType, setCardType] = useState<string>("internal")
 
     async function handleToPrint() {
         if (cardSidePrint === 'frontal') {
-            onHandleToPrint(cardSidePrint)
+            onHandleToPrint(cardSidePrint, cardType)
         } else {
-            onHandleToPrint(cardSidePrint)
+            onHandleToPrint(cardSidePrint, cardType)
         }
     }
 
@@ -40,7 +41,23 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
                 </Button>
             }
         >
-            <VStack gap={4}>
+            <Fieldset.Root size="lg">
+                <Fieldset.Legend>Tipo de cartão</Fieldset.Legend>
+                <RadioGroup
+                    variant={'outline'}
+                    spaceX="4"
+                    colorPalette="teal"
+                    value={cardType}
+                    onValueChange={e => setCardType(e.value)}
+                >
+                    <Radio value="internal" minW="120px">
+                        Interno
+                    </Radio>
+                    <Radio value="external">
+                        Externo
+                    </Radio>
+                </RadioGroup>
+                <Fieldset.Legend>Impressão</Fieldset.Legend>
                 <RadioGroup
                     variant={'outline'}
                     spaceX="4"
@@ -55,7 +72,7 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
                         Verso
                     </Radio>
                 </RadioGroup>
-            </VStack>
+            </Fieldset.Root>
         </DialogModal>
     )
 }

@@ -7,37 +7,38 @@ import CardService from "../database/CardService";
 
 const initialState: State = {
     cards: [],
-    selectedCards: []
+    selectedCard: null
 }
 
 interface State {
     cards: CardType[]
-    selectedCards: CardType[]
+    selectedCard: CardType | null
 }
 
 interface Actions {
     getAllCards: (url: string | null) => void
-    generatePersonCardFrontPVC: (card: CardType) => Promise<Uint8Array<ArrayBuffer>>
-    generatePersonCardBackPVC: () => Promise<Uint8Array<ArrayBuffer>>
-    generateA4CardsBack: (cards: CardType[]) => Promise<Uint8Array<ArrayBuffer>>
-    generateA4Cards: (cards: CardType[]) => Promise<Uint8Array<ArrayBuffer>>
+    generatePersonCardFrontPVC: (card: CardType, hasBlueBackground?: boolean) => Promise<Uint8Array>
+    generatePersonCardBackPVC: () => Promise<Uint8Array>
+    generateA4CardsBack: (cards: CardType[]) => Promise<Uint8Array>
+    generateA4Cards: (cards: CardType[]) => Promise<Uint8Array>
     setSelectedCard: (card: CardType) => void
     clearSelectedCard: () => void
+    generateCardPDF: (card: CardType) => Promise<Uint8Array>
 }
 
 export const useCardState = create<Actions & State>((set) => ({
     ...initialState,
-    setSelectedCard: (selectedCard: CardType) => set((state) => {
+    setSelectedCard: (selectedCard: CardType) => set(() => {
 
-        const selectedCards = [...state.selectedCards ]
-
-        if (selectedCards.includes(selectedCard)) {
-            return ({ selectedCards: selectedCards.filter(card => card.cardNumber !== selectedCard.cardNumber ) })    
-        }
-
-        return ({ selectedCards: [...state.selectedCards, selectedCard] })
+        /*  const selectedCards = [...state.selectedCards]
+ 
+         if (selectedCards.includes(selectedCard)) {
+             return ({ selectedCards: selectedCards.filter(card => card.cardNumber !== selectedCard.cardNumber) })
+         }
+  */
+        return ({ selectedCard })
     }),
-    clearSelectedCard: () => set(() => ({ selectedCards: [] })),
+    clearSelectedCard: () => set(() => ({ selectedCard: null })),
     getAllCards: (url: string | null) => {
         if (url) {
             CardService.shared.getAllCards(url)
@@ -53,7 +54,7 @@ export const useCardState = create<Actions & State>((set) => ({
                 .catch(console.log)
         }
     },
-    generatePersonCardFrontPVC: async (card: CardType) => {
+    generatePersonCardFrontPVC: async (card: CardType, hasBlueBackground?: boolean) => {
         const pdfDoc = await PDFDocument.create();
         const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
@@ -63,42 +64,101 @@ export const useCardState = create<Actions & State>((set) => ({
         const page = pdfDoc.addPage([width, height]);
 
         const grayColor = rgb(0.9, 0.9, 0.9);
+        const orangeColor = rgb(1, 0.5, 0);
+        const blueColor = rgb(0.141, 0.608, 0.753);
+        const whiteColor = rgb(1, 1, 1);
 
-        const topImage = await pdfDoc.embedPng(top);
-        const bottomImage = await pdfDoc.embedPng(bottom);
-        const signedImage = await pdfDoc.embedJpg(signed);
+        const imageMaxWidth = width - 40; 
+        const imageMaxHeight = height / 2.5;
 
-        const topImageDims = topImage.scale(0.15);
-        const bottomImageDims = bottomImage.scale(0.15);
+
+        const boxSpacing = 2;
+
+        let imgPerson;
+
+        try {
+            imgPerson = await pdfDoc.embedPng(card.person.image ?? '');
+        } catch (error) {
+            console.log(error)
+            imgPerson = await pdfDoc.embedJpg(card.person.image ?? '');
+        }
+
+        const imageWidth = Math.min(imgPerson.width, imageMaxWidth);
+        const imageHeight = Math.min(imgPerson.height, imageMaxHeight);
+
+        const signedImage = await pdfDoc.embedPng(signed);
+
+        //const imagerPersonDims = imgPerson.scale(0.15);
         const signedImageDims = signedImage.scale(0.18);
+
+        const sideBoxWidth = 18;
+        const sideBoxHeight = 18;
+        const sideLabels = card.person.accessType;
 
         page.drawRectangle({
             x: 0,
-            y: height - 110,
+            y: height - 145,
             width: width,
             height: 230,
-            color: grayColor,
+            color: hasBlueBackground ? blueColor : grayColor,
+            opacity: hasBlueBackground ? 1 : 0.5
         });
 
-        page.drawImage(topImage, {
-            x: (width - topImageDims.width) / 2,
-            y: height - topImageDims.height - 10,
-            width: topImageDims.width,
-            height: topImageDims.height,
+        sideLabels.forEach((label, index) => {
+            const boxYOffset = index * (sideBoxHeight + boxSpacing);
+
+            page.drawRectangle({
+                x: 5,
+                y: height - 30 - boxYOffset,
+                width: sideBoxWidth,
+                height: sideBoxHeight,
+                color: index === 0 || index === 5 ? whiteColor : orangeColor,
+                borderWidth: 1,
+            });
+
+            page.drawText(label, {
+                x: 9,
+                y: height - 26 - boxYOffset,
+                size: 14,
+                color: rgb(0, 0, 0),
+                font: helveticaBold,
+            });
         });
 
-        page.drawText(card.cardNumber, {
-            x: width / 2 - 25,
-            y: height / 2 + 65,
+        page.drawText(card.cardNumber.split("").join("\n"), {
+            x: width - 20,
+            y: height - 35,
             size: 24,
             color: rgb(0, 0, 0),
+            font: helveticaBold,
         });
 
-        page.drawImage(bottomImage, {
-            x: (width - bottomImageDims.width) / 2,
-            y: height / 1.75,
-            width: bottomImageDims.width,
-            height: bottomImageDims.height,
+        const textWidth = helveticaBold.widthOfTextAtSize(card.person.entity, 20);
+        const pageWidth = page.getWidth();
+        const x = (pageWidth - textWidth) / 2;
+
+        page.drawText(card.person.entity, {
+            x,
+            y: sideBoxHeight + 85,
+            size: 18,
+            color: rgb(0, 0, 0),
+            font: helveticaBold,
+        });
+
+        page.drawRectangle({
+            x: (width - imageWidth) / 1.3,
+            y: height - imageHeight - 22,
+            width: imageWidth - 20,
+            height: imageHeight + 10,
+            borderWidth: 1,
+            color: whiteColor
+        });
+
+        page.drawImage(imgPerson, {
+            x: (width - imageWidth) / 1.3,
+            y: height - imageHeight - 22,
+            width: imageWidth - 20,
+            height: imageHeight + 10,
         });
 
         page.drawImage(signedImage, {
@@ -110,16 +170,16 @@ export const useCardState = create<Actions & State>((set) => ({
 
         page.drawText(`Nome: ${getFirstAndLastName(card.person.name.toLocaleUpperCase())}`, {
             x: 10,
-            y: height / 2.1,
-            size: 11,
+            y: height / 3,
+            size: 9,
             color: rgb(0, 0, 0),
             font: helveticaBold
         });
 
         page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
             x: 10,
-            y: height / 2.5,
-            size: 11,
+            y: height / 3.7,
+            size: 9,
             color: rgb(0, 0, 0),
             font: helveticaBold
         });
@@ -127,15 +187,8 @@ export const useCardState = create<Actions & State>((set) => ({
 
         page.drawText(`Validade: ${convertformatDateAngolan(card.expiration)}`, {
             x: 10,
-            y: height / 3.1,
-            size: 11,
-            color: rgb(0, 0, 0),
-        });
-
-        page.drawText('FNCT/SGA-SA', {
-            x: 'FNCT/SGA-SA'.length * 3.9,
-            y: height / 4.2,
-            size: 11,
+            y: height / 4.8,
+            size: 9,
             color: rgb(0, 0, 0),
         });
 
@@ -419,51 +472,51 @@ export const useCardState = create<Actions & State>((set) => ({
                 });
 
                 page.drawText(`Nome: `, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 2.1,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
                 page.drawText(getFirstAndLastName(card.person.name.toLocaleUpperCase()), {
                     x: x + 50,
                     y: y + cardHeight / 2.1,
-                    size: 10,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
 
                 page.drawText(`Função:`, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 2.5,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
                 page.drawText(card.person.job?.toUpperCase(), {
-                    x: x + 60,
+                    x: x + 50,
                     y: y + cardHeight / 2.5,
-                    size: 10,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
 
                 page.drawText(`Validade:`, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 3.1,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
                 page.drawText(convertformatDateAngolan(card.expiration), {
                     x: x + 66,
                     y: y + cardHeight / 3.1,
-                    size: 11,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
 
                 page.drawText(`Entidade:`, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 4.1,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
@@ -471,7 +524,7 @@ export const useCardState = create<Actions & State>((set) => ({
                 page.drawText(`FNCT/${card.person.entity ?? 'SGA-SA'}`, {
                     x: x + 66,
                     y: y + cardHeight / 4.1,
-                    size: 11,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
             }
@@ -481,5 +534,121 @@ export const useCardState = create<Actions & State>((set) => ({
         const pdfBytes = await pdfDoc.save();
 
         return pdfBytes;
+    },
+
+    generateCardPDF: async (card: CardType) => {
+        // Create a new PDF document
+        const pdfDoc = await PDFDocument.create();
+
+        // Add a page to the document
+        const page = pdfDoc.addPage([300, 400]); // ID card dimensions
+        const { width, height } = page.getSize();
+
+        // Draw the background color
+        page.drawRectangle({
+            x: 0,
+            y: 0,
+            width,
+            height,
+            color: rgb(0.9, 0.9, 0.9), // Light gray background
+        });
+
+        // Draw the left-side blocks (A-F)
+        const blockHeight = 30;
+        const blockWidth = 20;
+        const colors = [rgb(1, 1, 1), rgb(1, 0.5, 0)]; // Black and Orange
+        ['A', 'B', 'C', 'D', 'E', 'F'].forEach((letter, index) => {
+            page.drawRectangle({
+                x: 10,
+                y: height - 20 - (index + 1) * blockHeight,
+                width: blockWidth,
+                height: blockHeight,
+                color: index === 1 || index === 2 || index === 3 ? colors[1] : colors[0], // Orange for B, C, D
+            });
+            page.drawText(letter, {
+                x: 15,
+                y: height - 20 - (index + 1) * blockHeight + 8,
+                size: 10,
+                color: rgb(1, 1, 1),
+            });
+        });
+
+        // Draw the card number on the right side
+        const cardDigits = card.cardNumber.split('');
+        cardDigits.forEach((digit, index) => {
+            page.drawText(digit, {
+                x: 260,
+                y: height - 20 - index * blockHeight - blockHeight / 2,
+                size: 12,
+                color: rgb(0, 0, 0),
+            });
+        });
+
+        // Draw a placeholder for the photo
+        page.drawRectangle({
+            x: 50,
+            y: height - 150,
+            width: 100,
+            height: 100,
+            borderColor: rgb(0, 0, 0),
+            borderWidth: 1,
+        });
+
+        // Add text fields
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        page.drawText(`NOME: ${card.person.name}`, {
+            x: 10,
+            y: 80,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+        page.drawText(`FUNÇÃO: ${card.person.job}`, {
+            x: 10,
+            y: 65,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+        page.drawText(`Val: ${card.expiration.toLocaleDateString('pt-PT')}`, {
+            x: 10,
+            y: 50,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+        page.drawText(card.person.entity, {
+            x: 10,
+            y: 35,
+            size: 10,
+            font,
+            color: rgb(0, 0, 0),
+        });
+
+        // Optionally embed logo or signature images (if you have them)
+        // const logoImage = await fetch('path_to_logo.png').then((res) => res.arrayBuffer());
+        // const embeddedLogo = await pdfDoc.embedPng(logoImage);
+        // page.drawImage(embeddedLogo, {
+        //   x: 10,
+        //   y: 10,
+        //   width: 50,
+        //   height: 20,
+        // });
+
+        // Serialize the PDFDocument to bytes
+        const pdfBytes = await pdfDoc.save();
+
+        // Create a blob and trigger download
+
+
+
+        return pdfBytes;
     }
+
+
+
+
+
+
+
 }));

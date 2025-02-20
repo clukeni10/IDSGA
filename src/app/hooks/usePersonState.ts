@@ -16,13 +16,14 @@ interface State {
 }
 
 interface Actions {
-    addPerson: (person: PersonType, valid: Date, url: string | null, totalCards?: any[]) => Promise<void>
+    addPerson: (person: PersonType, valid: Date, url: string | null, imageFile: File | null, totalCards?: any[]) => Promise<void>
+    updatePerson: (person: PersonType, url: string | null, imageFile: File | undefined, card: CardType) => Promise<void>
     forceRefresh: () => void
 }
 
 export const usePersonState = create<Actions & State>((set) => ({
     ...initialState,
-    addPerson: async (person: PersonType, valid: Date, url: string | null, total?: any[]) => {
+    addPerson: async (person: PersonType, valid: Date, url: string | null, imageFile: File | null, total?: any[]) => {
 
         let cardNumber: Promise<string> | string
 
@@ -40,7 +41,7 @@ export const usePersonState = create<Actions & State>((set) => ({
         }
 
         if (url) {
-            await CardService.shared.addCard({ ...card, ...person }, url)
+            await CardService.shared.addCard({ ...card, ...person }, imageFile, url)
         } else {
 
             await PersonDao.shared.addPerson(person)
@@ -48,6 +49,10 @@ export const usePersonState = create<Actions & State>((set) => ({
         }
 
         set((state) => ({ cards: [...state.cards, card], refresh: state.refresh + 1 }))
+    },
+    updatePerson: async (person: PersonType, url: string | null, imageFile: File | undefined, card: CardType) => {
+        await CardService.shared.updateCard({ ...person, ...card }, imageFile, url)
+        set((state) => ({ refresh: state.refresh + 1 }))
     },
     forceRefresh: () => {
         set((state) => ({ refresh: state.refresh + 1 }))
