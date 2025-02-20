@@ -17,7 +17,7 @@ interface State {
 
 interface Actions {
     getAllCards: (url: string | null) => void
-    generatePersonCardFrontPVC: (card: CardType) => Promise<Uint8Array>
+    generatePersonCardFrontPVC: (card: CardType, hasBlueBackground?: boolean) => Promise<Uint8Array>
     generatePersonCardBackPVC: () => Promise<Uint8Array>
     generateA4CardsBack: (cards: CardType[]) => Promise<Uint8Array>
     generateA4Cards: (cards: CardType[]) => Promise<Uint8Array>
@@ -54,7 +54,7 @@ export const useCardState = create<Actions & State>((set) => ({
                 .catch(console.log)
         }
     },
-    generatePersonCardFrontPVC: async (card: CardType) => {
+    generatePersonCardFrontPVC: async (card: CardType, hasBlueBackground?: boolean) => {
         const pdfDoc = await PDFDocument.create();
         const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
@@ -68,8 +68,8 @@ export const useCardState = create<Actions & State>((set) => ({
         const blueColor = rgb(0.141, 0.608, 0.753);
         const whiteColor = rgb(1, 1, 1);
 
-        const imageMaxWidth = width - 40; // Definir um limite para a largura da imagem
-        const imageMaxHeight = height / 2.5; // Definir um limite proporcional para altura
+        const imageMaxWidth = width - 40; 
+        const imageMaxHeight = height / 2.5;
 
 
         const boxSpacing = 2;
@@ -100,8 +100,8 @@ export const useCardState = create<Actions & State>((set) => ({
             y: height - 145,
             width: width,
             height: 230,
-            color: card.person.entity.slice(0, 3).toLowerCase() === 'sga' ? blueColor : grayColor,
-            opacity: card.person.entity.slice(0, 3).toLowerCase() === 'sga' ? 1 : 0.5
+            color: hasBlueBackground ? blueColor : grayColor,
+            opacity: hasBlueBackground ? 1 : 0.5
         });
 
         sideLabels.forEach((label, index) => {
@@ -137,15 +137,13 @@ export const useCardState = create<Actions & State>((set) => ({
         const pageWidth = page.getWidth();
         const x = (pageWidth - textWidth) / 2;
 
-        if (card.person.entity.slice(0, 3).toLowerCase() === "sga") {
-            page.drawText(card.person.entity, {
-                x,
-                y: sideBoxHeight + 85,
-                size: 20,
-                color: rgb(0, 0, 0),
-                font: helveticaBold,
-            });
-        }
+        page.drawText(card.person.entity, {
+            x,
+            y: sideBoxHeight + 85,
+            size: 18,
+            color: rgb(0, 0, 0),
+            font: helveticaBold,
+        });
 
         page.drawRectangle({
             x: (width - imageWidth) / 1.3,
@@ -173,7 +171,7 @@ export const useCardState = create<Actions & State>((set) => ({
         page.drawText(`Nome: ${getFirstAndLastName(card.person.name.toLocaleUpperCase())}`, {
             x: 10,
             y: height / 3,
-            size: 11,
+            size: 9,
             color: rgb(0, 0, 0),
             font: helveticaBold
         });
@@ -181,7 +179,7 @@ export const useCardState = create<Actions & State>((set) => ({
         page.drawText(`Função: ${card.person.job?.toUpperCase()}`, {
             x: 10,
             y: height / 3.7,
-            size: 11,
+            size: 9,
             color: rgb(0, 0, 0),
             font: helveticaBold
         });
@@ -190,7 +188,7 @@ export const useCardState = create<Actions & State>((set) => ({
         page.drawText(`Validade: ${convertformatDateAngolan(card.expiration)}`, {
             x: 10,
             y: height / 4.8,
-            size: 11,
+            size: 9,
             color: rgb(0, 0, 0),
         });
 

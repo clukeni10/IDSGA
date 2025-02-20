@@ -48,7 +48,7 @@ export default function HomeScreen(): JSX.Element {
         }
     }
 
-    async function onHandleToPrint(cardSidePrint: string) {
+    async function onHandleToPrint(cardSidePrint: string, cardType: string) {
         const dirPath = 'pdf'
         const extension = 'pdf'
         let pathUri: Uint8Array
@@ -56,8 +56,7 @@ export default function HomeScreen(): JSX.Element {
 
         if (selectedCard) {
             if (cardSidePrint === 'frontal') {
-                pathUri = await generatePersonCardFrontPVC(selectedCard)
-                console.log(pathUri)
+                pathUri = await generatePersonCardFrontPVC(selectedCard, cardType === 'internal')
             } else {
                 pathUri = await generatePersonCardBackPVC()
             }
@@ -92,11 +91,7 @@ export default function HomeScreen(): JSX.Element {
 
     function handleoOnSetupNetwork() {
         setOpenSetup({ open: true })
-    }
-
-
-    console.log(selectedCard);
-    
+    }    
 
     return (
         <Stack>

@@ -53,7 +53,6 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     useEffect(() => {
 
         if (selectedCard) {
-            console.log('veio')
             onJobValueChange([selectedCard.person.job])
             onSelectedAccessTypes(selectedCard.person.accessType)
             setEscort([selectedCard.person.escort])

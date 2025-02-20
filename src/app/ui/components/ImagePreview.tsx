@@ -29,7 +29,6 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
         onDeleteImage,
         onMessage,
         loading,
-        setLoading,
         isItem,
         disabledInput,
         imagePreview,
@@ -45,10 +44,8 @@ function ImagePreview(props: ImagePreviewProps): JSX.Element {
         const f = e.target.files as FileList
 
         if (file && file.size > 1000000) {
-            onMessage("A imagem seleccionada excede o tamanho de 350 KB máximo.")
+            onMessage("A imagem seleccionada excede o tamanho de 1 MB máximo.")
         } else {
-            setLoading(true)
-            setLoading(false)
             reader.onload = (e: ProgressEvent<FileReader>) => {
                 onSelectedImagePreview(file);
                 const result = e.target?.result as string;

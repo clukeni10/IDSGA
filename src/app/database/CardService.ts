@@ -44,8 +44,6 @@ export default class CardService {
 
                 const formData = new FormData();
 
-                console.log(person)
-
                 formData.append("name", person.name);
                 formData.append("job", person.job);
                 formData.append("personId", person.id);
@@ -58,7 +56,6 @@ export default class CardService {
                 if (file) {
                     formData.append("image", file);
                 }
-                console.log(`http://${url}/card/save`);
                 
                 await fetch(`http://${url}/card/save`, {
                     method: "PUT",
@@ -97,8 +94,6 @@ export default class CardService {
                             console.error("Erro ao carregar imagem:", imageError);
                         }
                     }
-
-                    console.log(d.person.permissions)
     
                     const card: CardType = {
                         person: {
@@ -114,7 +109,6 @@ export default class CardService {
                         cardNumber: d.cardNumber
                     };
     
-                    console.log(card);
                     all.push(card);
                 }
     
