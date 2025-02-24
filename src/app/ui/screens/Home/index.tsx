@@ -2,6 +2,7 @@
 import { Stack, Grid, For } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import AddPersonModal from "./AddPerson";
+import AddVehicleModal from "./AddVehicle";
 import CardId from "../../components/CardId";
 import HeaderActions from "../../components/HeaderActions";
 import { useCardState } from "@/app/hooks/useCardState";
@@ -16,6 +17,8 @@ import { useSetupState } from "@/app/hooks/useSetupState";
 export default function HomeScreen(): JSX.Element {
 
     const [open, setOpen] = useState<{ open: boolean }>({ open: false })
+    const [openPerson, setOpenPerson] = useState<{ open: boolean }>({ open: false })
+    const [openVehicle, setOpenVehicle] = useState<{ open:boolean}>({open: false })
     const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
     const [openSetup, setOpenSetup] = useState<{ open: boolean }>({ open: false })
 
@@ -39,7 +42,11 @@ export default function HomeScreen(): JSX.Element {
     }, [refresh])
 
     function handleOnOpenAddPerson() {
-        setOpen({ open: true })
+        setOpenPerson({ open: true })
+    }
+
+    function handleOnOpenAddVehicle() {
+        setOpenVehicle({ open: true })
     }
 
     async function handleOnPrintingCard() {
@@ -97,6 +104,7 @@ export default function HomeScreen(): JSX.Element {
         <Stack>
             <HeaderActions
                 onOpenAddPerson={handleOnOpenAddPerson}
+                onOpenAddVehicle={handleOnOpenAddVehicle}
                 onPrintCards={handleOnPrintingCard}
                 onPrintSelectedCards={handleOnPrintingCard}
                 onSetupNetwork={handleoOnSetupNetwork}
@@ -118,8 +126,15 @@ export default function HomeScreen(): JSX.Element {
                 </Grid>
                 <AddPersonModal
                     contentRef={contentRef}
-                    open={open.open}
-                    onOpenChange={setOpen}
+                    open={openPerson.open}
+                    onOpenChange={setOpenPerson}
+                />
+
+                <AddVehicleModal
+                    contentRef={contentRef}
+                    open={openVehicle.open}
+                    onOpenChange={setOpenVehicle}
+                
                 />
 
                 <CardOptionPrintScreen

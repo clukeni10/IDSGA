@@ -4,4 +4,4 @@ export type CardType = {
     person: PersonType
     expiration: Date
     cardNumber: string
-}
+} 

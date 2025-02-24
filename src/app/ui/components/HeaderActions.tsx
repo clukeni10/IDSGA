@@ -2,12 +2,13 @@ import { useCardState } from "@/app/hooks/useCardState";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { IoPersonAdd } from "react-icons/io5";
+import { IoCarSport, IoPersonAdd } from "react-icons/io5";
 import { PiPrinterLight } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
 import { VscEdit } from "react-icons/vsc";
 
 interface HeaderActions {
+    onOpenAddVehicle: () => void;
     onOpenAddPerson: () => void
     onPrintCards: () => void
     onPrintSelectedCards: () => void
@@ -42,18 +43,22 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
         >
             <HStack>
                 <Box
+                   
                     py={4}
                     px={8}
                     textAlign={'center'}
                     _hover={{
                         bgColor: '#cbe5f2',
-                        cursor: 'default'
+                        cursor: 'pointer'
                     }}
                     onClick={onOpenAddPerson}
+                    
+                   
                 >
                     <Icon
                         fontSize="2xl"
                         color={'#607d8c'}
+                        
                     >
                         <IoPersonAdd />
                     </Icon>
@@ -65,6 +70,32 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         Pessoal
                     </Text>
                 </Box>
+                <Box
+                    py={4}
+                    px={8}
+                    textAlign={'center'}
+                    _hover={{
+                        bgColor: '#cbe5f2',
+                        cursor: 'pointer'
+                    }}
+                    onClick={onOpenAddPerson}
+                    
+                >
+                    <Icon
+                        fontSize="3xl"
+                        color={'#607d8c'}
+                    >
+                        <IoCarSport />
+                    </Icon>
+                    <Text
+                        fontSize={'small'}
+                        fontWeight={'bold'}
+                        color={'#607d8c'}
+                    >
+                        Viaturas
+                    </Text>
+                </Box>
+                
                 <Spacer />
                 {
                     selectedCard !== null ?
