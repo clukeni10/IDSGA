@@ -5,5 +5,6 @@ export type VehicleType = {
     color:string;
     licenseplate:string;
     image:string;
+    type:string;
 
 }

@@ -20,6 +20,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
 
     const {
         onOpenAddPerson,
+        onOpenAddVehicle,
         onPrintSelectedCards,
         onSetupNetwork,
         onUpdateCard
@@ -78,7 +79,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         bgColor: '#cbe5f2',
                         cursor: 'pointer'
                     }}
-                    onClick={onOpenAddPerson}
+                    onClick={onOpenAddVehicle}
                     
                 >
                     <Icon

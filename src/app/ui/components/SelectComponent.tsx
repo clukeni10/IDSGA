@@ -7,7 +7,7 @@ import {
     SelectTrigger,
     SelectValueText,
 } from "@/components/ui/select"
-
+ 
 interface SelectComponent {
     label?: string
     placeholder?: string

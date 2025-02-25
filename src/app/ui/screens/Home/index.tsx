@@ -1,5 +1,5 @@
 "use client"
-import { Stack, Grid, For } from "@chakra-ui/react";
+import { Stack, Grid, For, GridItem } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import AddPersonModal from "./AddPerson";
 import AddVehicleModal from "./AddVehicle";
@@ -114,7 +114,8 @@ export default function HomeScreen(): JSX.Element {
             <Stack
                 p={4}
             >
-                <Grid templateColumns="repeat(5, 1fr)" gap="6">
+                <Grid templateColumns="1fr 1fr" gap="6">
+                    <GridItem >
                     <For each={cards}>
                         {(card) => (
                             <CardId
@@ -123,7 +124,10 @@ export default function HomeScreen(): JSX.Element {
                             />
                         )}
                     </For>
+                    </GridItem>
+                    
                 </Grid>
+
                 <AddPersonModal
                     contentRef={contentRef}
                     open={openPerson.open}

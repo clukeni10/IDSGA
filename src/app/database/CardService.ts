@@ -2,6 +2,7 @@ import { fetch } from '@tauri-apps/plugin-http';
 import { CardType } from "../types/CardType";
 import { PersonType } from '../types/PersonType';
 import { Buffer } from "buffer" 
+import { VehicleType } from '../types/VehicleType';
 
 export default class CardService {
 
@@ -38,6 +39,63 @@ export default class CardService {
         })
     }
 
+    async addVehicle(vehicle: VehicleType & CardType, file: File | null, url: string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try{
+                const formData = new FormData();
+
+                formData.append("brand", vehicle.brand);
+                formData.append("entity", vehicle.entity);
+                formData.append("color", vehicle.color);
+                formData.append("type", vehicle.type);
+                formData.append("cardNumber", vehicle.cardNumber)
+                formData.append("expiration", vehicle.expiration.toISOString())
+
+                if(file){
+                    formData.append("image", file);
+                }
+
+                await fetch(`http://${url}/card/save`, {
+                    method: "POST",
+                    body: formData,
+                });
+                resolve()
+            } catch (error){    
+                reject(error)
+                throw new Error("A operação de gravação falhou");   
+            }
+        })
+    }
+
+    async updateVehicle(vehicle: VehicleType & CardType, file: File | undefined, url: string | null): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const formData = new FormData();
+
+                formData.append("brand", vehicle.brand);
+                formData.append("entity", vehicle.entity);
+                formData.append("color", vehicle.color);
+                formData.append("type", vehicle.type);
+                formData.append("cardNumber", vehicle.cardNumber)
+                formData.append("expiration", vehicle.expiration.toISOString())
+
+                if (file) {
+                    formData.append("image", file);
+                }
+                
+                await fetch(`http://${url}/card/save`, {
+                    method: "PUT",
+                    body: formData,
+                });
+                resolve()
+            } catch (error) {
+                reject(error)
+                throw new Error("A operação de actualização falhou");
+            }
+        })
+    }
+
     async updateCard(person: PersonType & CardType, file: File | undefined, url: string | null): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -68,6 +126,8 @@ export default class CardService {
             }
         })
     }
+
+    
 
 
     async getAllCards(url: string): Promise<CardType[]> {
