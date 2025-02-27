@@ -1,12 +1,15 @@
 import {  Flex,  VStack, Input} from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import DialogModal from "../../components/DialogModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImagePreview from "../../components/ImagePreview";
 import { Field } from "@/components/ui/field";
 import SelectComponent from "../../components/SelectComponent";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { useCardState } from "@/app/hooks/useCardState";
+import { VehicleType } from "@/app/types/VehicleType";
+import UUIDv4 from "@/app/libs/uuidv4";
+import { VehicleCardType } from "@/app/types/VehicleCardType";
 
 
 
@@ -27,22 +30,54 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element{
 
     //const addVehicle = useVehicleState(state => state.addVehicle)
     const [message, setMessage] = useState<string>()
-    const [imagePreview, setImagePreview] = useState<string>('');
     const [option, setOption] = useState<string[]>([]);
     const personEntities = useSetupState(state => state.personEntities)
     const [entity, setEntity] = useState<string[]>([])
     const [cardValidate, setCardValidate] = useState<string>('')
-    const selectedCard = useCardState(state => state.selectedCard)
+    const [imagePreview, setImagePreview] = useState<string>('');
+    const [imageFile, setImageFile] = useState<File | undefined>(undefined);
+    
     const [loading, setLoading] = useState<boolean>(false)
-    const [vehicleBrand, setVehicleBrand] = useState<string>('')
+
+    const cards = useCardState(state => state.cards)
+
+    const selectedCard = useCardState(state => state.selectedCard)
+    const clearSelectedCard = useCardState(state => state.clearSelectedCard)
+
+
+    const [vehicleBrand, setVehicleBrand] = useState<string>("")
     const [vehicleType, setVehicleType] = useState<string>('')
     const [vehicleColor, setVehicleColor] = useState<string>('')
     const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>('')
 
-    
+    /*
+useEffect(() => {
 
+    if (selectedCard.vehicle){
+        setVehicleBrand(selectedCard.vehicle.brand)
+        setVehicleType(selectedCard.vehicle.type)
+        setVehicleColor(selectedCard.vehicle.color)
+        setEntity(selectedCard.vehicle.entity)
+        setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
+        setCardValidate(selectedCard.expiration.toISOString().
+        split('T')[0])
+    }
+}, [selectedCard])
+
+useEffect(() => {
+    if(!open){
+        clearSelectedCard();
+        setVehicleBrand('');
+        setCardValidate('');
+        setEntity([]);
+        setVehicleColor('');
+        setVehicleType('');
+        setVehicleLicensePlate('');
+    }
     
-   /* async function handleAddVehicle(){
+    }, [open]) */
+    
+   async function handleAddVehicle(){
         try{
             setLoading(true)
             const vehicle: VehicleType = {
@@ -51,16 +86,20 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element{
                 type: vehicleType[0],
                 id: UUIDv4.generateId(),
                 color: vehicleColor.trim(),
-                licenseplate: vehicleLicensePlate.trim(),
+                licensePlate: vehicleLicensePlate.trim(),
             }
 
             const valid = new Date(cardValidate)
 
-            if (imageFile){
-                await addVehicle()
+            
             }
+
+           
+               
+            
         }
-    }*/
+    }
+
 
     return (
         <DialogModal
@@ -87,17 +126,8 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element{
                 justify='center'
                 justifyContent={'center'}
             >
-                <ImagePreview
-                    loading={false}
-                    setLoading={() => { }}
-                    imagePreview={imagePreview}
-                    onMessage={setMessage}
-                    onSelectedImagePreview={setImageFile}
-                    onDeleteImage={() => { }}
-                    text='Adicionar foto'
-                    setImagePreview={setImagePreview}
-                    onResultFile={setImageFile}
-                                    />
+            
+          
             </Flex>
             <Field
                 label="Marca"

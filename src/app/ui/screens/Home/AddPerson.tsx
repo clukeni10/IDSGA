@@ -13,7 +13,7 @@ import ImagePreview from "../../components/ImagePreview";
 import { personAccesstypes } from "@/app/utils/constants";
 import { CardType } from "@/app/types/CardType";
 
-interface AddPersonModal {
+interface AddPersonModal { 
     open: boolean
     contentRef?: React.RefObject<HTMLDivElement>
     onOpenChange: (e: { open: boolean }) => void
@@ -38,7 +38,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     const [cardValidate, setCardValidate] = useState<string>('')
 
     const [message, setMessage] = useState<string>()
-
+ 
     const addPerson = usePersonState(state => state.addPerson)
     const updatePerson = usePersonState(state => state.updatePerson)
     const cards = useCardState(state => state.cards)
@@ -94,7 +94,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             const valid = new Date(cardValidate)
 
             if (imageFile) {
-                await addPerson(person, valid, address, imageFile, cards)
+                await addPerson(person, valid, address, imageFile, Array.isArray(cards) ? cards : [cards])
                     .catch(() => {
                         setLoading(false)
                     })

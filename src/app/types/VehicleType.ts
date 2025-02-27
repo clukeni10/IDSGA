@@ -1,10 +1,9 @@
 export type VehicleType = {
     id:string;
-    entity: string
+    entity: string;
     brand:string;
     color:string;
-    licenseplate:string;
-    image:string;
+    licensePlate:string;
     type:string;
 
 }

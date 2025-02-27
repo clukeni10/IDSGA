@@ -3,6 +3,7 @@ import { CardType } from "../types/CardType";
 import { PersonType } from '../types/PersonType';
 import { Buffer } from "buffer" 
 import { VehicleType } from '../types/VehicleType';
+import { VehicleCardType } from '../types/VehicleCardType';
 
 export default class CardService {
 
@@ -39,63 +40,7 @@ export default class CardService {
         })
     }
 
-    async addVehicle(vehicle: VehicleType & CardType, file: File | null, url: string): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try{
-                const formData = new FormData();
-
-                formData.append("brand", vehicle.brand);
-                formData.append("entity", vehicle.entity);
-                formData.append("color", vehicle.color);
-                formData.append("type", vehicle.type);
-                formData.append("cardNumber", vehicle.cardNumber)
-                formData.append("expiration", vehicle.expiration.toISOString())
-
-                if(file){
-                    formData.append("image", file);
-                }
-
-                await fetch(`http://${url}/card/save`, {
-                    method: "POST",
-                    body: formData,
-                });
-                resolve()
-            } catch (error){    
-                reject(error)
-                throw new Error("A operação de gravação falhou");   
-            }
-        })
-    }
-
-    async updateVehicle(vehicle: VehicleType & CardType, file: File | undefined, url: string | null): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try {
-
-                const formData = new FormData();
-
-                formData.append("brand", vehicle.brand);
-                formData.append("entity", vehicle.entity);
-                formData.append("color", vehicle.color);
-                formData.append("type", vehicle.type);
-                formData.append("cardNumber", vehicle.cardNumber)
-                formData.append("expiration", vehicle.expiration.toISOString())
-
-                if (file) {
-                    formData.append("image", file);
-                }
-                
-                await fetch(`http://${url}/card/save`, {
-                    method: "PUT",
-                    body: formData,
-                });
-                resolve()
-            } catch (error) {
-                reject(error)
-                throw new Error("A operação de actualização falhou");
-            }
-        })
-    }
-
+   
     async updateCard(person: PersonType & CardType, file: File | undefined, url: string | null): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -126,8 +71,6 @@ export default class CardService {
             }
         })
     }
-
-    
 
 
     async getAllCards(url: string): Promise<CardType[]> {
@@ -179,4 +122,100 @@ export default class CardService {
             }
         });
     }
+
+    async addVehicle(vehicle: VehicleType & CardType, file: File | null, url: string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try{
+                const formData = new FormData();
+
+                formData.append("brand", vehicle.brand);
+                formData.append("entity", vehicle.entity);
+                formData.append("color", vehicle.color);
+                formData.append("type", vehicle.type);
+                formData.append("cardNumber", vehicle.cardNumber)
+                formData.append("expiration", vehicle.expiration.toISOString())
+
+                if(file){
+                    formData.append("image", file);
+                }
+
+                await fetch(`http://${url}/setup/vehicle/save`, {
+                    method: "POST",
+                    body: formData,
+                });
+                resolve()
+            } catch (error){    
+                reject(error)
+                throw new Error("A operação de gravação falhou");   
+            }
+        })
+    }
+
+    async updateVehicle(vehicle: VehicleType & CardType, file: File | undefined, url: string | null): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const formData = new FormData();
+
+                formData.append("brand", vehicle.brand);
+                formData.append("entity", vehicle.entity);
+                formData.append("color", vehicle.color);
+                formData.append("type", vehicle.type);
+                formData.append("cardNumber", vehicle.cardNumber)
+                formData.append("expiration", vehicle.expiration.toISOString())
+
+                if (file) {
+                    formData.append("image", file);
+                }
+                
+                await fetch(`http://${url}/card-vehicle/save`, {
+                    method: "PUT",
+                    body: formData,
+                });
+                resolve()
+            } catch (error) {
+                reject(error)
+                throw new Error("A operação de actualização falhou");
+            }
+        })
+    }
+
+    async getAllVehicleCards(url: string): Promise<VehicleCardType[]> {
+        return new Promise(async (resolve, reject) => { 
+            try {
+                const response = await fetch(`http://${url}/card-vehicle/getAll`, {
+                    method: 'GET',
+                });
+
+                const data = await response.json();
+                const all: VehicleCardType[] = [];
+
+                for (const d of data){
+                   
+                    const card: VehicleCardType = {
+                        vehicle: {
+                            brand: d.vehicle.brand,
+                            id: d.vehicle.id,
+                            entity: d.vehicle.entity?.name,
+                            color: d.vehicle.color,
+                            licensePlate: d.vehicle.licensePlate,
+                            type: d.vehicle.type
+                        },
+                        expiration: new Date(d.expiration),
+                        cardNumber: d.cardNumber,
+                        entity: ''
+                    };
+
+                    all.push(card);
+                }
+                resolve(all);
+            }       catch(error){
+                console.log(error);
+                reject(error);
+            }
+    });
+    }
+
+
+   
 }

@@ -6,4 +6,4 @@ export type PersonType = {
     entity: string
     image?: string
     accessType: string[]
-} 
+}  

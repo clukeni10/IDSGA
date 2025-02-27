@@ -16,6 +16,7 @@ interface State {
 }
 
 interface Actions {
+
     addPerson: (person: PersonType, valid: Date, url: string | null, imageFile: File | null, totalCards?: any[]) => Promise<void>
     updatePerson: (person: PersonType, url: string | null, imageFile: File | undefined, card: CardType) => Promise<void>
     forceRefresh: () => void
@@ -38,7 +39,7 @@ export const usePersonState = create<Actions & State>((set) => ({
             person: person,
             expiration: valid,
             cardNumber
-        }
+        };
 
         if (url) {
             await CardService.shared.addCard({ ...card, ...person }, imageFile, url)
@@ -54,7 +55,9 @@ export const usePersonState = create<Actions & State>((set) => ({
         await CardService.shared.updateCard({ ...person, ...card }, imageFile, url)
         set((state) => ({ refresh: state.refresh + 1 }))
     },
+
     forceRefresh: () => {
         set((state) => ({ refresh: state.refresh + 1 }))
-    }
-}));
+}
+})
+);

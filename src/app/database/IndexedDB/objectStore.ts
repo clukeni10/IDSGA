@@ -1,6 +1,7 @@
 export const objectStore = {
     personObjectStore: "sga-persons",
     cardObjectStore: "sga-cards",
+    vehicleObjectStore: "sga-vehicles",
 }
 
 export const indexObjectStore = {

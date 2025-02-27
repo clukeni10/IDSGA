@@ -4,6 +4,7 @@ import CardDao from "../database/CardDao";
 import { BlendMode, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { bottom, convertformatDateAngolan, getFirstAndLastName, signed, signedBack, top } from "../utils";
 import CardService from "../database/CardService";
+import { VehicleCardType } from "../types/VehicleCardType";
 
 const initialState: State = {
     cards: [],
@@ -11,7 +12,7 @@ const initialState: State = {
 }
 
 interface State {
-    cards: CardType[]
+    cards: CardType[] | VehicleCardType[]
     selectedCard: CardType | null
 }
 
@@ -38,6 +39,7 @@ export const useCardState = create<Actions & State>((set) => ({
   */
         return ({ selectedCard })
     }),
+    
     clearSelectedCard: () => set(() => ({ selectedCard: null })),
     getAllCards: (url: string | null) => {
         if (url) {
