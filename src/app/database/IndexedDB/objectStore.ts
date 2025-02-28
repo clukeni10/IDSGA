@@ -2,6 +2,7 @@ export const objectStore = {
     personObjectStore: "sga-persons",
     cardObjectStore: "sga-cards",
     vehicleObjectStore: "sga-vehicles",
+    vehicleCardObjectStore: "sga-vehicles-cards"
 }
 
 export const indexObjectStore = {

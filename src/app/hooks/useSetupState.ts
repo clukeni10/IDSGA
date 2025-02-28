@@ -6,7 +6,7 @@ const initialState: State = {
     address: null,
     personFunctions: [],
     personEscorts: [],
-    personEntities: [],
+    personEntities: [], 
 }
 
 interface State {

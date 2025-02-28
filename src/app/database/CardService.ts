@@ -13,7 +13,7 @@ export default class CardService {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const formData = new FormData();
+                const formData = new FormData(); 
 
                 formData.append("name", person.name);
                 formData.append("job", person.job);
@@ -123,10 +123,11 @@ export default class CardService {
         });
     }
 
-    async addVehicle(vehicle: VehicleType & CardType, file: File | null, url: string): Promise<void> {
+    async addVehicle(vehicle: VehicleType & VehicleCardType,  url: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try{
                 const formData = new FormData();
+                console.log(url);
 
                 formData.append("brand", vehicle.brand);
                 formData.append("entity", vehicle.entity);
@@ -135,9 +136,7 @@ export default class CardService {
                 formData.append("cardNumber", vehicle.cardNumber)
                 formData.append("expiration", vehicle.expiration.toISOString())
 
-                if(file){
-                    formData.append("image", file);
-                }
+                
 
                 await fetch(`http://${url}/setup/vehicle/save`, {
                     method: "POST",
@@ -145,13 +144,17 @@ export default class CardService {
                 });
                 resolve()
             } catch (error){    
+                console.log(error);
+            
                 reject(error)
-                throw new Error("A operação de gravação falhou");   
+                throw new Error("A operação de gravação falhou");
+
+                
             }
         })
     }
 
-    async updateVehicle(vehicle: VehicleType & CardType, file: File | undefined, url: string | null): Promise<void> {
+    async updateVehicle(vehicle: VehicleType & VehicleCardType,  url: string | null): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -164,9 +167,7 @@ export default class CardService {
                 formData.append("cardNumber", vehicle.cardNumber)
                 formData.append("expiration", vehicle.expiration.toISOString())
 
-                if (file) {
-                    formData.append("image", file);
-                }
+               
                 
                 await fetch(`http://${url}/card-vehicle/save`, {
                     method: "PUT",

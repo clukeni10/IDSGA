@@ -8,7 +8,7 @@ import CardService from "../database/CardService";
 const initialState: State = {
     cards: [],
     refresh: 0
-}
+} 
 
 interface State {
     cards: CardType[]
@@ -35,7 +35,7 @@ export const usePersonState = create<Actions & State>((set) => ({
             cardNumber = await CardDao.shared.generateNextId()
         }
 
-        const card: CardType = {
+        const card: CardType = { 
             person: person,
             expiration: valid,
             cardNumber

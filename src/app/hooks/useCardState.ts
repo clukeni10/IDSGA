@@ -6,6 +6,7 @@ import { bottom, convertformatDateAngolan, getFirstAndLastName, signed, signedBa
 import CardService from "../database/CardService";
 import { VehicleCardType } from "../types/VehicleCardType";
 
+
 const initialState: State = {
     cards: [],
     selectedCard: null
@@ -17,6 +18,7 @@ interface State {
 }
 
 interface Actions {
+
     getAllCards: (url: string | null) => void
     generatePersonCardFrontPVC: (card: CardType, hasBlueBackground?: boolean) => Promise<Uint8Array>
     generatePersonCardBackPVC: () => Promise<Uint8Array>
@@ -26,6 +28,9 @@ interface Actions {
     clearSelectedCard: () => void
     generateCardPDF: (card: CardType) => Promise<Uint8Array>
 }
+
+
+
 
 export const useCardState = create<Actions & State>((set) => ({
     ...initialState,

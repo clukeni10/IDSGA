@@ -4,7 +4,7 @@ import { objectStore } from "./IndexedDB/objectStore"
 
 export default class CardDao {
 
-    static shared = new CardDao()
+    static shared = new CardDao() 
     private keyPath = objectStore.cardObjectStore
 
     async addCard(person: CardType): Promise<void> {

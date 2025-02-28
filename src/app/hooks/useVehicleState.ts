@@ -4,13 +4,14 @@ import { create } from "zustand";
 import CardDao from "../database/CardDao";
 import CardService from "../database/CardService";
 import VehicleDao from "../database/VehicleDao";
+import VehicleCardDao from "../database/VehicleCardDao";
 
 
 const initialState: State = {
     cards: [],
     refresh: 0
 }
-
+ 
 interface State {
     cards: VehicleCardType[]
     refresh: number
@@ -23,9 +24,9 @@ interface Actions {
     forceRefresh: () => void
 }
 
-export const usePersonState = create<Actions & State>((set) => ({
+export const useVehicleState = create<Actions & State>((set) => ({
     ...initialState,
-addVehicle: async (vehicle: VehicleType, valid: Date, url: string, totalCards?: any[]) => {
+addVehicle: async (vehicle: VehicleType, valid: Date, url: string , totalCards?: any[]) => {
     let cardNumber: string;
     
     if (totalCards) {
@@ -42,17 +43,21 @@ addVehicle: async (vehicle: VehicleType, valid: Date, url: string, totalCards?: 
     };
 
     if (url) {
-        await CardService.shared.addCard({ ...card, ...vehicle } as VehicleCardType, null, url);
+        await CardService.shared.addVehicle({ ...vehicle, ...card }, url);
     } else {
         await VehicleDao.shared.addVehicle(vehicle);
-        await CardDao.shared.addCard(card);
+        await VehicleCardDao.shared.addCard(card);
     }
 
     set((state) => ({ cards: [...state.cards, card], refresh: state.refresh + 1 }));
 },
 
 updateVehicle: async (vehicle: VehicleType, url: string | null, card: VehicleCardType) => {
-    await CardService.shared.updateCard({ ...vehicle, ...card }, null, url);
+    await CardService.shared.updateVehicle(
+        { ...vehicle, ...card }, 
+        url
+    );
+    
     set((state) => ({ refresh: state.refresh + 1 }));
 },
 forceRefresh: () => {

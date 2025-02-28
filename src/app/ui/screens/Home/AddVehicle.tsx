@@ -1,14 +1,14 @@
-import {  Flex,  VStack, Input} from "@chakra-ui/react";
+import { Flex, VStack, Input, Text } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import DialogModal from "../../components/DialogModal";
-import { useEffect, useState } from "react";
-import ImagePreview from "../../components/ImagePreview";
 import { Field } from "@/components/ui/field";
 import SelectComponent from "../../components/SelectComponent";
 import { useSetupState } from "@/app/hooks/useSetupState";
-import { useCardState } from "@/app/hooks/useCardState";
 import { VehicleType } from "@/app/types/VehicleType";
 import UUIDv4 from "@/app/libs/uuidv4";
+import { useEffect, useState } from "react";
+import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
+import { useVehicleState } from "@/app/hooks/useVehicleState";
 import { VehicleCardType } from "@/app/types/VehicleCardType";
 
 
@@ -19,7 +19,7 @@ interface AddVehicleModal {
     onOpenChange: (e: { open: boolean }) => void
 }
 
-export default function AddVehicleModal(props: AddVehicleModal): JSX.Element{
+export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
     const {
         open,
@@ -34,15 +34,15 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element{
     const personEntities = useSetupState(state => state.personEntities)
     const [entity, setEntity] = useState<string[]>([])
     const [cardValidate, setCardValidate] = useState<string>('')
-    const [imagePreview, setImagePreview] = useState<string>('');
-    const [imageFile, setImageFile] = useState<File | undefined>(undefined);
-    
     const [loading, setLoading] = useState<boolean>(false)
 
-    const cards = useCardState(state => state.cards)
+    const cards = useVehicleCardState(state => state.cards)
+    const selectedVehicleCard = useVehicleCardState(state => state.selectedVehicleCard)
+    const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedVehicleCard)
+    const addVehicle = useVehicleState(state => state.addVehicle)
+    const updateVehicle = useVehicleState(state => state.updateVehicle)
+    const address = useSetupState(state => state.address)
 
-    const selectedCard = useCardState(state => state.selectedCard)
-    const clearSelectedCard = useCardState(state => state.clearSelectedCard)
 
 
     const [vehicleBrand, setVehicleBrand] = useState<string>("")
@@ -50,35 +50,36 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element{
     const [vehicleColor, setVehicleColor] = useState<string>('')
     const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>('')
 
-    /*
-useEffect(() => {
 
-    if (selectedCard.vehicle){
-        setVehicleBrand(selectedCard.vehicle.brand)
-        setVehicleType(selectedCard.vehicle.type)
-        setVehicleColor(selectedCard.vehicle.color)
-        setEntity(selectedCard.vehicle.entity)
-        setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
-        setCardValidate(selectedCard.expiration.toISOString().
-        split('T')[0])
-    }
-}, [selectedCard])
 
-useEffect(() => {
-    if(!open){
-        clearSelectedCard();
-        setVehicleBrand('');
-        setCardValidate('');
-        setEntity([]);
-        setVehicleColor('');
-        setVehicleType('');
-        setVehicleLicensePlate('');
-    }
-    
-    }, [open]) */
-    
-   async function handleAddVehicle(){
-        try{
+    useEffect(() => {
+
+        if (selectedVehicleCard) {
+            setVehicleBrand(selectedVehicleCard.vehicle.brand)
+            setVehicleType(selectedVehicleCard.vehicle.type)
+            setVehicleColor(selectedVehicleCard.vehicle.color)
+            setEntity([selectedVehicleCard.vehicle.entity]); // Envia um array contendo a string
+            setVehicleLicensePlate(selectedVehicleCard.vehicle.licensePlate)
+            setCardValidate(selectedVehicleCard.expiration.toISOString().
+                split('T')[0])
+        }
+    }, [selectedVehicleCard])
+
+    useEffect(() => {
+        if (!open) {
+            clearSelectedVehicleCard();
+            setVehicleBrand('');
+            setCardValidate('');
+            setEntity([]);
+            setVehicleColor('');
+            setVehicleType('');
+            setVehicleLicensePlate('');
+        }
+
+    }, [open])
+
+    async function handleAddVehicle() {
+        try {
             setLoading(true)
             const vehicle: VehicleType = {
                 brand: vehicleBrand.trim(),
@@ -91,32 +92,92 @@ useEffect(() => {
 
             const valid = new Date(cardValidate)
 
-            
-            }
+            if (entity) {
+                await addVehicle(vehicle, valid, address ?? '', Array.isArray(cards) ? cards : [cards])
+                    .catch(() => {
+                        setLoading(false)
+                    })
 
-           
-               
-            
+                setLoading(false);
+                setEntity([]);
+                onOpenChange({ open: false });
+                setVehicleBrand('');
+                setVehicleColor('');
+                setVehicleLicensePlate('');
+                setVehicleType('');
+            }
+        } catch (error) {
+            setLoading(false);
+            setMessage("")
         }
     }
 
+    async function handleUpdateVehicle() {
+        try {
+            setLoading(true)
+            const vehicle: VehicleType = {
+                id: selectedVehicleCard?.vehicle?.id ?? '',
+                brand: selectedVehicleCard?.vehicle?.brand ?? '',
+                type: selectedVehicleCard?.vehicle?.type ?? '',
+                color: selectedVehicleCard?.vehicle?.color ?? '',
+                licensePlate: selectedVehicleCard?.vehicle?.licensePlate ?? '',
+                entity: ""
+            }
 
-    return (
-        <DialogModal
+            const valid = new Date(cardValidate)
+
+            const card: VehicleCardType = {
+                vehicle,
+                entity: "",
+                expiration: valid,
+                cardNumber: selectedVehicleCard?.cardNumber ?? ''
+            }
+
+            await updateVehicle(vehicle, entity[0], card)
+            setLoading(false)
+            setEntity([]);
+            onOpenChange({ open: false });
+            setVehicleBrand('');
+            setVehicleColor('');
+            setVehicleLicensePlate('');
+            setVehicleType('');
+            onOpenChange({ open: false })
+
+
+
+
+        }     catch (error) {
+            setLoading(false)
+
+        }
+               
+}
+
+
+return (
+    <DialogModal
         title="Cadastro de Veículos"
         open={open}
         onOpenChange={onOpenChange}
         footer={
-            
-                <Button
-                
+            selectedVehicleCard ?
+
+            <Button
+                onClick={handleUpdateVehicle }
                 loading={loading}
-                >
-                   Cadastrar
-                </Button>
+            >
+                Actualizar
+            </Button>
+            :
+            <Button
+                onClick={handleAddVehicle}
+                loading={loading}
+            >
+                Cadastrar
+            </Button>
         }
-        
->
+
+    >
 
         <VStack gap={4}>
             <Flex
@@ -126,9 +187,10 @@ useEffect(() => {
                 justify='center'
                 justifyContent={'center'}
             >
-            
-          
+
+
             </Flex>
+            <Text fontSize={'smaller'} fontWeight={'bold'} color={'red'}>{message}</Text>
             <Field
                 label="Marca"
                 errorText="Este campo é obrigatório"
@@ -138,7 +200,7 @@ useEffect(() => {
                 />
             </Field>
             <Field
-                
+
                 errorText="Este campo é obrigatório"
             >
                 <SelectComponent
@@ -148,23 +210,23 @@ useEffect(() => {
                     selectedValue={option}
                     onValueChange={setOption}
                     data={[
-                        
+
                         { label: "Carro", value: "carro" },
                         { label: "Motorizada", value: "motorizada" }
                     ]}
                 />
             </Field>
             <Field
-                
+
                 errorText="Este campo é obrigatório"
             >
                 <SelectComponent
                     portalRef={contentRef}
-                     label="Entidade"
-                     placeholder="Seleccione a entidade"
-                     selectedValue={entity}
-                     onValueChange={setEntity}
-                     data={personEntities}
+                    label="Entidade"
+                    placeholder="Seleccione a entidade"
+                    selectedValue={entity}
+                    onValueChange={setEntity}
+                    data={personEntities}
                 />
 
             </Field>
@@ -175,32 +237,32 @@ useEffect(() => {
                 <Input
                     placeholder="Digite o nº da matrícula do veículo"
                 />
-            
+
 
             </Field>
             <Field
                 label="Digite a cor do veículo"
                 errorText="Este campo é obrigatório"
             >
-               <Input
+                <Input
                     placeholder="Digite a cor do veículo"
-               />
+                />
             </Field>
             <Field label="Validade do cartão">
-                    <Input
-                        type="date"
-                        value={cardValidate}
-                        onChange={e => setCardValidate(e.target.value)}
-                        min={"2025-01-01"}
-                    />
-                </Field>
-            
-            
+                <Input
+                    type="date"
+                    value={cardValidate}
+                    onChange={e => setCardValidate(e.target.value)}
+                    min={"2025-01-01"}
+                />
+            </Field>
+
+
         </VStack>
 
-        </DialogModal>
-    
-        
-   
-    )
-}
+    </DialogModal>
+
+
+
+)
+        }

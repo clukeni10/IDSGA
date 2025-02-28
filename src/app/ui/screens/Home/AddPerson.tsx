@@ -49,7 +49,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
     const personFunctions = useSetupState(state => state.personFunctions)
     const personEscorts = useSetupState(state => state.personEscorts)
     const personEntities = useSetupState(state => state.personEntities)
-
+ 
     useEffect(() => {
 
         if (selectedCard) {
@@ -150,7 +150,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             onSelectedAccessTypes([])
             setEntity([])
             clearSelectedCard()
-            onOpenChange({ open: false })
+            onOpenChange({ open: false }) 
         } catch (error) {
             setLoading(false)
         }

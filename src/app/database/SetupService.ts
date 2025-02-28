@@ -22,6 +22,24 @@ export default class SetupService {
         })
     }
 
+    async saveVehicleFunction(value:string, url:string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(`https://${url}/setup/vehicle/save`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({vehicleFunction: value})
+                });
+                resolve()
+            } catch(error){
+                reject(error);
+                throw new Error("Failed to process payment");
+            }
+        })
+    }
+
     async savePersonEscort(value: string, url: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -77,6 +95,26 @@ export default class SetupService {
             }
         })
     }
+
+    async getAllVehicles(url: string): Promise<{ value: string, label: string }[]> {
+        return new Promise(async(resolve, reject) => {
+            try {
+                const response = await fetch(`http://${url}/setup/vehicle/getAll`, {
+                    method: "GET",
+                });
+
+                const data: {vehicleFunction: string} [] = await response.json()
+
+                const values = data.map(v => {
+                    return {value: v.vehicleFunction, label: v.vehicleFunction}
+                }) 
+                resolve(values)
+            }       catch(error){
+                reject(error)
+            }
+    })
+    }
+
     async getAllEscorts(url: string): Promise<{ value: string, label: string }[]> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -95,7 +133,7 @@ export default class SetupService {
                 reject(error)
             }
         })
-    }
+    } 
     async getAllEntity(url: string): Promise<{ value: string, label: string }[]> {
         return new Promise(async (resolve, reject) => {
             try {
