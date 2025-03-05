@@ -26,7 +26,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
         contentRef,
         onOpenChange
     } = props
-
+ 
     const [loading, setLoading] = useState<boolean>(false)
     const [selectedJob, onJobValueChange] = useState<string[]>([])
     const [selectedAccessTypes, onSelectedAccessTypes] = useState<string[]>([])
@@ -252,7 +252,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                 >
                     <SelectComponent
                         portalRef={contentRef}
-                        label="Entidade"
+                        label="Entidade" 
                         placeholder="Seleccione a entidade"
                         selectedValue={entity}
                         onValueChange={setEntity}

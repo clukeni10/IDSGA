@@ -10,7 +10,7 @@ import VehicleCardDao from "../database/VehicleCardDao";
 const initialState: State = {
     cards: [],
     refresh: 0
-}
+} 
  
 interface State {
     cards: VehicleCardType[]
@@ -26,8 +26,9 @@ interface Actions {
 
 export const useVehicleState = create<Actions & State>((set) => ({
     ...initialState,
-addVehicle: async (vehicle: VehicleType, valid: Date, url: string , totalCards?: any[]) => {
-    let cardNumber: string;
+    addVehicle: async (vehicle: VehicleType, valid: Date, url: string , totalCards?: any[]) => {
+
+    let cardNumber:Promise<string> | string;
     
     if (totalCards) {
         const nextId = totalCards.length + 1;
@@ -35,11 +36,14 @@ addVehicle: async (vehicle: VehicleType, valid: Date, url: string , totalCards?:
     } else {
         cardNumber = await CardDao.shared.generateNextId();
     }
-    const card: VehicleCardType = {
-        vehicle,
+    
+    const card: VehicleCardType= {
+        vehicle: vehicle,
         expiration: valid,
         cardNumber,
-        entity: "Desconhecido" 
+        entity: "Desconhecido" ,
+        
+        
     };
 
     if (url) {
@@ -63,4 +67,5 @@ updateVehicle: async (vehicle: VehicleType, url: string | null, card: VehicleCar
 forceRefresh: () => {
     set((state) => ({ refresh: state.refresh + 1 }))
 }
-}))
+})
+);

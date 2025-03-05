@@ -126,32 +126,32 @@ export default class CardService {
     async addVehicle(vehicle: VehicleType & VehicleCardType,  url: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try{
-                const formData = new FormData();
-                console.log(url);
-
-                formData.append("brand", vehicle.brand);
-                formData.append("entity", vehicle.entity);
-                formData.append("color", vehicle.color);
-                formData.append("type", vehicle.type);
-                formData.append("cardNumber", vehicle.cardNumber)
-                formData.append("expiration", vehicle.expiration.toISOString())
-
+                const vehicleData = {
+                    brand: vehicle.brand,
+                    entity: vehicle.entity,
+                    color: vehicle.color,
+                    type: vehicle.type,
+                    licencePlate: vehicle.licensePlate,
+                    cardNumber: vehicle.cardNumber
+                };
                 
+
+                console.log("Enviando veículo:", vehicleData);
 
                 await fetch(`http://${url}/setup/vehicle/save`, {
                     method: "POST",
-                    body: formData,
+                    headers: {
+                        "Content-Type": "application/json" 
+                    },
+                    body: JSON.stringify(vehicleData)
                 });
+
                 resolve()
             } catch (error){    
-                console.log(error);
-            
                 reject(error)
                 throw new Error("A operação de gravação falhou");
-
-                
             }
-        })
+        });
     }
 
     async updateVehicle(vehicle: VehicleType & VehicleCardType,  url: string | null): Promise<void> {
@@ -164,6 +164,7 @@ export default class CardService {
                 formData.append("entity", vehicle.entity);
                 formData.append("color", vehicle.color);
                 formData.append("type", vehicle.type);
+                formData.append("licencePlate", vehicle.licensePlate);
                 formData.append("cardNumber", vehicle.cardNumber)
                 formData.append("expiration", vehicle.expiration.toISOString())
 

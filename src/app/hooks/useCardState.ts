@@ -4,16 +4,15 @@ import CardDao from "../database/CardDao";
 import { BlendMode, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { bottom, convertformatDateAngolan, getFirstAndLastName, signed, signedBack, top } from "../utils";
 import CardService from "../database/CardService";
-import { VehicleCardType } from "../types/VehicleCardType";
 
 
-const initialState: State = {
+const initialState: State = { 
     cards: [],
     selectedCard: null
 }
 
 interface State {
-    cards: CardType[] | VehicleCardType[]
+    cards: CardType[] 
     selectedCard: CardType | null
 }
 

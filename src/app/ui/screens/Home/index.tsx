@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import AddPersonModal from "./AddPerson";
 import AddVehicleModal from "./AddVehicle";
 import CardId from "../../components/CardId";
+import VehicleCardId from "../../components/VehicleCardId";
 import HeaderActions from "../../components/HeaderActions";
 import { useCardState } from "@/app/hooks/useCardState";
 import { usePersonState } from "@/app/hooks/usePersonState";
@@ -12,6 +13,7 @@ import { saveFileLocal } from "@/app/libs/tauri-fs";
 import CardOptionPrintScreen from "../CardOptionPrint";
 import SetupScreen from "../SetupScreen";
 import { useSetupState } from "@/app/hooks/useSetupState";
+import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 
 
 export default function HomeScreen(): JSX.Element {
@@ -29,9 +31,12 @@ export default function HomeScreen(): JSX.Element {
     const generateA4CardsBack = useCardState(state => state.generateA4CardsBack) */
     const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
     const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
+    const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
     const clearSelectedCard = useCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
+    const vehicles = useVehicleCardState(state => state.cards)
     const selectedCard = useCardState(state => state.selectedCard)
+    const selectedVehicleCard= useVehicleCardState(state => state.selectedVehicleCard)
 
     const refresh = usePersonState(state => state.refresh)
 
@@ -55,6 +60,8 @@ export default function HomeScreen(): JSX.Element {
         }
     }
 
+
+
     async function onHandleToPrint(cardSidePrint: string, cardType: string) {
         const dirPath = 'pdf'
         const extension = 'pdf'
@@ -72,6 +79,14 @@ export default function HomeScreen(): JSX.Element {
             await openCardPDF(filePath)
             clearSelectedCard()
             setOpenOption({ open: false })
+        }
+
+        if(selectedVehicleCard) {
+            if (cardSidePrint === 'frontal') {
+                pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
+            } 
+
+            
         }
 
 
@@ -114,19 +129,26 @@ export default function HomeScreen(): JSX.Element {
             <Stack
                 p={4}
             >
-                <Grid templateColumns="1fr 1fr" gap="6">
-                    <GridItem >
-                    <For each={cards}>
-                        {(card) => (
-                            <CardId
-                                key={card.cardNumber}
-                                card={card}
-                            />
-                        )}
-                    </For>
-                    </GridItem>
-                    
-                </Grid>
+                <Grid templateColumns="1fr 1fr" gap="10px">
+    {/* Coluna para CardId */}
+    <GridItem>
+        <For each={cards}>
+            {(card) => (
+                <CardId key={card.cardNumber} card={card} />
+            )}
+        </For>
+    </GridItem>
+
+    {/* Coluna para VehicleCardId */}
+    <GridItem>
+        <For each={vehicles}>
+            {(vehicle) => (
+                <VehicleCardId key={vehicle.cardNumber} card={vehicle} />
+            )}
+        </For>
+    </GridItem>
+</Grid>
+
 
                 <AddPersonModal
                     contentRef={contentRef}
@@ -155,3 +177,4 @@ export default function HomeScreen(): JSX.Element {
         </Stack>
     )
 }
+

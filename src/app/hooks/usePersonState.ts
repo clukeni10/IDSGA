@@ -10,7 +10,7 @@ const initialState: State = {
     refresh: 0
 } 
 
-interface State {
+interface State { 
     cards: CardType[]
     refresh: number
 }

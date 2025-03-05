@@ -2,9 +2,8 @@ import { VehicleCardType } from "../types/VehicleCardType";
 import IndexedDB from "./IndexedDB";
 import { objectStore } from "./IndexedDB/objectStore";
 
-
-
 export default class VehicleCardDao {
+    
     static shared = new VehicleCardDao();
     private keyPath = objectStore.vehicleCardObjectStore
 

@@ -2,11 +2,11 @@ import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import CardService from "../database/CardService";
 import VehicleDao from "../database/VehicleDao";
 import { VehicleCardType } from "../types/VehicleCardType";
-import { create } from "zustand";
+import { create } from "zustand"; 
 import { convertformatDateAngolan } from "../utils";
 
 const initialState: State = {
-    cards: [],
+    cards: [] as VehicleCardType[],
     selectedVehicleCard: null
 };
 
@@ -17,36 +17,44 @@ interface State {
 
 interface Actions {
     getAllVehicleCards: (url: string | null) => void;
-    clearSelectedVehicleCard: () => void;
     generateVehicleCardFrontPVC: (card: VehicleCardType, hasBlueBackground?: boolean) => Promise<Uint8Array>;
+    setSelectedVehicleCard: (card: VehicleCardType) => void
+    clearSelectedVehicleCard: () => void;
+    
 }
+
+
 
 export const useVehicleCardState = create<Actions & State>((set) => ({
     ...initialState,
 
-    setSelectedVehicleCard: (selectedVehicleCard: VehicleCardType) =>
-        set(() => ({ selectedVehicleCard })),
+    setSelectedVehicleCard: (selectedVehicleCard: VehicleCardType) => set(() => {
+            
+           return ({ selectedVehicleCard })
+}),
 
     clearSelectedVehicleCard: () => set(() => ({ selectedVehicleCard: null })),
 
     getAllVehicleCards: (url: string | null) => {
         if (url) {
             CardService.shared.getAllVehicleCards(url)
-                .then(cards => set((state) => ({ ...state, cards })))
+                .then(cards => {
+                    set(() => ({ cards }))
+                })
                 .catch(console.log);
         } else {
             VehicleDao.shared.getAllVehicles()
-                .then(vehicles => {
-                    const cards: VehicleCardType[] = vehicles.map(vehicle => ({
-                        vehicle,
-                        expiration: new Date(),
-                        cardNumber: "0000",
-                        entity: "Desconhecido"
-                    }));
-
-                    set((state) => ({ ...state, cards }));
-                })
-                .catch(console.log);
+            .then(cards => {
+                const vehicleCards: VehicleCardType[] = cards.map(vehicle => ({
+                    vehicle, // `vehicle` é o próprio objeto `VehicleType`
+                    expiration: new Date(), // Substitua isso pela data real se necessário
+                    cardNumber: "0001", // Gere um número adequado aqui
+                    entity: "Desconhecido" // Ajuste conforme necessário
+                }));
+            
+                set(() => ({ cards: vehicleCards }));
+            })
+            .catch(console.log);
         }
     },
 

@@ -27,10 +27,29 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         onOpenChange
     } = props
 
+    const carBrands = [
+
+        "Toyota", "Hyundai", "Kia", "Nissan", "Mercedes-Benz", "BMW", "Volkswagen", "Ford", "Renault", "Peugeot",
+        "Mitsubishi", "Chevrolet", "Honda", "Mazda", "Audi", "Opel", "Land Rover", "Jeep", "Fiat", "Volvo",
+        "Citroën", "Chery", "Suzuki", "Daihatsu", "Isuzu", "Subaru", "Lexus", "Porsche", "Cadillac", "Dongfeng",
+        "Jaguar", "SsangYong", "Bugatti", "Haval", "GWM", "BYD", "Geely", "FAW", "Skoda", "GAC",
+
+
+         "Yamaha", "Kawasaki", "Bajaj", "Loncin", "Zongshen", "Keeway", "Lifan", "TVS",
+        "Outro"
+    ];
+
+    const carBrandsOptions = carBrands.map((brand) => ({
+        label: brand,
+        value: brand
+    }));
+
+
+
+
 
     //const addVehicle = useVehicleState(state => state.addVehicle)
     const [message, setMessage] = useState<string>()
-    const [option, setOption] = useState<string[]>([]);
     const personEntities = useSetupState(state => state.personEntities)
     const [entity, setEntity] = useState<string[]>([])
     const [cardValidate, setCardValidate] = useState<string>('')
@@ -45,8 +64,9 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
 
 
-    const [vehicleBrand, setVehicleBrand] = useState<string>("")
-    const [vehicleType, setVehicleType] = useState<string>('')
+    const [vehicleEntity, setVehicleEntity] = useState<string[]>([])
+    const [vehicleBrand, setVehicleBrand] = useState<string[]>([])
+    const [vehicleType, setVehicleType] = useState<string[]>([])
     const [vehicleColor, setVehicleColor] = useState<string>('')
     const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>('')
 
@@ -55,24 +75,23 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     useEffect(() => {
 
         if (selectedVehicleCard) {
-            setVehicleBrand(selectedVehicleCard.vehicle.brand)
-            setVehicleType(selectedVehicleCard.vehicle.type)
+            setVehicleBrand([selectedVehicleCard.vehicle.brand])
+            setVehicleType([selectedVehicleCard.vehicle.type])
             setVehicleColor(selectedVehicleCard.vehicle.color)
-            setEntity([selectedVehicleCard.vehicle.entity]); // Envia um array contendo a string
+            setVehicleEntity([selectedVehicleCard.vehicle.entity]); 
             setVehicleLicensePlate(selectedVehicleCard.vehicle.licensePlate)
-            setCardValidate(selectedVehicleCard.expiration.toISOString().
-                split('T')[0])
+            setCardValidate(selectedVehicleCard.expiration.toISOString().split('T')[0])
         }
     }, [selectedVehicleCard])
 
     useEffect(() => {
         if (!open) {
             clearSelectedVehicleCard();
-            setVehicleBrand('');
+            setVehicleBrand(['']);
             setCardValidate('');
-            setEntity([]);
+            setVehicleEntity([]);
             setVehicleColor('');
-            setVehicleType('');
+            setVehicleType(['']);
             setVehicleLicensePlate('');
         }
 
@@ -82,8 +101,8 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         try {
             setLoading(true)
             const vehicle: VehicleType = {
-                brand: vehicleBrand.trim(),
-                entity: entity[0],
+                brand: vehicleBrand[0],
+                entity: vehicleEntity[0],
                 type: vehicleType[0],
                 id: UUIDv4.generateId(),
                 color: vehicleColor.trim(),
@@ -99,12 +118,12 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                     })
 
                 setLoading(false);
-                setEntity([]);
+                setVehicleEntity([]);
                 onOpenChange({ open: false });
-                setVehicleBrand('');
+                setVehicleBrand(['']);
                 setVehicleColor('');
                 setVehicleLicensePlate('');
-                setVehicleType('');
+                setVehicleType(['']);
             }
         } catch (error) {
             setLoading(false);
@@ -121,148 +140,161 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 type: selectedVehicleCard?.vehicle?.type ?? '',
                 color: selectedVehicleCard?.vehicle?.color ?? '',
                 licensePlate: selectedVehicleCard?.vehicle?.licensePlate ?? '',
-                entity: ""
+                entity: selectedVehicleCard?.vehicle?.entity ?? '',
             }
 
             const valid = new Date(cardValidate)
 
             const card: VehicleCardType = {
                 vehicle,
-                entity: "",
+                entity: selectedVehicleCard?.vehicle?.entity ?? '',
                 expiration: valid,
                 cardNumber: selectedVehicleCard?.cardNumber ?? ''
             }
 
             await updateVehicle(vehicle, entity[0], card)
             setLoading(false)
-            setEntity([]);
+            setVehicleEntity([]);
             onOpenChange({ open: false });
-            setVehicleBrand('');
+            setVehicleBrand(['']);
             setVehicleColor('');
             setVehicleLicensePlate('');
-            setVehicleType('');
+            setVehicleType(['']);
             onOpenChange({ open: false })
 
 
 
 
-        }     catch (error) {
+        } catch (error) {
             setLoading(false)
 
         }
-               
+
+    }
+
+
+    return (
+        <DialogModal
+            title="Cadastro de Veículos"
+            open={open}
+            onOpenChange={onOpenChange}
+            footer={
+                selectedVehicleCard ?
+
+                    <Button
+                        onClick={handleUpdateVehicle}
+                        loading={loading}
+                    >
+                        Actualizar
+                    </Button>
+                    :
+                    <Button
+                        onClick={handleAddVehicle}
+                        loading={loading}
+                    >
+                        Cadastrar
+                    </Button>
+            }
+
+        >
+
+            <VStack gap={4}>
+                <Flex
+                    w="100%"
+                    flexDir={'column'}
+                    align='center'
+                    justify='center'
+                    justifyContent={'center'}
+                >
+
+
+                </Flex>
+                <Text fontSize={'smaller'} fontWeight={'bold'} color={'red'}>{message}</Text>
+                <Field
+                   
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Marca do veículo"
+                        placeholder="Selecione a marca do veículo"
+                        selectedValue={vehicleBrand} // Agora um array de strings
+                        onValueChange={setVehicleBrand} // Aceita um array de strings
+                        data={carBrandsOptions}
+                    >
+
+                    </SelectComponent>
+
+                </Field>
+                <Field
+
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Tipo de Veículo"
+                        placeholder="Seleccione o tipo de veículo"
+                        selectedValue={vehicleType}
+                        onValueChange={setVehicleType}
+                        data={[
+
+                            { label: "Carro", value: "Carro" },
+                            { label: "Motorizada", value: "Motorizada" }
+                        ]}
+                    />
+                </Field>
+                <Field
+
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Entidade"
+                        placeholder="Seleccione a entidade"
+                        selectedValue={vehicleEntity}
+                        onValueChange={setVehicleEntity}
+                        data={personEntities}
+                    />
+
+                </Field>
+                <Field
+                    label="Matrícula do veículo"
+                    errorText="Este campo é obrigatório"
+                >
+                    <Input
+                        placeholder="Digite o nº da matrícula do veículo"
+                        value={vehicleLicensePlate}
+                        onChange={e => setVehicleLicensePlate(e.target.value)}
+                        type="number"
+                    />
+
+
+                </Field>
+                <Field
+                    label="Digite a cor do veículo"
+                    errorText="Este campo é obrigatório"
+                >
+                    <Input
+                        placeholder="Digite a cor do veículo"
+                        value={vehicleColor}
+                        onChange={e => setVehicleColor(e.target.value)}
+                    />
+                </Field>
+                <Field label="Validade do cartão">
+                    <Input
+                        type="date"
+                        value={cardValidate}
+                        onChange={e => setCardValidate(e.target.value)}
+                        min={"2025-01-01"}
+                    />
+                </Field>
+
+
+            </VStack>
+
+        </DialogModal>
+
+
+
+    )
 }
-
-
-return (
-    <DialogModal
-        title="Cadastro de Veículos"
-        open={open}
-        onOpenChange={onOpenChange}
-        footer={
-            selectedVehicleCard ?
-
-            <Button
-                onClick={handleUpdateVehicle }
-                loading={loading}
-            >
-                Actualizar
-            </Button>
-            :
-            <Button
-                onClick={handleAddVehicle}
-                loading={loading}
-            >
-                Cadastrar
-            </Button>
-        }
-
-    >
-
-        <VStack gap={4}>
-            <Flex
-                w="100%"
-                flexDir={'column'}
-                align='center'
-                justify='center'
-                justifyContent={'center'}
-            >
-
-
-            </Flex>
-            <Text fontSize={'smaller'} fontWeight={'bold'} color={'red'}>{message}</Text>
-            <Field
-                label="Marca"
-                errorText="Este campo é obrigatório"
-            >
-                <Input
-                    placeholder="Digite o nome da marca do veículo"
-                />
-            </Field>
-            <Field
-
-                errorText="Este campo é obrigatório"
-            >
-                <SelectComponent
-                    portalRef={contentRef}
-                    label="Tipo de Veículo"
-                    placeholder="Seleccione o tipo de veículo"
-                    selectedValue={option}
-                    onValueChange={setOption}
-                    data={[
-
-                        { label: "Carro", value: "carro" },
-                        { label: "Motorizada", value: "motorizada" }
-                    ]}
-                />
-            </Field>
-            <Field
-
-                errorText="Este campo é obrigatório"
-            >
-                <SelectComponent
-                    portalRef={contentRef}
-                    label="Entidade"
-                    placeholder="Seleccione a entidade"
-                    selectedValue={entity}
-                    onValueChange={setEntity}
-                    data={personEntities}
-                />
-
-            </Field>
-            <Field
-                label="Matrícula do veículo"
-                errorText="Este campo é obrigatório"
-            >
-                <Input
-                    placeholder="Digite o nº da matrícula do veículo"
-                />
-
-
-            </Field>
-            <Field
-                label="Digite a cor do veículo"
-                errorText="Este campo é obrigatório"
-            >
-                <Input
-                    placeholder="Digite a cor do veículo"
-                />
-            </Field>
-            <Field label="Validade do cartão">
-                <Input
-                    type="date"
-                    value={cardValidate}
-                    onChange={e => setCardValidate(e.target.value)}
-                    min={"2025-01-01"}
-                />
-            </Field>
-
-
-        </VStack>
-
-    </DialogModal>
-
-
-
-)
-        }
