@@ -54,7 +54,7 @@ export default function HomeScreen(): JSX.Element {
         setOpenVehicle({ open: true })
     }
 
-    async function handleOnPrintingCard() {
+    async function handleOnPrintingCard() { 
         if (cards.length !== 0) {
             setOpenOption({ open: true })
         }
@@ -130,7 +130,7 @@ export default function HomeScreen(): JSX.Element {
                 p={4}
             >
                 <Grid templateColumns="1fr 1fr" gap="10px">
-    {/* Coluna para CardId */}
+    
     <GridItem>
         <For each={cards}>
             {(card) => (
@@ -139,7 +139,7 @@ export default function HomeScreen(): JSX.Element {
         </For>
     </GridItem>
 
-    {/* Coluna para VehicleCardId */}
+   
     <GridItem>
         <For each={vehicles}>
             {(vehicle) => (

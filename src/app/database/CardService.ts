@@ -23,6 +23,8 @@ export default class CardService {
                 formData.append("expiration", person.expiration.toISOString())
                 formData.append("accessType", JSON.stringify(person.accessType));
 
+                console.log("Enviando Pessoa:", Object.fromEntries(formData.entries()));
+
                 if (file) {
                     formData.append("image", file);
                 }
@@ -125,32 +127,32 @@ export default class CardService {
 
     async addVehicle(vehicle: VehicleType & VehicleCardType,  url: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            try{
-                const vehicleData = {
-                    brand: vehicle.brand,
-                    entity: vehicle.entity,
-                    color: vehicle.color,
-                    type: vehicle.type,
-                    licencePlate: vehicle.licensePlate,
-                    cardNumber: vehicle.cardNumber
-                };
-                
-
-                console.log("Enviando veículo:", vehicleData);
-
-                await fetch(`http://${url}/setup/vehicle/save`, {
+            try {
+                const formData = new FormData();
+                formData.append("brand", vehicle.brand);
+                formData.append("entity", vehicle.entity);
+                formData.append("color", vehicle.color);
+                formData.append("type", vehicle.type);
+                formData.append("licencePlate", vehicle.licensePlate);
+                formData.append("cardNumber", vehicle.cardNumber);
+            
+                console.log("Enviando veículo:", Object.fromEntries(formData.entries()));
+            
+                const response = await fetch(`http://${url}/card-vehicle/save`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json" 
-                    },
-                    body: JSON.stringify(vehicleData)
+                    body: formData, // Removemos os headers para que o navegador defina automaticamente "Content-Type"
                 });
-
-                resolve()
-            } catch (error){    
-                reject(error)
+            
+                const responseData = await response.json();
+                console.log("Resposta da API:", responseData);
+            
+                resolve();
+            } catch (error) {    
+                console.log(error);
+                reject(error);
                 throw new Error("A operação de gravação falhou");
             }
+            
         });
     }
 
@@ -198,14 +200,14 @@ export default class CardService {
                         vehicle: {
                             brand: d.vehicle.brand,
                             id: d.vehicle.id,
-                            entity: d.vehicle.entity?.name,
+                            entity: d.vehicle.entity,
                             color: d.vehicle.color,
                             licensePlate: d.vehicle.licensePlate,
                             type: d.vehicle.type
                         },
                         expiration: new Date(d.expiration),
                         cardNumber: d.cardNumber,
-                        entity: ''
+                        
                     };
 
                     all.push(card);

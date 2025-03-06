@@ -35,7 +35,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         "Jaguar", "SsangYong", "Bugatti", "Haval", "GWM", "BYD", "Geely", "FAW", "Skoda", "GAC",
 
 
-         "Yamaha", "Kawasaki", "Bajaj", "Loncin", "Zongshen", "Keeway", "Lifan", "TVS",
+        "Yamaha", "Kawasaki", "Bajaj", "Loncin", "Zongshen", "Keeway", "Lifan", "TVS",
         "Outro"
     ];
 
@@ -51,7 +51,6 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     //const addVehicle = useVehicleState(state => state.addVehicle)
     const [message, setMessage] = useState<string>()
     const personEntities = useSetupState(state => state.personEntities)
-    const [entity, setEntity] = useState<string[]>([])
     const [cardValidate, setCardValidate] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -64,7 +63,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
 
 
-    const [vehicleEntity, setVehicleEntity] = useState<string[]>([])
+    const [entity, setEntity] = useState<string[]>([])
     const [vehicleBrand, setVehicleBrand] = useState<string[]>([])
     const [vehicleType, setVehicleType] = useState<string[]>([])
     const [vehicleColor, setVehicleColor] = useState<string>('')
@@ -78,7 +77,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setVehicleBrand([selectedVehicleCard.vehicle.brand])
             setVehicleType([selectedVehicleCard.vehicle.type])
             setVehicleColor(selectedVehicleCard.vehicle.color)
-            setVehicleEntity([selectedVehicleCard.vehicle.entity]); 
+            setEntity([selectedVehicleCard.vehicle.entity]);
             setVehicleLicensePlate(selectedVehicleCard.vehicle.licensePlate)
             setCardValidate(selectedVehicleCard.expiration.toISOString().split('T')[0])
         }
@@ -89,7 +88,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             clearSelectedVehicleCard();
             setVehicleBrand(['']);
             setCardValidate('');
-            setVehicleEntity([]);
+            setEntity(['']);
             setVehicleColor('');
             setVehicleType(['']);
             setVehicleLicensePlate('');
@@ -102,7 +101,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setLoading(true)
             const vehicle: VehicleType = {
                 brand: vehicleBrand[0],
-                entity: vehicleEntity[0],
+                entity: entity[0],
                 type: vehicleType[0],
                 id: UUIDv4.generateId(),
                 color: vehicleColor.trim(),
@@ -112,13 +111,18 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             const valid = new Date(cardValidate)
 
             if (entity) {
-                await addVehicle(vehicle, valid, address ?? '', Array.isArray(cards) ? cards : [cards])
+                await addVehicle(vehicle, valid, address ?? '', cards)
+                    .then(() => {
+
+
+                    }
+                    )
                     .catch(() => {
                         setLoading(false)
                     })
 
                 setLoading(false);
-                setVehicleEntity([]);
+                setEntity(['']);
                 onOpenChange({ open: false });
                 setVehicleBrand(['']);
                 setVehicleColor('');
@@ -147,14 +151,13 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
             const card: VehicleCardType = {
                 vehicle,
-                entity: selectedVehicleCard?.vehicle?.entity ?? '',
                 expiration: valid,
                 cardNumber: selectedVehicleCard?.cardNumber ?? ''
             }
 
             await updateVehicle(vehicle, entity[0], card)
             setLoading(false)
-            setVehicleEntity([]);
+            setEntity(['']);
             onOpenChange({ open: false });
             setVehicleBrand(['']);
             setVehicleColor('');
@@ -211,7 +214,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 </Flex>
                 <Text fontSize={'smaller'} fontWeight={'bold'} color={'red'}>{message}</Text>
                 <Field
-                   
+
                     errorText="Este campo é obrigatório"
                 >
                     <SelectComponent
@@ -251,8 +254,8 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                         portalRef={contentRef}
                         label="Entidade"
                         placeholder="Seleccione a entidade"
-                        selectedValue={vehicleEntity}
-                        onValueChange={setVehicleEntity}
+                        selectedValue={entity}
+                        onValueChange={setEntity}
                         data={personEntities}
                     />
 
@@ -265,7 +268,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                         placeholder="Digite o nº da matrícula do veículo"
                         value={vehicleLicensePlate}
                         onChange={e => setVehicleLicensePlate(e.target.value)}
-                        type="number"
+
                     />
 
 

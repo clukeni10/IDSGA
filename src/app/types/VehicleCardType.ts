@@ -4,5 +4,5 @@ export type VehicleCardType = {
     vehicle: VehicleType
     expiration: Date
     cardNumber: string
-    entity: string
+    
 }

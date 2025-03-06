@@ -19,14 +19,14 @@ interface State {
 
 
 interface Actions {
-    addVehicle: (vehicle: VehicleType, valid:Date, url:string, totalCards?: any[])=> Promise<void>
+    addVehicle: (vehicle: VehicleType, valid:Date, url:string,  totalCards?: any[])=> Promise<void>
     updateVehicle:(vehicle: VehicleType,  url:string | null, card: VehicleCardType)=> Promise<void>
     forceRefresh: () => void
 }
 
 export const useVehicleState = create<Actions & State>((set) => ({
     ...initialState,
-    addVehicle: async (vehicle: VehicleType, valid: Date, url: string , totalCards?: any[]) => {
+    addVehicle: async (vehicle: VehicleType, valid: Date, url: string ,totalCards?: any[]) => {
 
     let cardNumber:Promise<string> | string;
     
@@ -41,7 +41,7 @@ export const useVehicleState = create<Actions & State>((set) => ({
         vehicle: vehicle,
         expiration: valid,
         cardNumber,
-        entity: "Desconhecido" ,
+        
         
         
     };
@@ -50,7 +50,7 @@ export const useVehicleState = create<Actions & State>((set) => ({
         await CardService.shared.addVehicle({ ...vehicle, ...card }, url);
     } else {
         await VehicleDao.shared.addVehicle(vehicle);
-        await VehicleCardDao.shared.addCard(card);
+        await VehicleCardDao.shared.addCard(card); 
     }
 
     set((state) => ({ cards: [...state.cards, card], refresh: state.refresh + 1 }));

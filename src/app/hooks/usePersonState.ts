@@ -40,7 +40,7 @@ export const usePersonState = create<Actions & State>((set) => ({
             expiration: valid,
             cardNumber
         };
-
+ 
         if (url) {
             await CardService.shared.addCard({ ...card, ...person }, imageFile, url)
         } else {
