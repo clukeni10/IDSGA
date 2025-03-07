@@ -55,8 +55,8 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     const [loading, setLoading] = useState<boolean>(false)
 
     const cards = useVehicleCardState(state => state.cards)
-    const selectedVehicleCard = useVehicleCardState(state => state.selectedVehicleCard)
-    const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedVehicleCard)
+    const selectedCard = useVehicleCardState(state => state.selectedCard)
+    const clearSelectedCard = useVehicleCardState(state => state.clearSelectedCard)
     const addVehicle = useVehicleState(state => state.addVehicle)
     const updateVehicle = useVehicleState(state => state.updateVehicle)
     const address = useSetupState(state => state.address)
@@ -73,19 +73,19 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
     useEffect(() => {
 
-        if (selectedVehicleCard) {
-            setVehicleBrand([selectedVehicleCard.vehicle.brand])
-            setVehicleType([selectedVehicleCard.vehicle.type])
-            setVehicleColor(selectedVehicleCard.vehicle.color)
-            setEntity([selectedVehicleCard.vehicle.entity]);
-            setVehicleLicensePlate(selectedVehicleCard.vehicle.licensePlate)
-            setCardValidate(selectedVehicleCard.expiration.toISOString().split('T')[0])
+        if (selectedCard) {
+            setVehicleBrand([selectedCard.vehicle.brand])
+            setVehicleType([selectedCard.vehicle.type])
+            setVehicleColor(selectedCard.vehicle.color)
+            setEntity([selectedCard.vehicle.entity]);
+            setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
+            setCardValidate(selectedCard.expiration.toISOString().split('T')[0])
         }
-    }, [selectedVehicleCard])
+    }, [selectedCard])
 
     useEffect(() => {
         if (!open) {
-            clearSelectedVehicleCard();
+            clearSelectedCard();
             setVehicleBrand(['']);
             setCardValidate('');
             setEntity(['']);
@@ -139,12 +139,12 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         try {
             setLoading(true)
             const vehicle: VehicleType = {
-                id: selectedVehicleCard?.vehicle?.id ?? '',
-                brand: selectedVehicleCard?.vehicle?.brand ?? '',
-                type: selectedVehicleCard?.vehicle?.type ?? '',
-                color: selectedVehicleCard?.vehicle?.color ?? '',
-                licensePlate: selectedVehicleCard?.vehicle?.licensePlate ?? '',
-                entity: selectedVehicleCard?.vehicle?.entity ?? '',
+                id: selectedCard?.vehicle?.id ?? '',
+                brand: selectedCard?.vehicle?.brand ?? '',
+                type: selectedCard?.vehicle?.type ?? '',
+                color: selectedCard?.vehicle?.color ?? '',
+                licensePlate: selectedCard?.vehicle?.licensePlate ?? '',
+                entity: selectedCard?.vehicle?.entity ?? '',
             }
 
             const valid = new Date(cardValidate)
@@ -152,7 +152,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             const card: VehicleCardType = {
                 vehicle,
                 expiration: valid,
-                cardNumber: selectedVehicleCard?.cardNumber ?? ''
+                cardNumber: selectedCard?.cardNumber ?? ''
             }
 
             await updateVehicle(vehicle, entity[0], card)
@@ -182,7 +182,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             open={open}
             onOpenChange={onOpenChange}
             footer={
-                selectedVehicleCard ?
+                selectedCard ?
 
                     <Button
                         onClick={handleUpdateVehicle}

@@ -43,6 +43,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
             bgColor={'#D2ECFA'}
         >
             <HStack>
+                
                 <Box
                    
                     py={4}
@@ -108,7 +109,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                                 bgColor: '#cbe5f2',
                                 cursor: 'default'
                             }}
-                            onClick={onUpdateCard}
+                            onClick={() => onUpdateCard()}
                         >
                             <Icon
                                 fontSize="2xl"

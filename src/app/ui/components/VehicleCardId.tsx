@@ -6,7 +6,7 @@ import { convertformatDateAngolan } from "@/app/utils"
 
 
 interface VehicleCardId {
-    card: VehicleCardType
+    card: VehicleCardType 
 }
 
 export default function VehicleCardId(props: VehicleCardId): JSX.Element {

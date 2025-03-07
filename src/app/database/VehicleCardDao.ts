@@ -24,8 +24,8 @@ export default class VehicleCardDao {
         async updateCard(vehicles: VehicleCardType | VehicleCardType[]): Promise<void> {
     
             if (Array.isArray(vehicles)) {
-                for (const person of vehicles) {
-                    await IndexedDB.shared.editItem<VehicleCardType>(person, this.keyPath)
+                for (const vehicle of vehicles) {
+                    await IndexedDB.shared.editItem<VehicleCardType>(vehicle, this.keyPath)
                 }
             } else {
                 await IndexedDB.shared.editItem<VehicleCardType>(vehicles, this.keyPath)

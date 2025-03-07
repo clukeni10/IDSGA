@@ -1,25 +1,26 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import CardService from "../database/CardService";
-import VehicleDao from "../database/VehicleDao";
+import VehicleCardService from "../database/VehicleCardService";
+import VehicleCardDao from "../database/VehicleCardDao";
 import { VehicleCardType } from "../types/VehicleCardType";
 import { create } from "zustand"; 
 import { convertformatDateAngolan } from "../utils";
 
+ 
 const initialState: State = {
-    cards: [] as VehicleCardType[],
-    selectedVehicleCard: null
+    cards: [],
+    selectedCard: null
 };
 
 interface State {
-    cards: VehicleCardType[];
-    selectedVehicleCard: VehicleCardType | null;
+    cards: VehicleCardType[]
+    selectedCard: VehicleCardType | null
 }
 
 interface Actions {
-    getAllVehicleCards: (url: string | null) => void;
-    generateVehicleCardFrontPVC: (card: VehicleCardType, hasBlueBackground?: boolean) => Promise<Uint8Array>;
-    setSelectedVehicleCard: (card: VehicleCardType) => void
-    clearSelectedVehicleCard: () => void;
+    getAllCards: (url: string | null) => void;
+   // generateVehicleCardFrontPVC: (card: VehicleCardType, hasBlueBackground?: boolean) => Promise<Uint8Array>;
+    setSelectedCard: (card: VehicleCardType) => void
+    clearSelectedCard: () => void;
     
 }
 
@@ -28,35 +29,38 @@ interface Actions {
 export const useVehicleCardState = create<Actions & State>((set) => ({
     ...initialState,
 
-    setSelectedVehicleCard: (selectedVehicleCard: VehicleCardType) => set(() => {
+    setSelectedCard: (selectedCard: VehicleCardType) => set(() => {
             
-           return ({ selectedVehicleCard })
+           return ({ selectedCard })
 }),
 
-    clearSelectedVehicleCard: () => set(() => ({ selectedVehicleCard: null })),
+    clearSelectedCard: () => set(() => ({ selectedCard: null })),
 
-    getAllVehicleCards: (url: string | null) => {
+    getAllCards: (url: string | null) => {
         if (url) {
-            CardService.shared.getAllVehicleCards(url)
-                .then(cards => {
-                    set(() => ({ cards }))
+            VehicleCardService.shared.getAllCards(url)
+                .then((cards: any) => {
+                   
+                    if (!Array.isArray(cards)) {
+                        console.error("Dados inválidos recebidos:", cards);
+                        return;
+                    }
+                    set(() => ({ cards: cards as VehicleCardType[] })); 
                 })
-                .catch(console.log);
+                .catch(console.error);
         } else {
-            VehicleDao.shared.getAllVehicles()
-            .then(cards => {
-                const vehicleCards: VehicleCardType[] = cards.map(vehicle => ({
-                    vehicle, // `vehicle` é o próprio objeto `VehicleType`
-                    expiration: new Date(), // Substitua isso pela data real se necessário
-                    cardNumber: "0001", // Gere um número adequado aqui
-                    entity: "Desconhecido" // Ajuste conforme necessário
-                }));
-            
-                set(() => ({ cards: vehicleCards }));
-            })
-            .catch(console.log);
+            VehicleCardDao.shared.getAllCards()
+                .then((cards: any) => {
+                    if (!Array.isArray(cards)) {
+                        console.error("Dados inválidos recebidos:", cards);
+                        return;
+                    }
+                    set(() => ({ cards: cards as VehicleCardType[] }));
+                })
+                .catch(console.error);
         }
     },
+    
 
     generateVehicleCardFrontPVC: async (card: VehicleCardType, hasBlueBackground?: boolean) => {
         const pdfDoc = await PDFDocument.create();

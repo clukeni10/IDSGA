@@ -25,7 +25,7 @@ export default class SetupService {
     async saveVehicleFunction(value:string, url:string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await fetch(`https://${url}/setup/vehicle/save`, {
+                await fetch(`https://${url}/card-vehicle/save`, {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export default class SetupService {
     async getAllVehicles(url: string): Promise<{ value: string, label: string }[]> {
         return new Promise(async(resolve, reject) => {
             try {
-                const response = await fetch(`http://${url}/setup/vehicle/getAll`, {
+                const response = await fetch(`http://${url}/card-vehicle/getAll`, {
                     method: "GET",
                 });
 

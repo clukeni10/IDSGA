@@ -2,8 +2,7 @@ import { fetch } from '@tauri-apps/plugin-http';
 import { CardType } from "../types/CardType";
 import { PersonType } from '../types/PersonType';
 import { Buffer } from "buffer" 
-import { VehicleType } from '../types/VehicleType';
-import { VehicleCardType } from '../types/VehicleCardType';
+
 
 export default class CardService {
 
@@ -81,11 +80,17 @@ export default class CardService {
                 const response = await fetch(`http://${url}/card/getAll`, {
                     method: "GET",
                 });
+                console.log("Resposta recebida:", response);
+
     
                 const data = await response.json();
+                console.log("Resposta recebida:", data);
+
                 const all: CardType[] = [];
     
                 for (const d of data) {
+                    
+
                     let imageBase64 = null;
     
                     // Se existir uma imagem, faz o download e converte para Base64
@@ -125,101 +130,6 @@ export default class CardService {
         });
     }
 
-    async addVehicle(vehicle: VehicleType & VehicleCardType,  url: string): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const formData = new FormData();
-                formData.append("brand", vehicle.brand);
-                formData.append("entity", vehicle.entity);
-                formData.append("color", vehicle.color);
-                formData.append("type", vehicle.type);
-                formData.append("licencePlate", vehicle.licensePlate);
-                formData.append("cardNumber", vehicle.cardNumber);
-            
-                console.log("Enviando veículo:", Object.fromEntries(formData.entries()));
-            
-                const response = await fetch(`http://${url}/card-vehicle/save`, {
-                    method: "POST",
-                    body: formData, // Removemos os headers para que o navegador defina automaticamente "Content-Type"
-                });
-            
-                const responseData = await response.json();
-                console.log("Resposta da API:", responseData);
-            
-                resolve();
-            } catch (error) {    
-                console.log(error);
-                reject(error);
-                throw new Error("A operação de gravação falhou");
-            }
-            
-        });
-    }
-
-    async updateVehicle(vehicle: VehicleType & VehicleCardType,  url: string | null): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try {
-
-                const formData = new FormData();
-
-                formData.append("brand", vehicle.brand);
-                formData.append("entity", vehicle.entity);
-                formData.append("color", vehicle.color);
-                formData.append("type", vehicle.type);
-                formData.append("licencePlate", vehicle.licensePlate);
-                formData.append("cardNumber", vehicle.cardNumber)
-                formData.append("expiration", vehicle.expiration.toISOString())
-
-               
-                
-                await fetch(`http://${url}/card-vehicle/save`, {
-                    method: "PUT",
-                    body: formData,
-                });
-                resolve()
-            } catch (error) {
-                reject(error)
-                throw new Error("A operação de actualização falhou");
-            }
-        })
-    }
-
-    async getAllVehicleCards(url: string): Promise<VehicleCardType[]> {
-        return new Promise(async (resolve, reject) => { 
-            try {
-                const response = await fetch(`http://${url}/card-vehicle/getAll`, {
-                    method: 'GET',
-                });
-
-                const data = await response.json();
-                const all: VehicleCardType[] = [];
-
-                for (const d of data){
-                   
-                    const card: VehicleCardType = {
-                        vehicle: {
-                            brand: d.vehicle.brand,
-                            id: d.vehicle.id,
-                            entity: d.vehicle.entity,
-                            color: d.vehicle.color,
-                            licensePlate: d.vehicle.licensePlate,
-                            type: d.vehicle.type
-                        },
-                        expiration: new Date(d.expiration),
-                        cardNumber: d.cardNumber,
-                        
-                    };
-
-                    all.push(card);
-                }
-                resolve(all);
-            }       catch(error){
-                console.log(error);
-                reject(error);
-            }
-    });
-    }
-
-
+    
    
 }

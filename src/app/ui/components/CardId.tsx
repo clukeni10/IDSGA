@@ -21,7 +21,7 @@ export default function CardId(props: CardId): JSX.Element {
 
     function handleSelectCards() {
         if (selectedCard === card) {
-            clearSelectedCard()
+            clearSelectedCard() 
         } else {
             setSelectedCard(card)
         }
@@ -29,9 +29,10 @@ export default function CardId(props: CardId): JSX.Element {
 
     return (
         <Card.Root 
-            maxW="xs"
+            w="xs"
             overflow="hidden"
             onClick={handleSelectCards}
+            p={2}
         >
             <Card.Body>
                 {

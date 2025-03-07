@@ -16,6 +16,12 @@ export default class VehicleDao {
         await IndexedDB.shared.removeItem(id, this.keyPath)
     }
 
+    async generateNextId(): Promise<string> {
+        const totalCards = await this.getAllVehicles();
+        const nextId = totalCards.length + 1;
+        return nextId.toString().padStart(4, '0');
+    }
+
     async updateVehicle(vehicles: VehicleType | VehicleType[]): Promise<void> {
         if(Array.isArray(vehicles)){
             for(const vehicle of vehicles) {

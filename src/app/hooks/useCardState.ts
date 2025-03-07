@@ -8,9 +8,9 @@ import CardService from "../database/CardService";
 
 const initialState: State = { 
     cards: [],
-    selectedCard: null
+    selectedCard: null 
 }
-
+ 
 interface State {
     cards: CardType[] 
     selectedCard: CardType | null

@@ -5,6 +5,7 @@ import SetupService from "../database/SetupService";
 const initialState: State = {
     address: null,
     personFunctions: [],
+    vehicleFunctions: [],
     personEscorts: [],
     personEntities: [], 
 }
@@ -12,6 +13,7 @@ const initialState: State = {
 interface State {
     address: string | null
     personFunctions: { value: string, label: string }[]
+    vehicleFunctions: { value: string, label: string }[]
     personEscorts: { value: string, label: string }[]
     personEntities: { value: string, label: string }[]
 }
@@ -41,6 +43,12 @@ export const useSetupState = create<Actions & State>()(
                 await SetupService.shared.savePersonFunction(value, address)
                 set((state) => ({
                     personFunctions: [...state.personFunctions, { value, label: value }],
+                }));
+            },
+            saveVehicleFunction: async (value: string, address: string) => {
+                await SetupService.shared.saveVehicleFunction(value, address)
+                set((state) => ({
+                    vehicleFunctions: [...state.vehicleFunctions, { value, label: value }],
                 }));
             },
             savePersonEscort: async (value: string, address: string) => {
@@ -77,6 +85,15 @@ export const useSetupState = create<Actions & State>()(
                 if (address) {
                     const response = await SetupService.shared.getAllFunctions(address)
                     set(() => ({ personFunctions: response }));
+                }
+            },
+            
+            getVehicleFunction: async () => {
+                const { address } = get()
+
+                if (address) {
+                    const response = await SetupService.shared.getAllFunctions(address)
+                    set(() => ({ vehicleFunctions: response }));
                 }
             }
         }),

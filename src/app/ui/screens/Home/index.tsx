@@ -1,5 +1,5 @@
 "use client"
-import { Stack, Grid, For, GridItem } from "@chakra-ui/react";
+import { Stack,  For, Tabs, Flex } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import AddPersonModal from "./AddPerson";
 import AddVehicleModal from "./AddVehicle";
@@ -14,29 +14,33 @@ import CardOptionPrintScreen from "../CardOptionPrint";
 import SetupScreen from "../SetupScreen";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
+import { IoCarSport,  } from "react-icons/io5";
+import { HiUsers } from "react-icons/hi";
+
 
 
 export default function HomeScreen(): JSX.Element {
 
     const [open, setOpen] = useState<{ open: boolean }>({ open: false })
     const [openPerson, setOpenPerson] = useState<{ open: boolean }>({ open: false })
-    const [openVehicle, setOpenVehicle] = useState<{ open:boolean}>({open: false })
+    const [openVehicle, setOpenVehicle] = useState<{ open: boolean }>({ open: false })
     const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
     const [openSetup, setOpenSetup] = useState<{ open: boolean }>({ open: false })
 
     const contentRef = useRef<HTMLDivElement>(null)
 
     const getAllCards = useCardState(state => state.getAllCards)
+    const getAllVehicleCards= useVehicleCardState(state => state.getAllCards)
     /* const generateA4Cards = useCardState(state => state.generateA4Cards)
     const generateA4CardsBack = useCardState(state => state.generateA4CardsBack) */
     const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
     const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
-    const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
+//const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
     const clearSelectedCard = useCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
-    const vehicles = useVehicleCardState(state => state.cards)
+    const vehiclesCards = useVehicleCardState(state => state.cards)
     const selectedCard = useCardState(state => state.selectedCard)
-    const selectedVehicleCard= useVehicleCardState(state => state.selectedVehicleCard)
+    const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
 
     const refresh = usePersonState(state => state.refresh)
 
@@ -44,6 +48,7 @@ export default function HomeScreen(): JSX.Element {
 
     useEffect(() => {
         getAllCards(address)
+        getAllVehicleCards(address)
     }, [refresh])
 
     function handleOnOpenAddPerson() {
@@ -54,7 +59,7 @@ export default function HomeScreen(): JSX.Element {
         setOpenVehicle({ open: true })
     }
 
-    async function handleOnPrintingCard() { 
+    async function handleOnPrintingCard() {
         if (cards.length !== 0) {
             setOpenOption({ open: true })
         }
@@ -81,13 +86,22 @@ export default function HomeScreen(): JSX.Element {
             setOpenOption({ open: false })
         }
 
-        if(selectedVehicleCard) {
+        if (selectedVehicleCard) {
             if (cardSidePrint === 'frontal') {
-                pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
-            } 
+               // pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
+            }
 
-            
+
         }
+    }
+
+    function handleUpdateCard() {
+        setOpen({ open: true })
+    }
+
+    function handleoOnSetupNetwork() {
+        setOpenSetup({ open: true })
+    }
 
 
 
@@ -105,15 +119,9 @@ export default function HomeScreen(): JSX.Element {
             }
         } */
 
-    }
+    
 
-    function handleUpdateCard() {
-        setOpen({ open: true })
-    }
-
-    function handleoOnSetupNetwork() {
-        setOpenSetup({ open: true })
-    }    
+   
 
     return (
         <Stack>
@@ -126,28 +134,45 @@ export default function HomeScreen(): JSX.Element {
                 onUpdateCard={handleUpdateCard}
             />
 
-            <Stack
-                p={4}
-            >
-                <Grid templateColumns="1fr 1fr" gap="10px">
-    
-    <GridItem>
-        <For each={cards}>
-            {(card) => (
-                <CardId key={card.cardNumber} card={card} />
-            )}
-        </For>
-    </GridItem>
+            
+                <Tabs.Root defaultValue="users" p={6} >
+                    <Tabs.List >
+                        <Tabs.Trigger value="users" >
+                            <HiUsers color={'#607d8c'} />
+                        </Tabs.Trigger>
+                    
+                    
+                        <Tabs.Trigger value="vehicles">
+                            <IoCarSport color={'#607d8c'}/>
+                        </Tabs.Trigger>
+                    </Tabs.List>
+                    <Tabs.Content value="users">
+                        <Flex  gap={10} wrap="wrap">
+                        <For each={cards}>
+                            {(card) => (
+                                <CardId key={card.cardNumber} card={card} />
+                            )}
+                        </For>
+                        </Flex>
+                    
 
-   
-    <GridItem>
-        <For each={vehicles}>
-            {(vehicle) => (
-                <VehicleCardId key={vehicle.cardNumber} card={vehicle} />
-            )}
-        </For>
-    </GridItem>
-</Grid>
+                    </Tabs.Content>
+                    <Tabs.Content value="vehicles">
+                        <Flex  gap={10} wrap="wrap">
+                        <For each={vehiclesCards}>
+                            {(vehicleCard) => (
+                                <VehicleCardId key={vehicleCard.cardNumber} card={vehicleCard} />
+                            )}
+                        </For>
+                        </Flex>
+
+                    </Tabs.Content>
+                    
+                    
+
+                </Tabs.Root>
+
+               
 
 
                 <AddPersonModal
@@ -160,7 +185,7 @@ export default function HomeScreen(): JSX.Element {
                     contentRef={contentRef}
                     open={openVehicle.open}
                     onOpenChange={setOpenVehicle}
-                
+
                 />
 
                 <CardOptionPrintScreen
@@ -174,7 +199,7 @@ export default function HomeScreen(): JSX.Element {
                     onOpenChange={setOpenSetup}
                 />
             </Stack>
-        </Stack>
+        
     )
 }
 
