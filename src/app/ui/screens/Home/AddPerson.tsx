@@ -15,8 +15,9 @@ import { CardType } from "@/app/types/CardType";
 
 interface AddPersonModal { 
     open: boolean
-    contentRef?: React.RefObject<HTMLDivElement>
+    contentRef?: React.RefObject<HTMLDivElement> 
     onOpenChange: (e: { open: boolean }) => void
+    selectedCard?: CardType | null; //
 }
 
 export default function AddPersonModal(props: AddPersonModal): JSX.Element {

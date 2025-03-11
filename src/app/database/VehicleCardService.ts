@@ -5,19 +5,19 @@ export default class VehicleCardService {
 
     static shared = new VehicleCardService()
 
-    async addVehicle(vehicle: VehicleType & VehicleCardType, url: string): Promise<void> {
+    async addVehicle(vehicle: VehicleType & VehicleCardType): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
 
                 console.log("Enviando veículo:", vehicle);
 
-                const response = await fetch(`http://${url}/card-vehicle/save`, {
+                const response = await fetch(`http://192.168.3.127:3000/card-vehicle/save`, {
                     headers: {
                         "Content-Type": "application/json",
                     },
                     method: "POST",
-                    body: JSON.stringify(vehicle),
-                });
+                    body: JSON.stringify(vehicle), 
+                }); 
 
                 const responseData = await response.json();
                 console.log("Resposta da API:", responseData);
@@ -28,89 +28,68 @@ export default class VehicleCardService {
                 reject(error);
                 throw new Error("A operação de gravação falhou");
             }
-
+ 
         });
     }
 
-    async updateVehicle(vehicle: VehicleType & VehicleCardType, url: string | null): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try {
-
-                console.log("Atualizando veículo:", vehicle);
-
-                const response = await fetch(`http://${url}/card-vehicle/save`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    method: "PUT",
-                    body: JSON.stringify(vehicle),
-                });
-                const responseData = await response.json();
-                console.log("Resposta da API:", responseData);
-
-                resolve()
-            } catch (error) {
-                reject(error)
-                throw new Error("A operação de actualização falhou");
-            }
-        })
+    async updateVehicle(vehicle: VehicleType & VehicleCardType): Promise<void> {
+        try {
+            console.log("Atualizando veículo:", vehicle);
+    
+            const API_URL = "http://192.168.3.127:3000/card-vehicle/save"; 
+           
+    
+            const response = await fetch(API_URL, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(vehicle),
+            });
+    
+            const responseData = await response.json();
+            console.log("Resposta da API:", responseData);
+        } catch (error) {
+            console.error("Erro ao atualizar o veículo:", error);
+            throw new Error("A operação de atualização falhou");
+        }
     }
+    
 
-    async getAllCards(url: string): Promise<VehicleCardType[]> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const endpoint = `http://${url}/card-vehicle/getAll`;
-                console.log("➡️ Fazendo requisição para:", endpoint);
+    async getAllCards(): Promise<VehicleCardType[]> {
+        try {
+            const endpoint = `http://192.168.3.127:3000/card-vehicle/getAll`;
+            console.log("➡️ Fazendo requisição para:", endpoint);
     
-                const response = await fetch(endpoint, { method: "GET" });
-
+            const response = await fetch(endpoint, { method: "GET" });
     
-                console.log("Resposta recebida:", response);
-    
-                const data = await response.json();
-                console.log("📩 Dados recebidos:", data);
-    
-                const dataArray = Array.isArray(data) ? data : [data]; // Garante que seja um array
-                console.log(`📦 Total de itens recebidos: ${dataArray.length}`);
-
-                if (!data || data.length === 0) {
-                    console.error("❌ Nenhum dado recebido ou resposta inválida:", data);
-                    resolve([]); // Retorna um array vazio para evitar erro
-                    return;
-                }
-                
-                const all: VehicleCardType[] = [];
-    
-                for (const d of dataArray) {
-                  
-    
-                    console.log(`✅ Processando veículo ID: ${d.vehicle.id}`);
-    
-                    const card: VehicleCardType = {
-                        vehicle: {
-                            id: d.vehicle.id,
-                            entity: d.vehicle.entity ?? "Desconhecida",
-                            brand: d.vehicle.brand ?? "Não especificada",
-                            color: d.vehicle.color ?? "Não especificada",
-                            licensePlate: d.vehicle.licensePlate ?? "Sem placa",
-                            type: d.vehicle.type ?? "Desconhecido",
-                        },
-                        expiration: d.expiration ? new Date(d.expiration) : new Date(),
-                        cardNumber: d.cardNumber || "0000",
-                    };
-    
-                    console.log("📌 Adicionando ao array:", card);
-                    all.push(card);
-                }
-    
-                console.log("✅ Todos os cartões foram processados.");
-                resolve(all);
-            } catch (error) {
-                console.log("❌ Erro na requisição:", error);
-                reject(error);
+            if (!response.ok) {
+                throw new Error("Erro ao buscar cartões");
             }
-        });
+    
+            const data = await response.json();
+            console.log("📩 Dados recebidos:", data);
+    
+            const dataArray = Array.isArray(data) ? data : [data]; // Garante que seja um array
+    
+            return dataArray.map((d) => ({
+                vehicle: {
+                    id: d.id,
+                    entity: d.entity,
+                    brand: d.brand,
+                    color: d.color,
+                    licensePlate: d.licensePlate,
+                    type: d.type,
+                },
+                expiration: d.expiration,
+                cardNumber: d.cardNumber,
+            }));
+        } catch (error) {
+            console.error("❌ Erro ao buscar veículos:", error);
+            return []; // Retorna um array vazio em caso de erro
+        }
     }
+    
     
     
 

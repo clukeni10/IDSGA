@@ -1,5 +1,6 @@
 import { useCardState } from "@/app/hooks/useCardState";
 import { useSetupState } from "@/app/hooks/useSetupState";
+import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { IoCarSport, IoPersonAdd } from "react-icons/io5";
@@ -12,8 +13,10 @@ interface HeaderActions {
     onOpenAddPerson: () => void
     onPrintCards: () => void
     onPrintSelectedCards: () => void
+    onPrintSelectedVehicleCards: () => void
     onSetupNetwork: () => void
     onUpdateCard: () => void
+    onUpdateVehicleCard: () => void
 }
 
 export default function HeaderActions(props: HeaderActions): JSX.Element {
@@ -22,8 +25,10 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
         onOpenAddPerson,
         onOpenAddVehicle,
         onPrintSelectedCards,
+        onPrintSelectedVehicleCards,
         onSetupNetwork,
-        onUpdateCard
+        onUpdateCard,
+        onUpdateVehicleCard
     } = props;
 
     const getPersonFunction = useSetupState(state => state.getPersonFunction)
@@ -31,6 +36,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
     const getPersonEntity = useSetupState(state => state.getPersonEntity)
 
     const selectedCard = useCardState(state => state.selectedCard)
+    const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
 
     useEffect(() => {
         getPersonFunction()
@@ -100,7 +106,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                 
                 <Spacer />
                 {
-                    selectedCard !== null ?
+                    (selectedCard !== null || selectedVehicleCard !== null) &&
                         <Box
                             py={4}
                             px={4}
@@ -109,7 +115,13 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                                 bgColor: '#cbe5f2',
                                 cursor: 'default'
                             }}
-                            onClick={() => onUpdateCard()}
+                            onClick={() => {
+                                if (selectedCard) {
+                                    onUpdateCard();
+                                } else if (selectedVehicleCard) {
+                                    onUpdateVehicleCard();
+                                }
+                            }}
                         >
                             <Icon
                                 fontSize="2xl"
@@ -124,10 +136,11 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                             >
                                 Editar cartão
                             </Text>
-                        </Box> : null
+                        </Box>
                 }
+                
                 {
-                    selectedCard !== null ?
+                   (selectedCard !== null || selectedVehicleCard !== null) &&
                         <Box
                             py={4}
                             px={4}
@@ -136,7 +149,13 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                                 bgColor: '#cbe5f2',
                                 cursor: 'default'
                             }}
-                            onClick={onPrintSelectedCards}
+                            onClick={() => {
+                                if (selectedCard) {
+                                    onPrintSelectedCards();
+                                } else if (selectedVehicleCard) {
+                                    onPrintSelectedVehicleCards();
+                                }
+                            }}
                         >
                             <Icon
                                 fontSize="2xl"
@@ -151,8 +170,9 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                             >
                                 Imprimir seleccionado(s)
                             </Text>
-                        </Box> : null
+                        </Box> 
                 }
+               
                {/*  <Box
                     py={4}
                     px={4}

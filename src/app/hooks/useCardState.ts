@@ -170,7 +170,7 @@ export const useCardState = create<Actions & State>((set) => ({
         page.drawImage(signedImage, {
             x: (width - signedImageDims.width) / 2,
             y: 0,
-            width: signedImageDims.width,
+            width: signedImageDims.width, 
             height: signedImageDims.height,
         });
 

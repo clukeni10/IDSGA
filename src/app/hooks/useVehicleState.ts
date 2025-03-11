@@ -2,9 +2,9 @@ import { VehicleCardType } from "../types/VehicleCardType"
 import { VehicleType } from "../types/VehicleType";
 import { create } from "zustand";
 import CardDao from "../database/CardDao";
-import CardService from "../database/CardService";
 import VehicleDao from "../database/VehicleDao";
 import VehicleCardDao from "../database/VehicleCardDao";
+import VehicleCardService from "../database/VehicleCardService";
 
 
 const initialState: State = {
@@ -19,14 +19,14 @@ interface State {
 
 
 interface Actions {
-    addVehicle: (vehicle: VehicleType, valid:Date, url:string,  totalCards?: any[])=> Promise<void>
-    updateVehicle:(vehicle: VehicleType,  url:string | null, card: VehicleCardType)=> Promise<void>
+    addVehicle: (vehicle: VehicleType, valid:Date,   totalCards?: any[])=> Promise<void>
+    updateVehicle:(vehicle: VehicleType, card: VehicleCardType)=> Promise<void>
     forceRefresh: () => void
 }
 
 export const useVehicleState = create<Actions & State>((set) => ({
     ...initialState,
-    addVehicle: async (vehicle: VehicleType, valid: Date, url: string ,totalCards?: any[]) => {
+    addVehicle: async (vehicle: VehicleType, valid: Date, totalCards?: any[]) => {
 
     let cardNumber:Promise<string> | string;
     
@@ -40,14 +40,11 @@ export const useVehicleState = create<Actions & State>((set) => ({
     const card: VehicleCardType= {
         vehicle: vehicle,
         expiration: valid,
-        cardNumber,
-        
-        
-        
+        cardNumber, 
     };
 
-    if (url) {
-        await CardService.shared.addVehicle({ ...vehicle, ...card }, url);
+    if (vehicle) {
+        await VehicleCardService.shared.addVehicle({ ...vehicle, ...card });
     } else {
         await VehicleDao.shared.addVehicle(vehicle);
         await VehicleCardDao.shared.addCard(card); 
@@ -56,10 +53,10 @@ export const useVehicleState = create<Actions & State>((set) => ({
     set((state) => ({ cards: [...state.cards, card], refresh: state.refresh + 1 }));
 },
 
-updateVehicle: async (vehicle: VehicleType, url: string | null, card: VehicleCardType) => {
-    await CardService.shared.updateVehicle(
+updateVehicle: async (vehicle: VehicleType,  card: VehicleCardType) => {
+    await VehicleCardService.shared.updateVehicle(
         { ...vehicle, ...card }, 
-        url
+       
     );
     
     set((state) => ({ refresh: state.refresh + 1 }));

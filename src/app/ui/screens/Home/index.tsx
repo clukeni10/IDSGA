@@ -29,14 +29,17 @@ export default function HomeScreen(): JSX.Element {
 
     const contentRef = useRef<HTMLDivElement>(null)
 
-    const getAllCards = useCardState(state => state.getAllCards)
-    const getAllVehicleCards= useVehicleCardState(state => state.getAllCards)
     /* const generateA4Cards = useCardState(state => state.generateA4Cards)
     const generateA4CardsBack = useCardState(state => state.generateA4CardsBack) */
+    const getAllCards = useCardState(state => state.getAllCards)
+    const getAllVehicleCards= useVehicleCardState(state => state.getAllCards)
+    
     const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
     const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
-//const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
+    const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
+    const generateVehicleCardBackPVC = useVehicleCardState(state => state.generateVehicleCardBackPVC)
     const clearSelectedCard = useCardState(state => state.clearSelectedCard)
+    const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
     const vehiclesCards = useVehicleCardState(state => state.cards)
     const selectedCard = useCardState(state => state.selectedCard)
@@ -65,6 +68,12 @@ export default function HomeScreen(): JSX.Element {
         }
     }
 
+    async function handleOnPrintingVehicleCard(){
+        if(vehiclesCards.length !== 0) {
+            setOpenOption({ open: true })
+        }
+    }
+
 
 
     async function onHandleToPrint(cardSidePrint: string, cardType: string) {
@@ -86,17 +95,35 @@ export default function HomeScreen(): JSX.Element {
             setOpenOption({ open: false })
         }
 
+    }
+
+    async function onHandleToPrintVehicle(cardSidePrint: string, cardType: string) {
+        const dirPath = 'pdf'
+        const extension = 'pdf'
+        let pathUri: Uint8Array
+    
         if (selectedVehicleCard) {
             if (cardSidePrint === 'frontal') {
-               // pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
+                pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
+            } else {
+                pathUri = await generateVehicleCardBackPVC()
             }
-
-
+    
+            const filePath = await saveFileLocal(pathUri, 'vehicle_cards', dirPath, extension)
+            await openCardPDF(filePath)
+            clearSelectedVehicleCard()
+            setOpenOption({ open: false })
         }
     }
+    
+
+   
 
     function handleUpdateCard() {
         setOpen({ open: true })
+    }
+    function handleUpdateVehicleCard(){
+        setOpen({open:true})
     }
 
     function handleoOnSetupNetwork() {
@@ -130,8 +157,11 @@ export default function HomeScreen(): JSX.Element {
                 onOpenAddVehicle={handleOnOpenAddVehicle}
                 onPrintCards={handleOnPrintingCard}
                 onPrintSelectedCards={handleOnPrintingCard}
+                onPrintSelectedVehicleCards={handleOnPrintingVehicleCard}
                 onSetupNetwork={handleoOnSetupNetwork}
                 onUpdateCard={handleUpdateCard}
+                onUpdateVehicleCard={handleUpdateVehicleCard}
+                
             />
 
             

@@ -13,10 +13,11 @@ import { VehicleCardType } from "@/app/types/VehicleCardType";
 
 
 
-interface AddVehicleModal {
+ interface AddVehicleModal {
     open: boolean
     contentRef?: React.RefObject<HTMLDivElement>
     onOpenChange: (e: { open: boolean }) => void
+    selectedVehicleCard?: VehicleCardType | null; //
 }
 
 export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
@@ -59,7 +60,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     const clearSelectedCard = useVehicleCardState(state => state.clearSelectedCard)
     const addVehicle = useVehicleState(state => state.addVehicle)
     const updateVehicle = useVehicleState(state => state.updateVehicle)
-    const address = useSetupState(state => state.address)
+
 
 
 
@@ -79,7 +80,10 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setVehicleColor(selectedCard.vehicle.color)
             setEntity([selectedCard.vehicle.entity]);
             setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
-            setCardValidate(selectedCard.expiration.toISOString().split('T')[0])
+            if (selectedCard && selectedCard.expiration) {
+                setCardValidate(selectedCard.expiration.toISOString().split('T')[0]);
+            }
+            
         }
     }, [selectedCard])
 
@@ -111,12 +115,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             const valid = new Date(cardValidate)
 
             if (entity) {
-                await addVehicle(vehicle, valid, address ?? '', cards)
-                    .then(() => {
-
-
-                    }
-                    )
+                await addVehicle(vehicle, valid, Array.isArray(cards) ? cards : [cards])
                     .catch(() => {
                         setLoading(false)
                     })
@@ -152,10 +151,11 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             const card: VehicleCardType = {
                 vehicle,
                 expiration: valid,
-                cardNumber: selectedCard?.cardNumber ?? ''
+                cardNumber: selectedCard?.cardNumber ?? '',
+                
             }
 
-            await updateVehicle(vehicle, entity[0], card)
+            await updateVehicle(vehicle, card)
             setLoading(false)
             setEntity(['']);
             onOpenChange({ open: false });

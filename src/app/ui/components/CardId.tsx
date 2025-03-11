@@ -7,6 +7,7 @@ import { VscPassFilled } from "react-icons/vsc";
 
 interface CardId {
     card: CardType
+    onClick?: () => void;
 }
 
 export default function CardId(props: CardId): JSX.Element {
@@ -28,10 +29,10 @@ export default function CardId(props: CardId): JSX.Element {
     }
 
     return (
-        <Card.Root 
+        <Card.Root  
             w="xs"
             overflow="hidden"
-            onClick={handleSelectCards}
+            onClick={handleSelectCards} 
             p={2}
         >
             <Card.Body>

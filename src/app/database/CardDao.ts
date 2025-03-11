@@ -6,7 +6,7 @@ export default class CardDao {
 
     static shared = new CardDao() 
     private keyPath = objectStore.cardObjectStore
-
+ 
     async addCard(person: CardType): Promise<void> {
         await IndexedDB.shared.addItem<CardType>(person, this.keyPath)
     }

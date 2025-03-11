@@ -7,6 +7,7 @@ import { convertformatDateAngolan } from "@/app/utils"
 
 interface VehicleCardId {
     card: VehicleCardType 
+    onClick?: () => void;
 }
 
 export default function VehicleCardId(props: VehicleCardId): JSX.Element {
@@ -14,9 +15,9 @@ export default function VehicleCardId(props: VehicleCardId): JSX.Element {
         card,
     } = props
 
-    const selectedCard = useVehicleCardState(state => state.selectedVehicleCard)
-    const setSelectedCard = useVehicleCardState(state => state.setSelectedVehicleCard)
-    const clearSelectedCard = useVehicleCardState(state => state.clearSelectedVehicleCard)
+    const selectedCard = useVehicleCardState(state => state.selectedCard)
+    const setSelectedCard = useVehicleCardState(state => state.setSelectedCard)
+    const clearSelectedCard = useVehicleCardState(state => state.clearSelectedCard)
 
     function handleSelectCards() {
         if (selectedCard === card) {
@@ -31,6 +32,7 @@ export default function VehicleCardId(props: VehicleCardId): JSX.Element {
             maxW="xs"
             overflow="hidden"
             onClick={handleSelectCards}
+            p={2}
         >
             <Card.Body>
                 {
@@ -53,7 +55,10 @@ export default function VehicleCardId(props: VehicleCardId): JSX.Element {
                     N: {card.cardNumber}
                 </Text>
                 <Text textStyle="xs" fontWeight="medium" letterSpacing="tight" mt="2">
-                    Entidade: {card.vehicle.entity ?? 'SGA-SA'}
+                    Matrícula: {card.vehicle.licensePlate}
+                </Text>
+                <Text textStyle="xs" fontWeight="medium" letterSpacing="tight" mt="2">
+                    Entidade: {card.vehicle.entity }
                 </Text>
                 <Text textStyle="xs" fontWeight="medium" letterSpacing="tight" mt="2">
                     Validade: {convertformatDateAngolan(card.expiration)}

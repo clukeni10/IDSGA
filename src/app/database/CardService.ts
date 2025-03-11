@@ -14,7 +14,7 @@ export default class CardService {
 
                 const formData = new FormData(); 
 
-                formData.append("name", person.name);
+                formData.append("name", person.name); 
                 formData.append("job", person.job);
                 formData.append("escort", person.escort);
                 formData.append("entity", person.entity);
@@ -34,7 +34,7 @@ export default class CardService {
                     body: formData,
                 });
                 resolve()
-            } catch (error) {
+            } catch (error) { 
                 reject(error)
                 throw new Error("A operação de gravação falhou");
             }
@@ -49,7 +49,7 @@ export default class CardService {
                 const formData = new FormData();
 
                 formData.append("name", person.name);
-                formData.append("job", person.job);
+                formData.append("job", person.job); 
                 formData.append("personId", person.id);
                 formData.append("escort", person.escort);
                 formData.append("entity", person.entity);
@@ -80,11 +80,11 @@ export default class CardService {
                 const response = await fetch(`http://${url}/card/getAll`, {
                     method: "GET",
                 });
-                console.log("Resposta recebida:", response);
+               
 
     
                 const data = await response.json();
-                console.log("Resposta recebida:", data);
+                
 
                 const all: CardType[] = [];
     
