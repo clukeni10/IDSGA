@@ -15,8 +15,7 @@ interface HeaderActions {
     onPrintSelectedCards: () => void
     onPrintSelectedVehicleCards: () => void
     onSetupNetwork: () => void
-    onUpdateCard: () => void
-    onUpdateVehicleCard: () => void
+
 }
 
 export default function HeaderActions(props: HeaderActions): JSX.Element {
@@ -27,8 +26,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
         onPrintSelectedCards,
         onPrintSelectedVehicleCards,
         onSetupNetwork,
-        onUpdateCard,
-        onUpdateVehicleCard
+
     } = props;
 
     const getPersonFunction = useSetupState(state => state.getPersonFunction)
@@ -110,16 +108,16 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         <Box
                             py={4}
                             px={4}
-                            textAlign={'center'}
+                            textAlign={'center'} 
                             _hover={{
                                 bgColor: '#cbe5f2',
                                 cursor: 'default'
                             }}
                             onClick={() => {
                                 if (selectedCard) {
-                                    onUpdateCard();
+                                    onOpenAddPerson();
                                 } else if (selectedVehicleCard) {
-                                    onUpdateVehicleCard();
+                                    onOpenAddVehicle();
                                 }
                             }}
                         >

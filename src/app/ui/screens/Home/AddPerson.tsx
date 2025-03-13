@@ -17,12 +17,12 @@ interface AddPersonModal {
     open: boolean
     contentRef?: React.RefObject<HTMLDivElement> 
     onOpenChange: (e: { open: boolean }) => void
-    selectedCard?: CardType | null; //
+    selectedCard?: CardType
 }
 
 export default function AddPersonModal(props: AddPersonModal): JSX.Element {
 
-    const {
+    const { 
         open,
         contentRef,
         onOpenChange

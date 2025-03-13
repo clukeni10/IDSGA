@@ -21,7 +21,7 @@ import { HiUsers } from "react-icons/hi";
 
 export default function HomeScreen(): JSX.Element {
 
-    const [open, setOpen] = useState<{ open: boolean }>({ open: false })
+   
     const [openPerson, setOpenPerson] = useState<{ open: boolean }>({ open: false })
     const [openVehicle, setOpenVehicle] = useState<{ open: boolean }>({ open: false })
     const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
@@ -36,14 +36,11 @@ export default function HomeScreen(): JSX.Element {
     
     const generatePersonCardFrontPVC = useCardState(state => state.generatePersonCardFrontPVC)
     const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
-    const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
-    const generateVehicleCardBackPVC = useVehicleCardState(state => state.generateVehicleCardBackPVC)
     const clearSelectedCard = useCardState(state => state.clearSelectedCard)
-    const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
     const vehiclesCards = useVehicleCardState(state => state.cards)
     const selectedCard = useCardState(state => state.selectedCard)
-    const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
+
 
     const refresh = usePersonState(state => state.refresh)
 
@@ -97,34 +94,12 @@ export default function HomeScreen(): JSX.Element {
 
     }
 
-    async function onHandleToPrintVehicle(cardSidePrint: string, cardType: string) {
-        const dirPath = 'pdf'
-        const extension = 'pdf'
-        let pathUri: Uint8Array
     
-        if (selectedVehicleCard) {
-            if (cardSidePrint === 'frontal') {
-                pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
-            } else {
-                pathUri = await generateVehicleCardBackPVC()
-            }
-    
-            const filePath = await saveFileLocal(pathUri, 'vehicle_cards', dirPath, extension)
-            await openCardPDF(filePath)
-            clearSelectedVehicleCard()
-            setOpenOption({ open: false })
-        }
-    }
     
 
    
 
-    function handleUpdateCard() {
-        setOpen({ open: true })
-    }
-    function handleUpdateVehicleCard(){
-        setOpen({open:true})
-    }
+    
 
     function handleoOnSetupNetwork() {
         setOpenSetup({ open: true })
@@ -159,8 +134,7 @@ export default function HomeScreen(): JSX.Element {
                 onPrintSelectedCards={handleOnPrintingCard}
                 onPrintSelectedVehicleCards={handleOnPrintingVehicleCard}
                 onSetupNetwork={handleoOnSetupNetwork}
-                onUpdateCard={handleUpdateCard}
-                onUpdateVehicleCard={handleUpdateVehicleCard}
+                
                 
             />
 

@@ -80,15 +80,13 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setVehicleColor(selectedCard.vehicle.color)
             setEntity([selectedCard.vehicle.entity]);
             setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
-            if (selectedCard && selectedCard.expiration) {
-                setCardValidate(selectedCard.expiration.toISOString().split('T')[0]);
-            }
+            setCardValidate(selectedCard.expiration.toISOString().split('T')[0]) 
             
         }
     }, [selectedCard])
 
     useEffect(() => {
-        if (!open) {
+        if (!open) { 
             clearSelectedCard();
             setVehicleBrand(['']);
             setCardValidate('');

@@ -84,6 +84,7 @@ export default class CardService {
 
     
                 const data = await response.json();
+                console.log("📩 Dados recebidos:", data);
                 
 
                 const all: CardType[] = [];
