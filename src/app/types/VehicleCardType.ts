@@ -6,4 +6,4 @@ export type VehicleCardType = {
     expiration: Date 
     cardNumber: string
     
-}
+} 

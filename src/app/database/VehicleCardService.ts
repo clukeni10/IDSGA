@@ -13,7 +13,7 @@ export default class VehicleCardService {
                 
                 console.log("Enviando veículo:", vehicle);
 
-                const response = await fetch(`http://192.168.3.127:3000/card-vehicle/save`, {
+                const response = await fetch(`http://localhost:3000/card-vehicle/save`, {
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -34,11 +34,13 @@ export default class VehicleCardService {
         });
     }
 
-    async updateVehicle(vehicle: VehicleType & VehicleCardType): Promise<void> {
+    async updateVehicle(vehicle:  VehicleCardType): Promise<void> {
         try {
             console.log("Atualizando veículo:", vehicle);
 
-            const API_URL = "http://192.168.3.127:3000/card-vehicle/save";
+            const API_URL = "http://localhost:3000/card-vehicle/save";
+            console.log("License Plate enviada:", vehicle.vehicle.licensePlate);
+
 
 
             const response = await fetch(API_URL, {
@@ -61,7 +63,7 @@ export default class VehicleCardService {
     async getAllCards(): Promise<VehicleCardType[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                const endpoint = `http://192.168.3.127:3000/card-vehicle/getAll`;
+                const endpoint = `http://localhost:3000/card-vehicle/getAll`;
                 console.log("➡️ Fazendo requisição para:", endpoint);
 
                 const response = await fetch(endpoint, { method: "GET" });

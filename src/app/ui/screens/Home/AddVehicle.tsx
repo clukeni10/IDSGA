@@ -17,7 +17,7 @@ import { VehicleCardType } from "@/app/types/VehicleCardType";
     open: boolean
     contentRef?: React.RefObject<HTMLDivElement>
     onOpenChange: (e: { open: boolean }) => void
-    selectedVehicleCard?: VehicleCardType | null; //
+    selectedVehicleCard?: VehicleCardType
 }
 
 export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
@@ -49,7 +49,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
 
 
-    //const addVehicle = useVehicleState(state => state.addVehicle)
+    
     const [message, setMessage] = useState<string>()
     const personEntities = useSetupState(state => state.personEntities)
     const [cardValidate, setCardValidate] = useState<string>('')
@@ -75,6 +75,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     useEffect(() => {
 
         if (selectedCard) {
+            
             setVehicleBrand([selectedCard.vehicle.brand])
             setVehicleType([selectedCard.vehicle.type])
             setVehicleColor(selectedCard.vehicle.color)
@@ -82,8 +83,9 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
             setCardValidate(selectedCard.expiration.toISOString().split('T')[0]) 
             
+            
         }
-    }, [selectedCard])
+    }, [selectedCard, cards])
 
     useEffect(() => {
         if (!open) { 
@@ -134,45 +136,41 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
 
     async function handleUpdateVehicle() {
         try {
-            setLoading(true)
+            setLoading(true);
+    
             const vehicle: VehicleType = {
                 id: selectedCard?.vehicle?.id ?? '',
-                brand: selectedCard?.vehicle?.brand ?? '',
-                type: selectedCard?.vehicle?.type ?? '',
-                color: selectedCard?.vehicle?.color ?? '',
-                licensePlate: selectedCard?.vehicle?.licensePlate ?? '',
-                entity: selectedCard?.vehicle?.entity ?? '',
-            }
-
-            const valid = new Date(cardValidate)
-
+                brand: vehicleBrand[0],
+                type: vehicleType[0],
+                color: vehicleColor,
+                licensePlate: vehicleLicensePlate,
+                entity: entity[0],
+            };
+    
+            const valid = new Date(cardValidate);
+    
             const card: VehicleCardType = {
                 vehicle,
                 expiration: valid,
                 cardNumber: selectedCard?.cardNumber ?? '',
-                
-            }
-
-            await updateVehicle(vehicle, card)
-            setLoading(false)
-            setEntity(['']);
+            };
+    
+            await updateVehicle(vehicle, card);
+    
+            // 🔹 Forçar atualização da lista de cartões
+            useVehicleCardState.setState(state => ({
+                cards: state.cards.map(c => 
+                    c.cardNumber === selectedCard?.cardNumber ? { ...c, vehicle } : c
+                ),
+            }));
+    
+            setLoading(false);
             onOpenChange({ open: false });
-            setVehicleBrand(['']);
-            setVehicleColor('');
-            setVehicleLicensePlate('');
-            setVehicleType(['']);
-            onOpenChange({ open: false })
-
-
-
-
+            clearSelectedCard();
         } catch (error) {
-            setLoading(false)
-
+            setLoading(false);
         }
-
     }
-
 
     return (
         <DialogModal
