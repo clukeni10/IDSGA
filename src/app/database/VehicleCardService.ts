@@ -39,7 +39,7 @@ export default class VehicleCardService {
             console.log("Atualizando veículo:", vehicle);
 
             const API_URL = "http://localhost:3000/card-vehicle/save";
-            console.log("License Plate enviada:", vehicle.vehicle.licensePlate);
+            
 
 
 
@@ -73,7 +73,7 @@ export default class VehicleCardService {
                 }
 
                 const data = await response.json();
-                console.log("📩 Dados recebidos:", data);
+                //console.log("📩 Dados recebidos:", data);
 
                 const all: VehicleCardType[] = [];
 

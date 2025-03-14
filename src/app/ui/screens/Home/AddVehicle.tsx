@@ -157,7 +157,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     
             await updateVehicle(vehicle, card);
     
-            // 🔹 Forçar atualização da lista de cartões
+            
             useVehicleCardState.setState(state => ({
                 cards: state.cards.map(c => 
                     c.cardNumber === selectedCard?.cardNumber ? { ...c, vehicle } : c

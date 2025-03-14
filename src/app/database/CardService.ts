@@ -80,11 +80,14 @@ export default class CardService {
                 const response = await fetch(`http://${url}/card/getAll`, {
                     method: "GET",
                 });
+
+                console.log("➡️ Fazendo requisição para:", response);
+
                
 
     
                 const data = await response.json();
-                console.log("📩 Dados recebidos:", data);
+                //console.log("📩 Dados recebidos:", data);
                 
 
                 const all: CardType[] = [];
