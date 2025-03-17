@@ -55,7 +55,8 @@ export const useVehicleState = create<Actions & State>((set) => ({
 
 updateVehicle: async (vehicle: VehicleType,  card: VehicleCardType) => {
     await VehicleCardService.shared.updateVehicle( { ...vehicle, ...card })
-    set((state) => ({ refresh: state.refresh + 1 }))
+    set((state) => ({ refresh: state.refresh + 1 }));
+ 
 },
 
 forceRefresh: () => {

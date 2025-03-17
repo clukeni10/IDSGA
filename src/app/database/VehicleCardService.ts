@@ -53,6 +53,7 @@ export default class VehicleCardService {
 
             const responseData = await response.json();
             console.log("Resposta da API:", responseData);
+            return responseData; 
         } catch (error) {
             console.error("Erro ao atualizar o veículo:", error);
             throw new Error("A operação de atualização falhou");
@@ -73,13 +74,12 @@ export default class VehicleCardService {
                 }
 
                 const data = await response.json();
-                //console.log("📩 Dados recebidos:", data);
-
+              
                 const all: VehicleCardType[] = [];
 
                 for (const d of data) {
-                     // Verifique o valor recebido
-                    const card: VehicleCardType = {
+                    
+                    const card: VehicleCardType = { 
                         vehicle: {
                             id: d.id,
                             entity: d.entity,

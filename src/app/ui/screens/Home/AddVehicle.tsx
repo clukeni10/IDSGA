@@ -9,7 +9,7 @@ import UUIDv4 from "@/app/libs/uuidv4";
 import { useEffect, useState } from "react";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { useVehicleState } from "@/app/hooks/useVehicleState";
-import { VehicleCardType } from "@/app/types/VehicleCardType";
+import { VehicleCardType } from "@/app/types/VehicleCardType"; 
 
 
 
@@ -123,6 +123,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 setLoading(false);
                 setEntity(['']);
                 onOpenChange({ open: false });
+                setMessage("")
                 setVehicleBrand(['']);
                 setVehicleColor('');
                 setVehicleLicensePlate('');
@@ -131,6 +132,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         } catch (error) {
             setLoading(false);
             setMessage("")
+            
         }
     }
 
@@ -155,8 +157,17 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 cardNumber: selectedCard?.cardNumber ?? '',
             };
     
-            await updateVehicle(vehicle, card);
-    
+            await updateVehicle(vehicle, card)
+            setLoading(false)
+            setMessage("")
+            setEntity(['']);
+            setVehicleBrand(['']);
+            setVehicleColor('');
+            setVehicleLicensePlate('');
+            setVehicleType(['']);
+            clearSelectedCard()
+            onOpenChange({ open: false })
+
             
             useVehicleCardState.setState(state => ({
                 cards: state.cards.map(c => 
@@ -164,9 +175,8 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 ),
             }));
     
-            setLoading(false);
-            onOpenChange({ open: false });
-            clearSelectedCard();
+            
+            
         } catch (error) {
             setLoading(false);
         }

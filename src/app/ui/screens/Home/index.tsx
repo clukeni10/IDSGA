@@ -38,8 +38,14 @@ export default function HomeScreen(): JSX.Element {
     const generatePersonCardBackPVC = useCardState(state => state.generatePersonCardBackPVC)
     const clearSelectedCard = useCardState(state => state.clearSelectedCard)
     const cards = useCardState(state => state.cards)
-    const vehiclesCards = useVehicleCardState(state => state.cards)
     const selectedCard = useCardState(state => state.selectedCard)
+
+    const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
+    const generateVehicleCardBackPVC = useVehicleCardState(state => state.generateVehicleCardBackPVC)
+    const vehiclesCards = useVehicleCardState(state => state.cards)
+    const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
+    const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedCard)
+    
 
 
     const refresh = usePersonState(state => state.refresh)
@@ -85,14 +91,25 @@ export default function HomeScreen(): JSX.Element {
             } else {
                 pathUri = await generatePersonCardBackPVC()
             }
+        }
+
+        if(selectedVehicleCard) {
+            if (cardSidePrint === 'frontal'){
+                pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
+            } else {
+                pathUri = await generateVehicleCardBackPVC()
+            }
 
             const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
             await openCardPDF(filePath)
             clearSelectedCard()
             setOpenOption({ open: false })
         }
-
     }
+
+    
+
+    
 
     
     

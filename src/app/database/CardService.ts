@@ -83,21 +83,14 @@ export default class CardService {
 
                 console.log("➡️ Fazendo requisição para:", response);
 
-               
-
-    
                 const data = await response.json();
-                //console.log("📩 Dados recebidos:", data);
-                
 
                 const all: CardType[] = [];
     
                 for (const d of data) {
-                    
 
                     let imageBase64 = null;
     
-                    // Se existir uma imagem, faz o download e converte para Base64
                     if (d.person.image) {
                         try {
                             const imageResponse = await fetch(`http://${url}/${d.person.image}`);
@@ -120,7 +113,7 @@ export default class CardService {
                             image: imageBase64 ?? ''
                         },
                         expiration: new Date(d.expiration),
-                        cardNumber: d.cardNumber
+                        cardNumber: d.cardNumber 
                     };
     
                     all.push(card);

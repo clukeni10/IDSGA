@@ -11,7 +11,7 @@ const initialState: State = {
     selectedCard: null  
 }
  
-interface State {
+ interface State {
     cards: CardType[] 
     selectedCard: CardType | null
 }
