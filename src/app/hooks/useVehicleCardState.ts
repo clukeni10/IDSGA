@@ -57,194 +57,190 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
         }
     },
     generateVehicleCardFrontPVC: async (card: VehicleCardType, hasBlueBackground?: boolean) => {
-
         // Create a new PDF document
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage([350, 200]);
-
+    
         // Get the standard font
         const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-        // Set the background color (green)
+    
+        const { width, height } = page.getSize();
+    
+        // Carregar a imagem de fundo do texto repetido "AEROPORTO INTERNACIONAL..."
+        const backgroundText = await fetch('/aeroporto.png').then(response => response.arrayBuffer());
+        const backgroundImage = await pdfDoc.embedPng(backgroundText);
+    
+        // Desenhar a imagem de fundo primeiro
+        page.drawImage(backgroundImage, {
+            x: 0,
+            y: 0,
+            width: width,
+            height: height
+        });
+    
+        // Desenhar o retângulo verde semi-transparente por cima da imagem de fundo
+        const greenColor = rgb(0 / 255, 173 / 255, 67 / 255); // Verde mais vivo como na imagem
         page.drawRectangle({
             x: 0,
             y: 0,
-            width: 350,
-            height: 200,
-            color: rgb(0, 0.8, 0.2),
+            width: width,
+            height: height,
+            color: greenColor,
+            opacity: 0.85 // Mais opaco para mostrar o verde intenso
         });
-
-        
-
-        // Add the SGA logo placeholder
-        page.drawRectangle({
+    
+        // Adicionar o logo SGA no canto superior esquerdo
+        const sgaLogo = await fetch('/SGA Logo.png').then(response => response.arrayBuffer());
+        const logoImage = await pdfDoc.embedPng(sgaLogo);
+        page.drawImage(logoImage, {
             x: 10,
             y: 150,
             width: 80,
-            height: 40,
-            color: rgb(1, 1, 1),
+            height: 40
         });
-
-        // Add the SGA text
-        page.drawText('SGA', {
-            x: 20,
-            y: 170,
-            size: 20,
-            font: helveticaBold,
-            color: rgb(0, 0, 0.8),
-        });
-
-        // Add the permit type (P or T) in a large format
-        page.drawText('P', {
-            x: 260,
-            y: 100,
-            size: 100,
-            font: helveticaBold,
-            color: rgb(1, 1, 1),
-        });
-
-        // Add the expiration date
+    
+        // Cor branca para todo o texto
+        const whiteColor = rgb(1, 1, 1);
+    
+        // Adicionar a data de expiração em formato grande
         page.drawText(card.expiration.toLocaleDateString("pt-AO", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit"
-        }).replace(/\//g, "-"), {
-            x: 220,
+        }).replace(/\//g, "."), {
+            x: 200,
             y: 160,
-            size: 20,
+            size: 24,
             font: helveticaBold,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-
-        // Add the permit number
-        page.drawText(`Nº${card.cardNumber}`, {
+    
+        // Adicionar o número do cartão
+        page.drawText(`Nº${card.cardNumber.padStart(3, '0')}`, {
             x: 10,
-            y: 120,
-            size: 20,
+            y: 140,
+            size: 24,
             font: helveticaBold,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-        // Add the company information
+    
+        // Adicionar a informação da companhia
         page.drawText('COMPANHIA:', {
             x: 10,
-            y: 100,
-            size: 10,
+            y: 120,
+            size: 12,
             font: helveticaBold,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-
+    
         page.drawText(card.vehicle.entity, {
             x: 10,
-            y: 85,
-            size: 10,
-            font: helvetica,
-            color: rgb(1, 1, 1),
+            y: 105,
+            size: 14,
+            font: helveticaBold,
+            color: whiteColor
         });
-
-        // Add the color information
+    
+        // Adicionar a informação da cor
         page.drawText('COR:', {
             x: 10,
-            y: 70,
-            size: 10,
+            y: 90,
+            size: 12,
             font: helveticaBold,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-
+    
         page.drawText(card.vehicle.color, {
             x: 10,
-            y: 55,
-            size: 10,
-            font: helvetica,
-            color: rgb(1, 1, 1),
+            y: 80,
+            size: 14,
+            font: helveticaBold,
+            color: whiteColor
         });
-
-        // Add license plate or operations based on permit type
+    
+        // Adicionar matrícula ou operações com base no tipo de permissão
         if (card.permitType === 'P') {
             page.drawText('MATRICULA:', {
                 x: 10,
-                y: 40,
-                size: 10,
+                y: 30,
+                size: 12,
                 font: helveticaBold,
-                color: rgb(1, 1, 1),
+                color: whiteColor
             });
-
+    
             page.drawText(card.vehicle.licensePlate || '', {
                 x: 10,
-                y: 25,
-                size: 10,
-                font: helvetica,
-                color: rgb(1, 1, 1),
+                y: 15,
+                size: 14,
+                font: helveticaBold,
+                color: whiteColor
             });
         } else {
             page.drawText('TIPO:', {
                 x: 10,
-                y: 40,
-                size: 10,
+                y: 70,
+                size: 12,
                 font: helveticaBold,
-                color: rgb(1, 1, 1),
+                color: whiteColor
             });
-
+    
             page.drawText(card.vehicle.type || '', {
                 x: 10,
-                y: 25,
-                size: 10,
-                font: helvetica,
-                color: rgb(1, 1, 1),
+                y: 60,
+                size: 14,
+                font: helveticaBold,
+                color: whiteColor
             });
         }
-
-        // Add brand and model
+    
+        // Adicionar marca e modelo
         page.drawText('MARCA:', {
-            x: 150,
-            y: 40,
-            size: 10,
+            x: 10,
+            y: 50, // Posicionamento abaixo
+            size: 12,
             font: helveticaBold,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-
+    
         page.drawText(`${card.vehicle.brand} `, {
-            x: 150,
-            y: 25,
-            size: 10,
-            font: helvetica,
-            color: rgb(1, 1, 1),
+            x: 10,
+            y: 40, // Posicionamento abaixo
+            size: 14,
+            font: helveticaBold,
+            color: whiteColor
         });
-
-        // Add director information
+    
+        // Adicionar o tipo de permissão (P ou T) em formato grande
+        page.drawText(card.permitType || '', {
+            x: 250,
+            y: 90,
+            size: 120,
+            font: helveticaBold,
+            color: whiteColor
+        });
+    
+        // Adicionar informação do diretor
         page.drawText('O DIRECTOR DO AEROPORTO', {
             x: 200,
-            y: 15,
+            y: 10,
             size: 6,
             font: helveticaBold,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-
+    
         page.drawText('DR. ARMINDO CHAMBASSUCO', {
             x: 210,
-            y: 5,
+            y: 0,
             size: 6,
             font: helvetica,
-            color: rgb(1, 1, 1),
+            color: whiteColor
         });
-
-        // Serialize the PDFDocument to bytes
+    
+        // Serializar o PDFDocument para bytes
         const pdfBytes = await pdfDoc.save();
-
-        // Create a blob and trigger download
-
-
-
+    
         return pdfBytes;
-
-
-
-
-
-
-
-
-
     },
 
     generateVehicleCardBackPVC: async () => {

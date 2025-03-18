@@ -15,6 +15,7 @@ import SetupScreen from "../SetupScreen";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { IoCarSport,  } from "react-icons/io5";
+import { FaAddressCard } from "react-icons/fa6";
 import { HiUsers } from "react-icons/hi";
 
 
@@ -44,7 +45,7 @@ export default function HomeScreen(): JSX.Element {
     const generateVehicleCardBackPVC = useVehicleCardState(state => state.generateVehicleCardBackPVC)
     const vehiclesCards = useVehicleCardState(state => state.cards)
     const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
-    const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedCard)
+    //const clearSelectedVehicleCard = useVehicleCardState(state => state.clearSelectedCard)
     
 
 
@@ -165,6 +166,11 @@ export default function HomeScreen(): JSX.Element {
                     
                         <Tabs.Trigger value="vehicles">
                             <IoCarSport color={'#607d8c'}/>
+                        </Tabs.Trigger>
+
+                        <Tabs.Trigger value="licenses">
+                            <FaAddressCard color={'#607d8c'}/>
+
                         </Tabs.Trigger>
                     </Tabs.List>
                     <Tabs.Content value="users">

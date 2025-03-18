@@ -4,6 +4,7 @@ import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { IoCarSport, IoPersonAdd } from "react-icons/io5";
+import { FaAddressCard } from "react-icons/fa6";
 import { PiPrinterLight } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
 import { VscEdit } from "react-icons/vsc";
@@ -99,6 +100,32 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         color={'#607d8c'}
                     >
                         Viaturas
+                    </Text>
+                </Box>
+                <Box
+                    py={4}
+                    px={8}
+                    textAlign={'center'}
+                    _hover={{
+                        bgColor: '#cbe5f2',
+                        cursor: 'pointer'
+                    }}
+                    //onClick={}
+                    
+                >
+                    <Icon
+                        fontSize="3xl"
+                        color={'#607d8c'}
+                    >
+                        <FaAddressCard />
+
+                    </Icon>
+                    <Text
+                        fontSize={'small'}
+                        fontWeight={'bold'}
+                        color={'#607d8c'}
+                    >
+                        Licenças
                     </Text>
                 </Box>
                 

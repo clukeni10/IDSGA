@@ -2,7 +2,7 @@ import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 export async function openCardPDF(path: string) {
     const invoiceWindow = new WebviewWindow('invoiceWindow', {
-        url: `pvcCard.html?path=${encodeURIComponent(path)}`,
+        url: `./pvcCard.html?path=${encodeURIComponent(path)}`,
         title: "Impressão de Cartão",
         width: 800,
         height: 600,
@@ -21,3 +21,4 @@ export async function openCardPDF(path: string) {
         console.log("Erro ao criar a janela de factura", e)
     })
 }
+ 

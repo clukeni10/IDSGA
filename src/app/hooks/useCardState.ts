@@ -30,7 +30,7 @@ interface Actions {
 
 
 
-
+ 
 export const useCardState = create<Actions & State>((set) => ({
     ...initialState,
     setSelectedCard: (selectedCard: CardType) => set(() => {
