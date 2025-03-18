@@ -27,7 +27,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         contentRef,
         onOpenChange
     } = props
-
+ 
     const carBrands = [
 
         "Toyota", "Hyundai", "Kia", "Nissan", "Mercedes-Benz", "BMW", "Volkswagen", "Ford", "Renault", "Peugeot",

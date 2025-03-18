@@ -56,7 +56,7 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
                 .catch(console.log)
         }
     },
-    generateVehicleCardFrontPVC: async (card: VehicleCardType, hasBlueBackground?: boolean) => {
+    generateVehicleCardFrontPVC: async (card: VehicleCardType) => {
         // Create a new PDF document
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage([350, 200]);
@@ -80,7 +80,8 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
         });
     
         // Desenhar o retângulo verde semi-transparente por cima da imagem de fundo
-        const greenColor = rgb(0 / 255, 173 / 255, 67 / 255); // Verde mais vivo como na imagem
+        const greenColor = rgb(62 / 255, 218 / 255, 62 / 255); 
+ // Verde mais vivo como na imagem
         page.drawRectangle({
             x: 0,
             y: 0,
@@ -96,8 +97,8 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
         page.drawImage(logoImage, {
             x: 10,
             y: 150,
-            width: 80,
-            height: 40
+            width: 100,
+            height: 50
         });
     
         // Cor branca para todo o texto
@@ -109,9 +110,9 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
             month: "2-digit",
             day: "2-digit"
         }).replace(/\//g, "."), {
-            x: 200,
+            x: 140,
             y: 160,
-            size: 24,
+            size: 40,
             font: helveticaBold,
             color: whiteColor
         });
@@ -129,7 +130,7 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
         page.drawText('COMPANHIA:', {
             x: 10,
             y: 120,
-            size: 12,
+            size: 20,
             font: helveticaBold,
             color: whiteColor
         });
@@ -137,7 +138,7 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
         page.drawText(card.vehicle.entity, {
             x: 10,
             y: 105,
-            size: 14,
+            size: 15,
             font: helveticaBold,
             color: whiteColor
         });
@@ -145,93 +146,79 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
         // Adicionar a informação da cor
         page.drawText('COR:', {
             x: 10,
-            y: 90,
-            size: 12,
+            y: 85,
+            size: 20,
             font: helveticaBold,
             color: whiteColor
         });
     
         page.drawText(card.vehicle.color, {
             x: 10,
-            y: 80,
-            size: 14,
+            y: 70,
+            size: 15,
             font: helveticaBold,
             color: whiteColor
         });
     
-        // Adicionar matrícula ou operações com base no tipo de permissão
-        if (card.permitType === 'P') {
+       
+        
             page.drawText('MATRICULA:', {
                 x: 10,
-                y: 30,
-                size: 12,
+                y: 50,
+                size: 20,
                 font: helveticaBold,
                 color: whiteColor
             });
     
             page.drawText(card.vehicle.licensePlate || '', {
                 x: 10,
-                y: 15,
-                size: 14,
+                y: 35,
+                size: 15,
                 font: helveticaBold,
                 color: whiteColor
             });
-        } else {
-            page.drawText('TIPO:', {
-                x: 10,
-                y: 70,
-                size: 12,
-                font: helveticaBold,
-                color: whiteColor
-            });
-    
-            page.drawText(card.vehicle.type || '', {
-                x: 10,
-                y: 60,
-                size: 14,
-                font: helveticaBold,
-                color: whiteColor
-            });
-        }
+        
+         
+        
     
         // Adicionar marca e modelo
         page.drawText('MARCA:', {
             x: 10,
-            y: 50, // Posicionamento abaixo
-            size: 12,
+            y: 15, // Posicionamento abaixo
+            size: 20,
             font: helveticaBold,
             color: whiteColor
         });
     
         page.drawText(`${card.vehicle.brand} `, {
             x: 10,
-            y: 40, // Posicionamento abaixo
-            size: 14,
+            y: 1, // Posicionamento abaixo
+            size: 15,
             font: helveticaBold,
             color: whiteColor
         });
     
         // Adicionar o tipo de permissão (P ou T) em formato grande
-        page.drawText(card.permitType || '', {
-            x: 250,
-            y: 90,
-            size: 120,
+        page.drawText('P', {
+            x: 200,
+            y: 40,
+            size: 150,
             font: helveticaBold,
             color: whiteColor
         });
     
         // Adicionar informação do diretor
         page.drawText('O DIRECTOR DO AEROPORTO', {
-            x: 200,
-            y: 10,
+            x: 250,
+            y: 30,
             size: 6,
             font: helveticaBold,
             color: whiteColor
         });
     
         page.drawText('DR. ARMINDO CHAMBASSUCO', {
-            x: 210,
-            y: 0,
+            x: 240,
+            y: 10,
             size: 6,
             font: helvetica,
             color: whiteColor
@@ -245,8 +232,8 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
 
     generateVehicleCardBackPVC: async () => {
         const pdfDoc = await PDFDocument.create();
-        const helveticaFontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+       /* const helveticaFontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)*/
 
         const pdfBytes = await pdfDoc.save();
         return pdfBytes;

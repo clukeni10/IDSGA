@@ -14,7 +14,7 @@ import CardOptionPrintScreen from "../CardOptionPrint";
 import SetupScreen from "../SetupScreen";
 import { useSetupState } from "@/app/hooks/useSetupState";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
-import { IoCarSport,  } from "react-icons/io5";
+import { IoCarSport,  } from "react-icons/io5"; 
 import { FaAddressCard } from "react-icons/fa6";
 import { HiUsers } from "react-icons/hi";
 
