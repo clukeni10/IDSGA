@@ -74,6 +74,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
             onJobValueChange([])
             setEscort([])
             setEmployeeName("")
+            setEntity([])
             onOpenChange({ open: false })
         } catch (error) {
             setLoading(false)
@@ -169,7 +170,7 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                 >
                     <SelectComponent
                         portalRef={contentRef}
-                        label="Escolta"
+                        label="Entidade"
                         placeholder="Seleccione a entidade"
                         selectedValue={entity}
                         onValueChange={setEntity}

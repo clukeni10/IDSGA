@@ -420,51 +420,51 @@ export const useCardState = create<Actions & State>((set) => ({
                 });
 
                 page.drawText(`Nome: `, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 2.1,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
                 page.drawText(getFirstAndLastName(card.person.name.toLocaleUpperCase()), {
                     x: x + 50,
                     y: y + cardHeight / 2.1,
-                    size: 10,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
 
                 page.drawText(`Função:`, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 2.5,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
                 page.drawText(card.person.job?.toUpperCase(), {
-                    x: x + 60,
+                    x: x + 50,
                     y: y + cardHeight / 2.5,
-                    size: 10,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
 
                 page.drawText(`Validade:`, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 3.1,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
                 page.drawText(convertformatDateAngolan(card.expiration), {
                     x: x + 66,
                     y: y + cardHeight / 3.1,
-                    size: 11,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
 
                 page.drawText(`Entidade:`, {
-                    x: x + 10,
+                    x: x + 8,
                     y: y + cardHeight / 4.1,
-                    size: 11,
+                    size: 10,
                     color: rgb(0, 0, 0),
                     font: helveticaBold
                 });
@@ -472,7 +472,7 @@ export const useCardState = create<Actions & State>((set) => ({
                 page.drawText(`FNCT/${card.person.entity ?? 'SGA-SA'}`, {
                     x: x + 66,
                     y: y + cardHeight / 4.1,
-                    size: 11,
+                    size: 9,
                     color: rgb(0, 0, 0),
                 });
             }
