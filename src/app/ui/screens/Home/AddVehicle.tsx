@@ -9,11 +9,11 @@ import UUIDv4 from "@/app/libs/uuidv4";
 import { useEffect, useState } from "react";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { useVehicleState } from "@/app/hooks/useVehicleState";
-import { VehicleCardType } from "@/app/types/VehicleCardType"; 
+import { VehicleCardType } from "@/app/types/VehicleCardType";
 
 
 
- interface AddVehicleModal {
+interface AddVehicleModal {
     open: boolean
     contentRef?: React.RefObject<HTMLDivElement>
     onOpenChange: (e: { open: boolean }) => void
@@ -27,7 +27,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         contentRef,
         onOpenChange
     } = props
- 
+
     const carBrands = [
 
         "Toyota", "Hyundai", "Kia", "Nissan", "Mercedes-Benz", "BMW", "Volkswagen", "Ford", "Renault", "Peugeot",
@@ -45,11 +45,20 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
         value: brand
     }));
 
+    const cardPermits = [
+        "Permanente", 
+        "Temporário"
+    ];
+
+    const cardPermitOptions = cardPermits.map((permit) => ({
+        label:permit,
+        value:permit
+    }));
 
 
 
 
-    
+
     const [message, setMessage] = useState<string>()
     const personEntities = useSetupState(state => state.personEntities)
     const [cardValidate, setCardValidate] = useState<string>('')
@@ -69,26 +78,28 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
     const [vehicleType, setVehicleType] = useState<string[]>([])
     const [vehicleColor, setVehicleColor] = useState<string>('')
     const [vehicleLicensePlate, setVehicleLicensePlate] = useState<string>('')
+    const [vehicleCardPermit, setVehicleCardPermit] = useState<string[]>([]);
 
 
 
     useEffect(() => {
 
         if (selectedCard) {
-            
+
             setVehicleBrand([selectedCard.vehicle.brand])
             setVehicleType([selectedCard.vehicle.type])
             setVehicleColor(selectedCard.vehicle.color)
             setEntity([selectedCard.vehicle.entity]);
             setVehicleLicensePlate(selectedCard.vehicle.licensePlate)
-            setCardValidate(selectedCard.expiration.toISOString().split('T')[0]) 
-            
-            
+            setCardValidate(selectedCard.expiration.toISOString().split('T')[0])
+            setVehicleCardPermit([selectedCard.permitType])
+
+
         }
     }, [selectedCard, cards])
 
     useEffect(() => {
-        if (!open) { 
+        if (!open) {
             clearSelectedCard();
             setVehicleBrand(['']);
             setCardValidate('');
@@ -96,6 +107,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setVehicleColor('');
             setVehicleType(['']);
             setVehicleLicensePlate('');
+            setVehicleCardPermit(['']);
         }
 
     }, [open])
@@ -115,7 +127,7 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             const valid = new Date(cardValidate)
 
             if (entity) {
-                await addVehicle(vehicle, valid, Array.isArray(cards) ? cards : [cards])
+                await addVehicle(vehicle, valid, vehicleCardPermit[0], cards)
                     .catch(() => {
                         setLoading(false)
                     })
@@ -128,18 +140,20 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 setVehicleColor('');
                 setVehicleLicensePlate('');
                 setVehicleType(['']);
+                setVehicleCardPermit(['']);
+
             }
         } catch (error) {
             setLoading(false);
             setMessage("")
-            
+
         }
     }
 
     async function handleUpdateVehicle() {
         try {
             setLoading(true);
-    
+
             const vehicle: VehicleType = {
                 id: selectedCard?.vehicle?.id ?? '',
                 brand: vehicleBrand[0],
@@ -148,16 +162,17 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                 licensePlate: vehicleLicensePlate,
                 entity: entity[0],
             };
-    
+
             const valid = new Date(cardValidate);
-    
+
             const card: VehicleCardType = {
                 vehicle,
                 expiration: valid,
                 cardNumber: selectedCard?.cardNumber ?? '',
+                permitType: vehicleCardPermit[0],
             };
-    
-            await updateVehicle(vehicle, card)
+
+            await updateVehicle(vehicle, card, vehicleCardPermit[0])
             setLoading(false)
             setMessage("")
             setEntity(['']);
@@ -165,18 +180,19 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
             setVehicleColor('');
             setVehicleLicensePlate('');
             setVehicleType(['']);
+            setVehicleCardPermit(['']);
             clearSelectedCard()
             onOpenChange({ open: false })
 
-            
+
             useVehicleCardState.setState(state => ({
-                cards: state.cards.map(c => 
+                cards: state.cards.map(c =>
                     c.cardNumber === selectedCard?.cardNumber ? { ...c, vehicle } : c
                 ),
             }));
-    
-            
-            
+
+
+
         } catch (error) {
             setLoading(false);
         }
@@ -227,8 +243,8 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                         portalRef={contentRef}
                         label="Marca do veículo"
                         placeholder="Selecione a marca do veículo"
-                        selectedValue={vehicleBrand} // Agora um array de strings
-                        onValueChange={setVehicleBrand} // Aceita um array de strings
+                        selectedValue={vehicleBrand} 
+                        onValueChange={setVehicleBrand} 
                         data={carBrandsOptions}
                     >
 
@@ -251,6 +267,20 @@ export default function AddVehicleModal(props: AddVehicleModal): JSX.Element {
                             { label: "Motorizada", value: "Motorizada" }
                         ]}
                     />
+                </Field>
+                <Field
+
+                    errorText="Este campo é obrigatório"
+                >
+                    <SelectComponent
+                        portalRef={contentRef}
+                        label="Tipo de Licença"
+                        placeholder="Seleccione o tipo de Licença"
+                        selectedValue={vehicleCardPermit}  
+                        onValueChange={setVehicleCardPermit} 
+                        data={cardPermitOptions}
+                    />
+
                 </Field>
                 <Field
 

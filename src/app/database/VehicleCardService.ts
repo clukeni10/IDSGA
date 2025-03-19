@@ -90,6 +90,7 @@ export default class VehicleCardService {
                         },
                         expiration: new Date(d.expiration),
                         cardNumber: d.cardNumber,
+                        permitType: d.permitType,
                     };
                     all.push(card);
                 }

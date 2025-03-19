@@ -51,7 +51,7 @@ export default function HomeScreen(): JSX.Element {
 
     const refresh = usePersonState(state => state.refresh)
 
-    const address = useSetupState(state => state.address)
+    const address = useSetupState(state => state.address) 
 
     useEffect(() => {
         getAllCards(address)
@@ -109,16 +109,6 @@ export default function HomeScreen(): JSX.Element {
     }
 
     
-
-    
-
-    
-    
-
-   
-
-    
-
     function handleoOnSetupNetwork() {
         setOpenSetup({ open: true })
     }

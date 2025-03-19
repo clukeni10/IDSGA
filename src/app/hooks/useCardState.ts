@@ -9,7 +9,7 @@ import CardService from "../database/CardService";
 const initialState: State = { 
     cards: [],
     selectedCard: null  
-}
+} 
  
  interface State {
     cards: CardType[] 

@@ -19,14 +19,14 @@ interface State {
 
 
 interface Actions {
-    addVehicle: (vehicle: VehicleType, valid:Date,   totalCards?: any[])=> Promise<void>
-    updateVehicle:(vehicle: VehicleType, card: VehicleCardType)=> Promise<void>
+    addVehicle: (vehicle: VehicleType, valid:Date, permitType:string,  totalCards?: any[])=> Promise<void>
+    updateVehicle:(vehicle: VehicleType, card: VehicleCardType, permitType:string)=> Promise<void>
     forceRefresh: () => void
 }
 
 export const useVehicleState = create<Actions & State>((set) => ({
     ...initialState,
-    addVehicle: async (vehicle: VehicleType, valid: Date, totalCards?: any[]) => {
+    addVehicle: async (vehicle: VehicleType, valid: Date, permitType:string, totalCards?: any[]) => {
 
     let cardNumber:Promise<string> | string;
     
@@ -41,6 +41,7 @@ export const useVehicleState = create<Actions & State>((set) => ({
         vehicle: vehicle,
         expiration: valid,
         cardNumber, 
+        permitType,
     };
 
     if (vehicle) {

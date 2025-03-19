@@ -6,7 +6,7 @@ import { CardType } from "../types/CardType";
 import CardService from "../database/CardService";
 
 const initialState: State = {
-    cards: [],
+    cards: [], 
     refresh: 0
 } 
 

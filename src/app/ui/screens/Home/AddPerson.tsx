@@ -22,7 +22,7 @@ interface AddPersonModal {
 
 export default function AddPersonModal(props: AddPersonModal): JSX.Element {
 
-    const { 
+    const {  
         open,
         contentRef,
         onOpenChange

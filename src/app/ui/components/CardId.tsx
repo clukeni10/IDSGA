@@ -36,6 +36,7 @@ export default function CardId(props: CardId): JSX.Element {
             p={2}
         >
             <Card.Body>
+                
                 {
                     selectedCard === card ?
                         <Icon
