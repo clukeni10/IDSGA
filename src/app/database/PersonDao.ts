@@ -2,7 +2,7 @@ import { PersonType } from "../types/PersonType"
 import IndexedDB from "./IndexedDB"
 import { objectStore } from "./IndexedDB/objectStore"
 
-export default class PersonDao {
+export default class PersonDao { 
     
     static shared = new PersonDao()
 	private keyPath = objectStore.personObjectStore

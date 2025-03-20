@@ -3,7 +3,7 @@ import { Stack, Grid, For } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import AddPersonModal from "./AddPerson";
 import CardId from "../../components/CardId";
-import HeaderActions from "../../components/HeaderActions";
+import HeaderActions from "../../components/HeaderActions"; 
 import { useCardState } from "@/app/hooks/useCardState";
 import { usePersonState } from "@/app/hooks/usePersonState";
 import { openCardPDF } from "@/app/libs/tauri-window";

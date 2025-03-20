@@ -8,7 +8,7 @@ import { usePersonState } from "@/app/hooks/usePersonState";
 import { PersonType } from "@/app/types/PersonType";
 import UUIDv4 from "@/app/libs/uuidv4";
 import { useSetupState } from "@/app/hooks/useSetupState";
-import { useCardState } from "@/app/hooks/useCardState";
+import { useCardState } from "@/app/hooks/useCardState"; 
 import ImagePreview from "../../components/ImagePreview";
 import { personAccesstypes } from "@/app/utils/constants";
 import { CardType } from "@/app/types/CardType";
@@ -184,7 +184,6 @@ export default function AddPersonModal(props: AddPersonModal): JSX.Element {
                     flexDir={'column'}
                     align='center'
                     justify='center'
-                    // borderTop='1px solid #ddd'
                     justifyContent={'center'}
                 >
                     <ImagePreview
