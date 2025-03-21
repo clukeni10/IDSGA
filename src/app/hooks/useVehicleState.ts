@@ -42,7 +42,7 @@ export const useVehicleState = create<Actions & State>((set) => ({
         }
 
         if (url) {
-            await VehicleCardService.shared.addCard({ ...card, ...vehicle } url)
+            await VehicleCardService.shared.addCard({ ...card, ...vehicle }, url)
         } else {
 
             await VehicleDao.shared.addVehicle(vehicle)

@@ -1,27 +1,32 @@
 import { useCardState } from "@/app/hooks/useCardState";
 import { useSetupState } from "@/app/hooks/useSetupState";
+import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { IoPersonAdd } from "react-icons/io5";
+import { IoCarSport, IoPersonAdd } from "react-icons/io5";
 import { PiPrinterLight } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
 import { VscEdit } from "react-icons/vsc";
 
 interface HeaderActions {
     onOpenAddPerson: () => void
+    onOpenAddVehicle: () => void
     onPrintCards: () => void
     onPrintSelectedCards: () => void
     onSetupNetwork: () => void
     onUpdateCard: () => void
+    onUpdateVehicleCard: () => void
 }
 
 export default function HeaderActions(props: HeaderActions): JSX.Element {
 
     const {
         onOpenAddPerson,
+        onOpenAddVehicle,
         onPrintSelectedCards,
         onSetupNetwork,
-        onUpdateCard
+        onUpdateCard,
+        onUpdateVehicleCard
     } = props;
 
     const getPersonFunction = useSetupState(state => state.getPersonFunction)
@@ -29,12 +34,14 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
     const getPersonEntity = useSetupState(state => state.getPersonEntity)
 
     const selectedCard = useCardState(state => state.selectedCard)
+    const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
 
     useEffect(() => {
         getPersonFunction()
         getPersonEscort()
         getPersonEntity()
     }, [])
+
 
     return (
         <Stack
@@ -65,62 +72,75 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         Pessoal
                     </Text>
                 </Box>
+                <Box
+                    py={4}
+                    px={8}
+                    textAlign={'center'}
+                    _hover={{
+                        bgColor: '#cbe5f2',
+                        cursor: 'default'
+                    }}
+                    onClick={onOpenAddVehicle}
+                >
+                    <Icon
+                        fontSize="2xl"
+                        color={'#607d8c'}
+                    >
+                        <IoCarSport />
+                    </Icon>
+                    <Text
+                        fontSize={'small'}
+                        fontWeight={'bold'}
+                        color={'#607d8c'}
+                    >
+                        Veículos
+                    </Text>
+                </Box>
                 <Spacer />
                 {
-                    selectedCard !== null ?
-                        <Box
-                            py={4}
-                            px={4}
-                            textAlign={'center'}
-                            _hover={{
-                                bgColor: '#cbe5f2',
-                                cursor: 'default'
-                            }}
-                            onClick={onUpdateCard}
-                        >
-                            <Icon
-                                fontSize="2xl"
-                                color={'#607d8c'}
+                    (selectedCard !== null || selectedVehicleCard !== null) && (
+                        <>
+                            <Box
+                                py={4}
+                                px={4}
+                                textAlign={'center'}
+                                _hover={{
+                                    bgColor: '#cbe5f2',
+                                    cursor: 'default'
+                                }}
+                                onClick={selectedVehicleCard ? onUpdateVehicleCard : onUpdateCard}
                             >
-                                <VscEdit />
-                            </Icon>
-                            <Text
-                                fontSize={'small'}
-                                fontWeight={'bold'}
-                                color={'#607d8c'}
+                                <Icon fontSize="2xl" color={'#607d8c'}>
+                                    <VscEdit />
+                                </Icon>
+                                <Text fontSize={'small'} fontWeight={'bold'} color={'#607d8c'}>
+                                    Editar cartão
+                                </Text>
+                            </Box>
+
+                            <Box
+                                py={4}
+                                px={4}
+                                textAlign={'center'}
+                                _hover={{
+                                    bgColor: '#cbe5f2',
+                                    cursor: 'default'
+                                }}
+                                onClick={onPrintSelectedCards}
                             >
-                                Editar cartão
-                            </Text>
-                        </Box> : null
+                                <Icon fontSize="2xl" color={'#607d8c'}>
+                                    <PiPrinterLight />
+                                </Icon>
+                                <Text fontSize={'small'} fontWeight={'bold'} color={'#607d8c'}>
+                                    Imprimir seleccionado(s)
+                                </Text>
+                            </Box>
+                        </>
+                    )
                 }
-                {
-                    selectedCard !== null ?
-                        <Box
-                            py={4}
-                            px={4}
-                            textAlign={'center'}
-                            _hover={{
-                                bgColor: '#cbe5f2',
-                                cursor: 'default'
-                            }}
-                            onClick={onPrintSelectedCards}
-                        >
-                            <Icon
-                                fontSize="2xl"
-                                color={'#607d8c'}
-                            >
-                                <PiPrinterLight />
-                            </Icon>
-                            <Text
-                                fontSize={'small'}
-                                fontWeight={'bold'}
-                                color={'#607d8c'}
-                            >
-                                Imprimir seleccionado(s)
-                            </Text>
-                        </Box> : null
-                }
-               {/*  <Box
+
+
+                {/*  <Box
                     py={4}
                     px={4}
                     textAlign={'center'}

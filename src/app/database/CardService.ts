@@ -92,7 +92,7 @@ export default class CardService {
                             imageBase64 = `data:image/png;base64,${Buffer.from(imageBuffer).toString("base64")}`;
                         } catch (imageError) {
                             console.error("Erro ao carregar imagem:", imageError);
-                        }
+                        } 
                     }
     
                     const card: CardType = {

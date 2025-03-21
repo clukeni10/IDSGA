@@ -12,7 +12,7 @@ const initialState: State = {
 
 interface State {
     cards: CardType[]
-    selectedCard: CardType | null
+    selectedCard: CardType | null 
 }
 
 interface Actions {
@@ -47,7 +47,7 @@ export const useCardState = create<Actions & State>((set) => ({
                 })
                 .catch(console.log)
         } else {
-            CardDao.shared.getAllCards()
+            CardDao.shared.getAllCards() 
                 .then(cards => {
                     set(() => ({ cards }))
                 })
