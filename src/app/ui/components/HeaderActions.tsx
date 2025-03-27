@@ -12,6 +12,7 @@ interface HeaderActions {
     onOpenAddPerson: () => void
     onOpenAddVehicle: () => void
     onPrintCards: () => void
+    onPrintVehicleCards: () => void
     onPrintSelectedCards: () => void
     onSetupNetwork: () => void
     onUpdateCard: () => void

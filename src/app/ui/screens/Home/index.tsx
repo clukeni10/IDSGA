@@ -36,6 +36,8 @@ export default function HomeScreen(): JSX.Element {
     const cards = useCardState(state => state.cards)
     const selectedCard = useCardState(state => state.selectedCard)
 
+    const generateVehicleCardFrontPVC = useVehicleCardState(state => state.generateVehicleCardFrontPVC)
+    const generateVehicleCardBackPVC = useVehicleCardState(state => state.generateVehicleCardBackPVC)
     const getAllVehicleCards = useVehicleCardState(state => state.getAllCards)
     const vehicleCards = useVehicleCardState(state => state.cards)
     const selectedVehicleCard = useVehicleCardState(state => state.selectedCard)
@@ -65,6 +67,12 @@ export default function HomeScreen(): JSX.Element {
         }
     }
 
+    async function handleOnPrintingVehicleCard() {
+        if (cards.length !== 0) {
+            setOpenOption({ open: true })
+        }
+    }
+
     async function onHandleToPrint(cardSidePrint: string, cardType: string) {
         const dirPath = 'pdf'
         const extension = 'pdf'
@@ -84,6 +92,18 @@ export default function HomeScreen(): JSX.Element {
             setOpenOption({ open: false })
         }
 
+        if(selectedVehicleCard){
+            if(cardSidePrint === 'frontal'){
+                pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
+            } else {
+                pathUri = await generateVehicleCardBackPVC()
+            }
+
+            const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
+            await openCardPDF(filePath)
+            clearSelectedVehicleCard()
+            setOpenVehicle
+        }
 
 
         /* if (cardSidePrint === 'frontal') {
@@ -120,6 +140,7 @@ export default function HomeScreen(): JSX.Element {
                 onOpenAddPerson={handleOnOpenAddPerson}
                 onOpenAddVehicle={handleOnOpenAddVehicle}
                 onPrintCards={handleOnPrintingCard}
+                onPrintVehicleCards={handleOnPrintingVehicleCard}
                 onPrintSelectedCards={handleOnPrintingCard}
                 onSetupNetwork={handleoOnSetupNetwork}
                 onUpdateCard={handleUpdateCard}

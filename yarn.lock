@@ -443,6 +443,11 @@
   resolved "https://registry.npmjs.org/@tauri-apps/api/-/api-2.2.0.tgz"
   integrity sha512-R8epOeZl1eJEl603aUMIGb4RXlhPjpgxbGVEaqY+0G5JG9vzV/clNlzTeqc+NLYXVqXcn8mb4c5b9pJIUDEyAg==
 
+"@tauri-apps/api@2.0.0-alpha.6":
+  version "2.0.0-alpha.6"
+  resolved "https://registry.npmjs.org/@tauri-apps/api/-/api-2.0.0-alpha.6.tgz"
+  integrity sha512-ZMOc3eu9amwvkC6M69h3hWt4/EsFaAXmtkiw4xd2LN59/lTb4ZQiVfq2QKlRcu1rj3n/Tcr7U30ZopvHwXBGIg==
+
 "@tauri-apps/cli-win32-x64-msvc@2.2.4":
   version "2.2.4"
   resolved "https://registry.npmjs.org/@tauri-apps/cli-win32-x64-msvc/-/cli-win32-x64-msvc-2.2.4.tgz"
@@ -471,7 +476,7 @@
   dependencies:
     "@tauri-apps/api" "^2.0.0"
 
-"@tauri-apps/plugin-fs@2.2.0":
+"@tauri-apps/plugin-fs@^2.2.0":
   version "2.2.0"
   resolved "https://registry.npmjs.org/@tauri-apps/plugin-fs/-/plugin-fs-2.2.0.tgz"
   integrity sha512-+08mApuONKI8/sCNEZ6AR8vf5vI9DXD4YfrQ9NQmhRxYKMLVhRW164vdW5BSLmMpuevftpQ2FVoL9EFkfG9Z+g==
@@ -491,6 +496,13 @@
   integrity sha512-iC3Ic1hLmasoboG7BO+7p+AriSoqAwKrIk+Hpk+S/bjTQdXqbl2GbdclghI4gM32X0bls7xHzIFqhRdrlvJeaA==
   dependencies:
     "@tauri-apps/api" "^2.0.0"
+
+"@tauri-apps/plugin-window@^2.0.0-alpha.1":
+  version "2.0.0-alpha.1"
+  resolved "https://registry.npmjs.org/@tauri-apps/plugin-window/-/plugin-window-2.0.0-alpha.1.tgz"
+  integrity sha512-dFOAgal/3Txz3SQ+LNQq0AK1EPC+acdaFlwPVB/6KXUZYmaFleIlzgxDVoJCQ+/xOhxvYrdQaFLefh0I/Kldbg==
+  dependencies:
+    "@tauri-apps/api" "2.0.0-alpha.6"
 
 "@types/babel__core@^7.20.5":
   version "7.20.5"

@@ -35,5 +35,9 @@
     "resources": [
       "resources/**/*"
     ]
+  },
+  "plugins": {
+    "window": {},
+    "fs": {}
   }
 }

@@ -58,7 +58,7 @@ export const useCardState = create<Actions & State>((set) => ({
         const pdfDoc = await PDFDocument.create();
         const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-        const height = 242.64;
+        const height = 242.64; 
         const width = 153;
 
         const page = pdfDoc.addPage([width, height]);
