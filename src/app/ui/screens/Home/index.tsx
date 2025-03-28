@@ -74,8 +74,6 @@ export default function HomeScreen(): JSX.Element {
     }
 
     async function onHandleToPrint(cardSidePrint: string, cardType: string) {
-        const dirPath = 'pdf'
-        const extension = 'pdf'
         let pathUri: Uint8Array
 
 
@@ -86,20 +84,42 @@ export default function HomeScreen(): JSX.Element {
                 pathUri = await generatePersonCardBackPVC()
             }
 
-            const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
-            await openCardPDF(filePath)
+            const filePath = await saveFileLocal(pathUri, 'cards', 'pdf', 'pdf');
+
+            if (!filePath) {
+                console.error("❌ Erro: Caminho do arquivo não gerado corretamente.");
+                return;
+            }
+
+            console.log(`📂 Arquivo salvo: ${filePath}`);
+
+            await openCardPDF(filePath); // ✅ Passa o caminho correto para a função!
+
+
             clearSelectedCard()
             setOpenOption({ open: false })
         }
 
-        if(selectedVehicleCard){
-            if(cardSidePrint === 'frontal'){
+        if (selectedVehicleCard) {
+            if (cardSidePrint === 'frontal') {
                 pathUri = await generateVehicleCardFrontPVC(selectedVehicleCard, cardType === 'internal')
             } else {
                 pathUri = await generateVehicleCardBackPVC()
             }
 
-            const filePath = await saveFileLocal(pathUri, 'cards', dirPath, extension)
+
+            const filePath = await saveFileLocal(pathUri, 'cards', 'pdf', 'pdf');
+
+            if (!filePath) {
+                console.error("❌ Erro: Caminho do arquivo não gerado corretamente.");
+                return;
+            }
+
+            console.log(`📂 Arquivo salvo: ${filePath}`);
+
+            await openCardPDF(filePath); // ✅ Passa o caminho correto para a função!
+
+
             await openCardPDF(filePath)
             clearSelectedVehicleCard()
             setOpenVehicle
@@ -125,9 +145,9 @@ export default function HomeScreen(): JSX.Element {
     function handleUpdateCard() {
         setOpen({ open: true })
     }
-    
-    function handleUpdateVehicleCard(){
-        setOpenVehicle({open:true})
+
+    function handleUpdateVehicleCard() {
+        setOpenVehicle({ open: true })
     }
 
     function handleoOnSetupNetwork() {
@@ -180,7 +200,7 @@ export default function HomeScreen(): JSX.Element {
                         </Grid>
                     </Tabs.Content>
                     <Tabs.Content value="Veículos">
-                    <Grid templateColumns="repeat(5, 1fr)" gap="6">
+                        <Grid templateColumns="repeat(5, 1fr)" gap="6">
                             <For each={vehicleCards}>
                                 {(card) => (
                                     <VehicleCardId

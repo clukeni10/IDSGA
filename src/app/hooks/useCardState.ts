@@ -27,7 +27,7 @@ interface Actions {
 }
 
 export const useCardState = create<Actions & State>((set) => ({
-    ...initialState,
+    ...initialState, 
     setSelectedCard: (selectedCard: CardType) => set(() => {
 
         /*  const selectedCards = [...state.selectedCards]

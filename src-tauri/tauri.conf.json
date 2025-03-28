@@ -5,8 +5,8 @@
   "identifier": "com.sga-card-gest.app",
   "build": {
     "beforeDevCommand": "yarn dev",
+    "beforeBuildCommand": "yarn build && copy src-tauri\\pvcCard.html dist\\", 
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "yarn build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -19,7 +19,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'"
     }
   },
   "bundle": {
@@ -32,6 +32,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    
     "resources": [
       "resources/**/*"
     ]
