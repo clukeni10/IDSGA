@@ -23,9 +23,7 @@ export default function CardOptionPrintScreen(props: CardOptionPrintScreen): JSX
     async function handleToPrint() {
         if (cardSidePrint === 'frontal') {
             onHandleToPrint(cardSidePrint, cardType)
-        } else {
-            onHandleToPrint(cardSidePrint, cardType)
-        }
+        } 
     }
 
     return (

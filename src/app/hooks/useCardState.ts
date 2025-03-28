@@ -12,7 +12,7 @@ const initialState: State = {
 
 interface State {
     cards: CardType[]
-    selectedCard: CardType | null
+    selectedCard: CardType | null 
 }
 
 interface Actions {
@@ -27,7 +27,7 @@ interface Actions {
 }
 
 export const useCardState = create<Actions & State>((set) => ({
-    ...initialState,
+    ...initialState, 
     setSelectedCard: (selectedCard: CardType) => set(() => {
 
         /*  const selectedCards = [...state.selectedCards]
@@ -47,7 +47,7 @@ export const useCardState = create<Actions & State>((set) => ({
                 })
                 .catch(console.log)
         } else {
-            CardDao.shared.getAllCards()
+            CardDao.shared.getAllCards() 
                 .then(cards => {
                     set(() => ({ cards }))
                 })
@@ -58,7 +58,7 @@ export const useCardState = create<Actions & State>((set) => ({
         const pdfDoc = await PDFDocument.create();
         const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-        const height = 242.64;
+        const height = 242.64; 
         const width = 153;
 
         const page = pdfDoc.addPage([width, height]);
