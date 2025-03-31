@@ -16,4 +16,4 @@ export async function saveFileLocal(pdfBytes: Uint8Array, fileName: string, dirP
         console.error('Erro ao salvar o arquivo localmente:', error);
         throw error;
     }
-}
+} 

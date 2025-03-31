@@ -207,8 +207,8 @@ export const useVehicleCardState = create<Actions & State>((set) => ({
     },
     generateVehicleCardBackPVC: async () => {
         const pdfDoc = await PDFDocument.create();
-        const helveticaFontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+       // const helveticaFontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+       // const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
 
         const pdfBytes = await pdfDoc.save();

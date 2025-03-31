@@ -91,10 +91,13 @@ export default function HomeScreen(): JSX.Element {
                 return;
             }
 
-            console.log(`📂 Arquivo salvo: ${filePath}`);
-
-            await openCardPDF(filePath); // ✅ Passa o caminho correto para a função!
-
+            await openCardPDF(filePath, {
+                name: selectedCard.person.name, 
+                personFunction: selectedCard.person.job,
+                cardNumber: selectedCard.cardNumber, 
+                cardValidate: selectedCard.expiration,
+                imagem: selectedCard.person.image
+            });
 
             clearSelectedCard()
             setOpenOption({ open: false })
@@ -117,10 +120,10 @@ export default function HomeScreen(): JSX.Element {
 
             console.log(`📂 Arquivo salvo: ${filePath}`);
 
-            await openCardPDF(filePath); // ✅ Passa o caminho correto para a função!
+          //  await openCardPDF(filePath); // ✅ Passa o caminho correto para a função!
 
 
-            await openCardPDF(filePath)
+           
             clearSelectedVehicleCard()
             setOpenVehicle
         }

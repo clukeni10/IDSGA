@@ -1,54 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impressão de Cartão</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal ID Card</title>
     <style>
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
+      :root {
+        --gray-background: #e6e6e6;
+        --blue-background: #249ac0;
+        --orange-accent: #ff8000;
+        --white: #ffffff;
+        --black: #000000;
+      }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+      }
+
+      .card {
+        width: 300px;
+        height: 475px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card-header {
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .card-header.blue {
+        background-color: var(--blue-background);
+      }
+
+      .card-header.gray {
+        background-color: var(--gray-background);
+      }
+
+      .access-labels {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .access-label {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .access-label.white {
+        background-color: var(--white);
+      }
+
+      .access-label.orange {
+        background-color: var(--orange-accent);
+      }
+
+      .card-number {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+      }
+
+      .entity-name {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      .photo-container {
+        width: 180px;
+        height: 200px;
+        border: 1px solid var(--white);
+        margin: 20px auto 10px;
+        overflow: hidden;
+      }
+
+      .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .card-details {
+        padding: 10px;
+        text-align: center;
+      }
+
+      .card-details p {
+        font-size: 14px;
+        margin: 8px 0;
+      }
+
+      .card-details p:nth-child(1),
+      .card-details p:nth-child(2) {
+        font-weight: bold;
+      }
+
+      .card-details p:nth-child(3) {
+        font-weight: normal;
+      }
+
+      .card-footer {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
+
+      .airport-name {
+        font-size: 9px;
+        margin: 0 0 5px 0;
+        text-align: center;
+        width: 100%;
+      }
+
+      .logo-container {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+      }
+
+      .logo {
+        width: 80px;
+        height: auto;
+      }
     </style>
-</head>
+  </head>
+  <body>
+    <div class="card">
+      <div class="card-header blue">
+        <div class="access-labels">
+          <div class="access-label white">A</div>
+          <div class="access-label orange">B</div>
+          <div class="access-label orange">C</div>
+          <div class="access-label orange">D</div>
+          <div class="access-label orange">E</div>
+          <div class="access-label white">F</div>
+        </div>
 
-<body>
-    <iframe id="pdf-frame"></iframe>
-    <script type="module">
-        const { readFile, BaseDirectory } = window.__TAURI__.fs
+        <div class="card-number" id="card-number"></div>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const path = urlParams.get('path');
+        <div class="photo-container">
+          <img id="personImg" src="/api/placeholder/180/200" alt="Person Photo" />
+        </div>
 
-        readFile(path, { baseDir: BaseDirectory.AppLocalData })
-            .then((content) => {
-                const base64PDF = uint8ArrayToBase64(content)
+        <div class="entity-name">COMPANY NAME</div>
+      </div>
 
-                if (base64PDF) {
-                    document.getElementById('pdf-frame').src = `data:application/pdf;base64,${base64PDF}`;
-                }
-            })
-            .catch(console.log)
+      <div class="card-details">
+        <p id="nome">Nome: JOHN DOE</p>
+        <p id="funcao">Função: SOFTWARE ENGINEER</p>
+        <p id="validade">Validade: 31/12/2024</p>
+      </div>
 
-        function uint8ArrayToBase64(u8a) {
-            const CHUNK_SIZE = 0x8000;
-            const chunks = [];
-            for (let i = 0; i < u8a.length; i += CHUNK_SIZE) {
-                chunks.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SIZE)));
-            }
-            return btoa(chunks.join(''));
-        }
-    </script>
-</body>
+      <div class="card-footer">
+        <p class="airport-name">AEROPORTO INTERNACIONAL PAULO TEIXEIRA JORGE</p>
+        <div class="logo-container">
+          <img src="sga-logo.png" alt="SGA Logo" class="logo" />
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get("name");
+    const personFunction = urlParams.get("personFunction");
+    const cardNumber = urlParams.get("cardNumber");
+    const cardValidate = urlParams.get("cardValidate");
+    const imagem = urlParams.get("imagem");
 
+    console.log(name, personFunction, cardNumber, cardValidate ); // Agora os dados estão acessíveis no HTML
+
+    document.getElementById("nome").textContent = `Nome: ${name}`;
+    document.getElementById("funcao").textContent = `Função: ${funcao}`;
+    document.getElementById("card-number").textContent = cardNumber;
+    document.getElementById("validade").textContent = cardValidate;
+    document.getElementById("personImg").innerHTML = imagem;
+  </script>
 </html>
