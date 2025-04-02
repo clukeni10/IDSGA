@@ -160,12 +160,12 @@
     <div class="card">
       <div class="card-header blue">
         <div class="access-labels">
-          <div class="access-label white">A</div>
-          <div class="access-label orange">B</div>
-          <div class="access-label orange">C</div>
-          <div class="access-label orange">D</div>
-          <div class="access-label orange">E</div>
-          <div class="access-label white">F</div>
+          <div class="access-label ">A</div>
+          <div class="access-label ">B</div>
+          <div class="access-label ">C</div>
+          <div class="access-label ">D</div>
+          <div class="access-label ">E</div>
+          <div class="access-label ">F</div>
         </div>
 
         <div class="card-number" id="card-number"></div>
@@ -197,14 +197,27 @@
     const personFunction = urlParams.get("personFunction");
     const cardNumber = urlParams.get("cardNumber");
     const cardValidate = urlParams.get("cardValidate");
-    const imagem = urlParams.get("imagem");
+    const acessType = urlParams.get("acessType");
+    const userAccess = acessType ? acessType.split(",") : [];
+    //const imagem = urlParams.get("imagem");
+
 
     console.log(name, personFunction, cardNumber, cardValidate ); // Agora os dados estão acessíveis no HTML
 
     document.getElementById("nome").textContent = `Nome: ${name}`;
-    document.getElementById("funcao").textContent = `Função: ${funcao}`;
+    document.getElementById("funcao").textContent = `Função: ${personFunction}`;
     document.getElementById("card-number").textContent = cardNumber;
     document.getElementById("validade").textContent = cardValidate;
-    document.getElementById("personImg").innerHTML = imagem;
+    document.querySelectorAll(".access-label").forEach(label => {
+    if (userAccess.includes(label.textContent.trim())) {
+        label.classList.add("orange");
+        label.classList.remove("white");
+    } else {
+        label.classList.add("white");
+        label.classList.remove("orange");
+    }
+});
+
+    //document.getElementById("personImg").innerHTML = imagem;
   </script>
 </html>

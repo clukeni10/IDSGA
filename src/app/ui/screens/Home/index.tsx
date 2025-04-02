@@ -96,7 +96,8 @@ export default function HomeScreen(): JSX.Element {
                 personFunction: selectedCard.person.job,
                 cardNumber: selectedCard.cardNumber, 
                 cardValidate: selectedCard.expiration,
-                imagem: selectedCard.person.image
+                acessType: selectedCard.person.accessType
+
             });
 
             clearSelectedCard()
