@@ -7,6 +7,7 @@ const initialState: State = {
     personFunctions: [],
     personEscorts: [],
     personEntities: [],
+    personNames: [],
 }
 
 interface State {
@@ -14,6 +15,7 @@ interface State {
     personFunctions: { value: string, label: string }[]
     personEscorts: { value: string, label: string }[]
     personEntities: { value: string, label: string }[]
+    personNames: { value: string, label: string }[]
 }
 
 interface Actions {
@@ -24,6 +26,7 @@ interface Actions {
     getPersonFunction: () => void
     getPersonEscort: () => void
     getPersonEntity: () => void
+
 }
 
 export const useSetupState = create<Actions & State>()(
@@ -34,7 +37,7 @@ export const useSetupState = create<Actions & State>()(
                 if (address) {
                     set(() => ({ address: `${address.replace(':3000', '')}:3000` }))
                 } else {
-                    set(() => ({ address: null }))
+                    set(() => ({ address: null })) 
                 }
             },
             savePersonFunction: async (value: string, address: string) => {
@@ -43,6 +46,7 @@ export const useSetupState = create<Actions & State>()(
                     personFunctions: [...state.personFunctions, { value, label: value }],
                 }));
             },
+            
             savePersonEscort: async (value: string, address: string) => {
                 await SetupService.shared.savePersonEscort(value, address)
                 set((state) => ({
@@ -78,7 +82,8 @@ export const useSetupState = create<Actions & State>()(
                     const response = await SetupService.shared.getAllFunctions(address)
                     set(() => ({ personFunctions: response }));
                 }
-            }
+            },
+           
         }),
         {
             name: 'sga-network',

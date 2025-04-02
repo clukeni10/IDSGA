@@ -22,6 +22,8 @@ export default class SetupService {
         })
     }
 
+   
+
     async savePersonEscort(value: string, url: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -77,6 +79,9 @@ export default class SetupService {
             }
         })
     }
+
+
+   
     async getAllEscorts(url: string): Promise<{ value: string, label: string }[]> {
         return new Promise(async (resolve, reject) => {
             try {

@@ -119,4 +119,36 @@ export default class CardService {
             }
         });
     }
+    async getAllNames(url: string): Promise<string[]> {
+        try {
+            // Realiza a requisição para o servidor
+            const response = await fetch(`${url}/card/getAll`, { method: "GET" });
+    
+            // Verifica se a resposta foi bem-sucedida
+            if (!response.ok) {
+                throw new Error(`Erro ao buscar dados: ${response.statusText}`);
+            }
+    
+            // Converte a resposta para JSON
+            const data = await response.json();
+    
+            // Verifica se a estrutura da resposta é um array
+            if (!Array.isArray(data)) {
+                throw new Error("Resposta inesperada do servidor");
+            }
+    
+            // Extrai os nomes das pessoas
+            const names: string[] = data
+                .filter((d: any) => d.person?.name) // Verifica se 'person' e 'name' existem
+                .map((d: any) => d.person.name); // Extrai os nomes
+    
+            return names; // Retorna os nomes extraídos
+        } catch (error) {
+            console.error("Erro ao obter nomes:", error);
+            throw error; // Lança o erro para ser tratado onde a função for chamada
+        }
+    }
+    
+    
+    
 }

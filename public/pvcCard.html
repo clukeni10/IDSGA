@@ -60,8 +60,8 @@
       }
 
       .access-label {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border: 1px solid var(--black);
         display: flex;
         align-items: center;
@@ -174,7 +174,7 @@
           <img id="personImg" src="/api/placeholder/180/200" alt="Person Photo" />
         </div>
 
-        <div class="entity-name">COMPANY NAME</div>
+        <div class="entity-name" id="entity-name">COMPANY NAME</div>
       </div>
 
       <div class="card-details">
@@ -192,32 +192,19 @@
     </div>
   </body>
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const name = urlParams.get("name");
-    const personFunction = urlParams.get("personFunction");
-    const cardNumber = urlParams.get("cardNumber");
-    const cardValidate = urlParams.get("cardValidate");
-    const acessType = urlParams.get("acessType");
-    const userAccess = acessType ? acessType.split(",") : [];
-    //const imagem = urlParams.get("imagem");
 
 
-    console.log(name, personFunction, cardNumber, cardValidate ); // Agora os dados estão acessíveis no HTML
+        // Função para obter parâmetros da URL
+        function getURLParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
 
-    document.getElementById("nome").textContent = `Nome: ${name}`;
-    document.getElementById("funcao").textContent = `Função: ${personFunction}`;
-    document.getElementById("card-number").textContent = cardNumber;
-    document.getElementById("validade").textContent = cardValidate;
-    document.querySelectorAll(".access-label").forEach(label => {
-    if (userAccess.includes(label.textContent.trim())) {
-        label.classList.add("orange");
-        label.classList.remove("white");
-    } else {
-        label.classList.add("white");
-        label.classList.remove("orange");
-    }
-});
+        // Recupera o parâmetro 'filePath' da URL
+        const path = getURLParameter('path');
+        console.log(path); 
 
-    //document.getElementById("personImg").innerHTML = imagem;
+
+
   </script>
 </html>

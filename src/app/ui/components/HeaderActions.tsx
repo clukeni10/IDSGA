@@ -3,6 +3,7 @@ import { useSetupState } from "@/app/hooks/useSetupState";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import { Box, HStack, Stack, Text, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { FaRegIdCard } from "react-icons/fa";
 import { IoCarSport, IoPersonAdd } from "react-icons/io5";
 import { PiPrinterLight } from "react-icons/pi";
 import { VscSettings } from "react-icons/vsc";
@@ -11,6 +12,7 @@ import { VscEdit } from "react-icons/vsc";
 interface HeaderActions {
     onOpenAddPerson: () => void
     onOpenAddVehicle: () => void
+    onOpenAddLicense: () => void
     onPrintCards: () => void
     onPrintVehicleCards: () => void
     onPrintSelectedCards: () => void
@@ -24,6 +26,7 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
     const {
         onOpenAddPerson,
         onOpenAddVehicle,
+        onOpenAddLicense,
         onPrintSelectedCards,
         onSetupNetwork,
         onUpdateCard,
@@ -95,6 +98,30 @@ export default function HeaderActions(props: HeaderActions): JSX.Element {
                         color={'#607d8c'}
                     >
                         Veículos
+                    </Text>
+                </Box>
+                <Box
+                    py={4}
+                    px={8}
+                    textAlign={'center'}
+                    _hover={{
+                        bgColor: '#cbe5f2',
+                        cursor: 'default'
+                    }}
+                    onClick={onOpenAddLicense}
+                >
+                    <Icon
+                        fontSize="2xl"
+                        color={'#607d8c'}
+                    >
+                        <FaRegIdCard />
+                    </Icon>
+                    <Text
+                        fontSize={'small'}
+                        fontWeight={'bold'}
+                        color={'#607d8c'}
+                    >
+                        Licenças
                     </Text>
                 </Box>
                 <Spacer />

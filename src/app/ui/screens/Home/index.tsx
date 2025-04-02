@@ -16,6 +16,7 @@ import { FaRegIdBadge, FaRegIdCard } from "react-icons/fa";
 import { IoCarSport } from "react-icons/io5";
 import { useVehicleCardState } from "@/app/hooks/useVehicleCardState";
 import VehicleCardId from "../../components/VehicleCardId";
+import { AddLicenseModal } from "./addLicense";
 
 
 export default function HomeScreen(): JSX.Element {
@@ -24,6 +25,7 @@ export default function HomeScreen(): JSX.Element {
     const [openVehicle, setOpenVehicle] = useState<{ open: boolean }>({ open: false })
     const [openOption, setOpenOption] = useState<{ open: boolean }>({ open: false })
     const [openSetup, setOpenSetup] = useState<{ open: boolean }>({ open: false })
+    const [openLicense, setOpenLicense] = useState<{ open: boolean }>({ open: false }) 
 
     const contentRef = useRef<HTMLDivElement>(null)
 
@@ -59,6 +61,9 @@ export default function HomeScreen(): JSX.Element {
     function handleOnOpenAddVehicle() {
         setOpenVehicle({ open: true })
     }
+    function handleOnOpenAddLicence(){
+        setOpenLicense({ open: true })
+    }
 
 
     async function handleOnPrintingCard() {
@@ -91,14 +96,7 @@ export default function HomeScreen(): JSX.Element {
                 return;
             }
 
-            await openCardPDF(filePath, {
-                name: selectedCard.person.name, 
-                personFunction: selectedCard.person.job,
-                cardNumber: selectedCard.cardNumber, 
-                cardValidate: selectedCard.expiration,
-                acessType: selectedCard.person.accessType
-
-            });
+            await openCardPDF(filePath);
 
             clearSelectedCard()
             setOpenOption({ open: false })
@@ -163,6 +161,7 @@ export default function HomeScreen(): JSX.Element {
             <HeaderActions
                 onOpenAddPerson={handleOnOpenAddPerson}
                 onOpenAddVehicle={handleOnOpenAddVehicle}
+                onOpenAddLicense={handleOnOpenAddLicence}
                 onPrintCards={handleOnPrintingCard}
                 onPrintVehicleCards={handleOnPrintingVehicleCard}
                 onPrintSelectedCards={handleOnPrintingCard}
@@ -228,6 +227,11 @@ export default function HomeScreen(): JSX.Element {
                     contentRef={contentRef}
                     open={openVehicle.open}
                     onOpenChange={setOpenVehicle}
+                />
+                <AddLicenseModal
+                contentRef={contentRef}
+                open={openLicense.open}
+                onOpenChange={setOpenLicense}
                 />
 
                 <CardOptionPrintScreen
